@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
 		<table class="widefat striped health-check-table" role="presentation">
 			<?php foreach( $this->exporters as $tool ) : ?>
 				<tr>
-					<td>
+					<td style="width:200px">
 						<strong><?php echo esc_html( $tool['name'] ); ?></strong>
 					</td>
 					<td>

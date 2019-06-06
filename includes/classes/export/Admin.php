@@ -77,12 +77,30 @@ class Admin {
 	public function hook() {
 
 		add_action( 'admin_menu', array( $this, 'add_to_menus' ) );
-		// add_action( 'admin_head', array( $this, 'hide_from_menus' ) );
+		add_action( 'admin_head', array( $this, 'hide_from_menus' ) );
 		add_action( 'admin_init', array( $this, 'download_schemas_export_file' ) );
 		add_action( 'pno_tools_export', [ $this, 'register_exporters_list' ], 20 );
 
 		add_action( 'wp_ajax_posterno_do_ajax_schemas_export', array( $this, 'do_ajax_schemas_export' ) );
 
+	}
+
+	/**
+	 * Hide all exporters from the main menu.
+	 *
+	 * @return void
+	 */
+	public function hide_from_menus() {
+		global $submenu;
+		foreach ( $this->exporters as $id => $exporter ) {
+			if ( isset( $submenu[ $exporter['menu'] ] ) ) {
+				foreach ( $submenu[ $exporter['menu'] ] as $key => $menu ) {
+					if ( $id === $menu[2] ) {
+						unset( $submenu[ $exporter['menu'] ][ $key ] );
+					}
+				}
+			}
+		}
 	}
 
 	/**
