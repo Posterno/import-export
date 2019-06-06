@@ -88,6 +88,7 @@ class Admin {
 	 */
 	public function admin_scripts() {
 
+		wp_register_style( 'pno-export', PNO_PLUGIN_URL . '/vendor/posterno/import-export/dist/css/screen.css', false, PNO_VERSION );
 		wp_register_script( 'pno-schemas-export', PNO_PLUGIN_URL . '/vendor/posterno/import-export/dist/js/pno-schemas-export.js', array( 'jquery' ), PNO_VERSION );
 
 		wp_localize_script(
@@ -105,6 +106,8 @@ class Admin {
 	 * @return void
 	 */
 	public function schemas_exporter() {
+
+		require_once PNO_PLUGIN_DIR . '/vendor/posterno/import-export/resources/views/html-schemas-export.php';
 
 	}
 
