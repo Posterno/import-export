@@ -11,6 +11,12 @@
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
+if ( is_admin() ) {
+
+	new PosternoImportExport\Export\Admin();
+
+}
+
 /**
  * "Register" the export tools.
  */
