@@ -34,6 +34,7 @@ add_action(
 		if ( in_array( $screen->id, $ids ) ) {
 			wp_enqueue_style( 'pno-admin-export-import' );
 			wp_enqueue_script( 'pno-schemas-export' );
+			wp_enqueue_style( 'pno-options-panel', PNO_PLUGIN_URL . '/assets/css/admin/admin-settings-panel.min.css', false, PNO_VERSION );
 		}
 
 		wp_localize_script(
