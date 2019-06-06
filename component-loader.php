@@ -10,3 +10,16 @@
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
+
+/**
+ * "Register" the export tools.
+ */
+add_action(
+	'pno_tools_export',
+	function() {
+
+		require_once dirname( __FILE__ ) . '/resources/views/export-tool.php';
+
+	},
+	20
+);
