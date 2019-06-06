@@ -37,7 +37,7 @@ $exporter = new CsvSchemasExporter();
 			<header>
 				<span class="spinner is-active"></span>
 				<h2><?php esc_html_e( 'Export schemas to a CSV file', 'posterno' ); ?></h2>
-				<p><?php esc_html_e( 'This tool allows you to generate and download a CSV file containing a list of all listings schemas.', 'posterno' ); ?></p>
+				<p><?php esc_html_e( 'This tool allows you to generate and download a CSV file containing a list of all listings schemas on your site.', 'posterno' ); ?></p>
 			</header>
 			<section>
 				<progress class="posterno-exporter-progress" max="100" value="0"></progress>
