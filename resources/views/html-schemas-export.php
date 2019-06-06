@@ -8,15 +8,12 @@
  * @since       0.1.0
  */
 
-use PosternoImportExport\Export\CsvExporter;
+use PosternoImportExport\Export\CsvSchemasExporter;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
-wp_enqueue_style( 'pno-export' );
-wp_enqueue_script( 'pno-schemas-export' );
-
-$exporter = new CsvExporter();
+$exporter = new CsvSchemasExporter();
 ?>
 <div class="wrap woocommerce">
 	<h1><?php esc_html_e( 'Export Products', 'woocommerce' ); ?></h1>
