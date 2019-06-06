@@ -16,7 +16,10 @@
 	"autoload": {
 		"psr-4": {
 			"PosternoImportExport\\": "includes/classes/"
-		}
+		},
+		"files" : [
+			"component-loader.php"
+		]
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "0.4.4",
