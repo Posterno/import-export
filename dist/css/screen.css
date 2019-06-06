@@ -663,8 +663,8 @@
 .posterno-importer-wrapper .pno-progress-form-content progress::-webkit-progress-value {
 	border-radius: 3px;
 	box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.4);
-	background: #a46497;
-	background: linear-gradient(to bottom, #a46497, #66405f), #a46497;
+	background: #0085ba;
+	background: linear-gradient(to bottom, #0085ba, #006799), #0085ba;
 	transition: width 1s ease;
 }
 .posterno-progress-form-wrapper .posterno-exporter progress::-moz-progress-bar,
@@ -678,8 +678,8 @@
 .posterno-importer-wrapper .pno-progress-form-content progress::-moz-progress-bar {
 	border-radius: 3px;
 	box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.4);
-	background: #a46497;
-	background: linear-gradient(to bottom, #a46497, #66405f), #a46497;
+	background: #0085ba;
+	background: linear-gradient(to bottom, #0085ba, #006799), #0085ba;
 	transition: width 1s ease;
 }
 .posterno-progress-form-wrapper .posterno-exporter progress::-ms-fill,
@@ -693,8 +693,8 @@
 .posterno-importer-wrapper .pno-progress-form-content progress::-ms-fill {
 	border-radius: 3px;
 	box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.4);
-	background: #a46497;
-	background: linear-gradient(to bottom, #a46497, #66405f), #a46497;
+	background: #0085ba;
+	background: linear-gradient(to bottom, #0085ba, #006799), #0085ba;
 	transition: width 1s ease;
 }
 .posterno-progress-form-wrapper .posterno-exporter.posterno-exporter__exporting .spinner, .posterno-progress-form-wrapper .posterno-exporter.posterno-importer__importing .spinner,
