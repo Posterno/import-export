@@ -19,14 +19,16 @@ defined( 'ABSPATH' ) || exit;
 	</h2>
 	<div class="inside">
 		<table class="widefat striped health-check-table" role="presentation">
-			<tr>
-				<td>
-					<strong><?php esc_html_e( 'Listings schemas' ); ?></strong>
-				</td>
-				<td>
-					<a href="<?php echo esc_url( '#' ); ?>" class="button"><?php esc_html_e( 'Export' ); ?></a>
-				</td>
-			</tr>
+			<?php foreach( $this->exporters as $tool ) : ?>
+				<tr>
+					<td>
+						<strong><?php echo esc_html( $tool['name'] ); ?></strong>
+					</td>
+					<td>
+						<a href="<?php echo esc_url( $tool['url'] ); ?>" class="button2"><?php esc_html_e( 'Export' ); ?> &rarr;</a>
+					</td>
+				</tr>
+			<?php endforeach; ?>
 		</table>
 	</div>
 </div>

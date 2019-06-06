@@ -41,9 +41,10 @@ class Admin {
 		// Register exporters.
 		$this->exporters['schemas_exporter'] = array(
 			'menu'       => 'edit.php?post_type=listings',
-			'name'       => esc_html__( 'Schemas Export' ),
+			'name'       => esc_html__( 'Listings schemas' ),
 			'capability' => 'manage_options',
 			'callback'   => array( $this, 'schemas_exporter' ),
+			'url'        => admin_url( 'edit.php?post_type=listings&page=schemas_exporter' ),
 		);
 
 	}
@@ -78,6 +79,8 @@ class Admin {
 		add_action( 'admin_menu', array( $this, 'add_to_menus' ) );
 		// add_action( 'admin_head', array( $this, 'hide_from_menus' ) );
 		add_action( 'admin_init', array( $this, 'download_schemas_export_file' ) );
+		add_action( 'pno_tools_export', [ $this, 'register_exporters_list' ], 20 );
+
 		add_action( 'wp_ajax_posterno_do_ajax_schemas_export', array( $this, 'do_ajax_schemas_export' ) );
 
 	}
@@ -154,6 +157,17 @@ class Admin {
 			}
 			$exporter->export();
 		}
+	}
+
+	/**
+	 * Display a list of exporters registered within the tools page.
+	 *
+	 * @return void
+	 */
+	public function register_exporters_list() {
+
+		include PNO_PLUGIN_DIR . '/vendor/posterno/import-export/resources/views/export-tool.php';
+
 	}
 
 }
