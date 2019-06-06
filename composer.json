@@ -1,0 +1,29 @@
+{
+	"name": "posterno/import-export",
+	"description": "Component that provides the import and export functionalities for Posterno's content.",
+	"keywords": [
+		"wordpress"
+	],
+	"homepage": "https://posterno.com",
+	"authors": [{
+		"name": "Posterno",
+		"email": "hello@posterno.com"
+	}],
+	"require": {
+		"php": ">=5.6",
+		"composer/installers": "~1.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"PosternoImportExport\\": "includes/classes/"
+		}
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "0.4.4",
+		"pressmodo/phpcs-config": "dev-master"
+	},
+	"scripts": {
+		"lint": "phpcs .",
+		"lint-fix": "phpcbf ."
+	}
+}
