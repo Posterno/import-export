@@ -148,24 +148,8 @@
 	margin-right: 0.5em;
 	margin-bottom: 2px;
 	height: auto !important;
-	border-radius: 4px;
-	background-color: #bb77ae;
-	border-color: #a36597;
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 0 #a36597;
-	text-shadow: 0 -1px 1px #a36597, 1px 0 1px #a36597, 0 1px 1px #a36597, -1px 0 1px #a36597;
 	margin: 0;
 	opacity: 1;
-}
-.posterno-progress-form-wrapper .button:hover, .posterno-progress-form-wrapper .button:focus, .posterno-progress-form-wrapper .button:active,
-.posterno-exporter-wrapper .button:hover,
-.posterno-exporter-wrapper .button:focus,
-.posterno-exporter-wrapper .button:active,
-.posterno-importer-wrapper .button:hover,
-.posterno-importer-wrapper .button:focus,
-.posterno-importer-wrapper .button:active {
-	background: #a36597;
-	border-color: #a36597;
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 1px 0 #a36597;
 }
 .posterno-progress-form-wrapper .error .button,
 .posterno-exporter-wrapper .error .button,
