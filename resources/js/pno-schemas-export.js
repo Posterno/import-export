@@ -47,7 +47,7 @@
 			url: ajaxurl,
 			data: {
 				form     : data,
-				action   : 'posterno_do_ajax_product_export',
+				action   : 'posterno_do_ajax_schemas_export',
 				step     : step,
 				columns  : columns,
 				filename : filename,
