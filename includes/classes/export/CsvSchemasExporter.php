@@ -13,51 +13,49 @@ namespace PosternoImportExport\Export;
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Export listings schemas.
+ */
 class CsvSchemasExporter extends CsvBatchExporter {
 
 	/**
-	 * Type of export used in filter names.
+	 * Type of export, used in filters.
 	 *
 	 * @var string
 	 */
 	protected $export_type = 'schemas';
 
 	/**
-	 * Constructor.
-	 */
-	public function __construct() {
-		parent::__construct();
-	}
-
-	/**
-	 * Return an array of columns to export.
+	 * Get list of columns for the csv file.
 	 *
-	 * @since  3.1.0
 	 * @return array
 	 */
 	public function get_default_column_names() {
+
+		/**
+		 * Filter: allow developers to customize csv columns for the schemas exporter.
+		 */
 		return apply_filters(
-			"posterno_product_export_{$this->export_type}_default_columns",
+			"posterno_schema_export_{$this->export_type}_default_columns",
 			array(
-				'id'        => __( 'ID', 'posterno' ),
-				'sku'       => __( 'SKU', 'posterno' ),
-				'name'      => __( 'Name', 'posterno' ),
-				'published' => __( 'Published', 'posterno' ),
+				'id'    => esc_html__( 'ID', 'posterno' ),
+				'title' => esc_html__( 'Title', 'posterno' ),
 			)
 		);
 	}
 
 	/**
-	 * Prepare data for export.
+	 * Prepare data for the export.
 	 *
-	 * @since 3.1.0
+	 * @return void
 	 */
 	public function prepare_data_to_export() {
 		$args = array(
-			'post_status'         => array( 'private', 'publish', 'draft', 'future', 'pending' ),
+			'post_status'    => array( 'private', 'publish', 'draft', 'future', 'pending' ),
 			'post_type'      => 'pno_schema',
 			'posts_per_page' => $this->get_limit(),
 			'paged'          => $this->get_page(),
+			'fields'         => 'ids',
 			'orderby'        => array(
 				'ID' => 'ASC',
 			),
@@ -74,7 +72,13 @@ class CsvSchemasExporter extends CsvBatchExporter {
 
 	}
 
-	protected function generate_row_data( $schema ) {
+	/**
+	 * Generate data for each row.
+	 *
+	 * @param string $id id of the post found.
+	 * @return array
+	 */
+	protected function generate_row_data( $id ) {
 		$columns = $this->get_column_names();
 		$row     = array();
 		foreach ( $columns as $column_id => $column_name ) {
@@ -86,42 +90,34 @@ class CsvSchemasExporter extends CsvBatchExporter {
 				continue;
 			}
 
-			if ( has_filter( "posterno_product_export_{$this->export_type}_column_{$column_id}" ) ) {
+			if ( has_filter( "posterno_schema_export_column_{$column_id}" ) ) {
 				// Filter for 3rd parties.
-				$value = apply_filters( "posterno_product_export_{$this->export_type}_column_{$column_id}", '', $schema, $column_id );
-
+				$value = apply_filters( "posterno_schema_export_column_{$column_id}", '', $id, $column_id );
 			} elseif ( is_callable( array( $this, "get_column_value_{$column_id}" ) ) ) {
 				// Handle special columns which don't map 1:1 to product data.
-				$value = $this->{"get_column_value_{$column_id}"}( $schema );
+				$value = $this->{"get_column_value_{$column_id}"}( $id );
+			} else {
 
-			} elseif ( is_callable( array( $schema, "get_{$column_id}" ) ) ) {
-				// Default and custom handling.
-				$value = $schema->{"get_{$column_id}"}( 'edit' );
-			}
-
-			if ( 'description' === $column_id || 'short_description' === $column_id ) {
-				$value = $this->filter_description_field( $value );
+				switch ( $column_id ) {
+					case 'id':
+						$value = absint( $id );
+						break;
+					case 'title':
+						$value = $this->get_post_title( $id );
+						break;
+				}
 			}
 
 			$row[ $column_id ] = $value;
 		}
 
-		return apply_filters( 'posterno_product_export_row_data', $row, $schema );
-	}
-
-	/**
-	 * Filter description field for export.
-	 * Convert newlines to '\n'.
-	 *
-	 * @param string $description Product description text to filter.
-	 *
-	 * @since  3.5.4
-	 * @return string
-	 */
-	protected function filter_description_field( $description ) {
-		$description = str_replace( '\n', "\\\\n", $description );
-		$description = str_replace( "\n", '\n', $description );
-		return $description;
+		/**
+		 * Filter: allow developers to customize data retrive for rows of the CSV schemas exporter.
+		 *
+		 * @param array $row row data.
+		 * @param string $id post id.
+		 */
+		return apply_filters( 'posterno_schema_export_row_data', $row, $id );
 	}
 
 }

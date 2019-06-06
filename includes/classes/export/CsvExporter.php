@@ -487,4 +487,28 @@ abstract class CsvExporter {
 			fputcsv( $buffer, $export_row, ",", '"', "\0" ); // @codingStandardsIgnoreLine
 		}
 	}
+
+	/**
+	 * Filter description field for export.
+	 * Convert newlines to '\n'.
+	 *
+	 * @param string $description description text to filter.
+	 * @return string
+	 */
+	protected function filter_description_field( $description ) {
+		$description = str_replace( '\n', "\\\\n", $description );
+		$description = str_replace( "\n", '\n', $description );
+		return $description;
+	}
+
+	/**
+	 * Get title of a post.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	protected function get_post_title( $id ) {
+		return esc_html( get_the_title( $id ) );
+	}
+
 }
