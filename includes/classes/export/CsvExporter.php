@@ -469,7 +469,7 @@ abstract class CsvExporter {
 	 *
 	 * @see https://bugs.php.net/bug.php?id=43225
 	 * @see https://bugs.php.net/bug.php?id=50686
-	 * @see https://github.com/woocommerce/woocommerce/issues/19514
+	 * @see https://github.com/posterno/posterno/issues/19514
 	 * @since 3.4.0
 	 * @param resource $buffer Resource we are writing to.
 	 * @param array    $export_row Row to export.

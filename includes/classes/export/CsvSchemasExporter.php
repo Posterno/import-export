@@ -37,15 +37,15 @@ class CsvSchemasExporter extends CsvBatchExporter {
 	 */
 	public function get_default_column_names() {
 		return apply_filters(
-			"woocommerce_product_export_{$this->export_type}_default_columns",
+			"posterno_product_export_{$this->export_type}_default_columns",
 			array(
-				'id'                 => __( 'ID', 'woocommerce' ),
-				'type'               => __( 'Type', 'woocommerce' ),
-				'sku'                => __( 'SKU', 'woocommerce' ),
-				'name'               => __( 'Name', 'woocommerce' ),
-				'published'          => __( 'Published', 'woocommerce' ),
-				'featured'           => __( 'Is featured?', 'woocommerce' ),
-				'catalog_visibility' => __( 'Visibility in catalog', 'woocommerce' ),
+				'id'                 => __( 'ID', 'posterno' ),
+				'type'               => __( 'Type', 'posterno' ),
+				'sku'                => __( 'SKU', 'posterno' ),
+				'name'               => __( 'Name', 'posterno' ),
+				'published'          => __( 'Published', 'posterno' ),
+				'featured'           => __( 'Is featured?', 'posterno' ),
+				'catalog_visibility' => __( 'Visibility in catalog', 'posterno' ),
 			)
 		);
 	}
@@ -71,7 +71,7 @@ class CsvSchemasExporter extends CsvBatchExporter {
 		if ( ! empty( $this->product_category_to_export ) ) {
 			$args['category'] = $this->product_category_to_export;
 		}
-		$products = wc_get_products( apply_filters( "woocommerce_product_export_{$this->export_type}_query_args", $args ) );
+		$products = pno_get_products( apply_filters( "posterno_product_export_{$this->export_type}_query_args", $args ) );
 
 		$this->total_rows  = $products->total;
 		$this->row_data    = array();
@@ -89,7 +89,7 @@ class CsvSchemasExporter extends CsvBatchExporter {
 		// If a category was selected we loop through the variations as they are not tied to a category so will be excluded by default.
 		if ( ! empty( $variable_products ) ) {
 			foreach ( $variable_products as $parent_id ) {
-				$products = wc_get_products(
+				$products = pno_get_products(
 					array(
 						'parent' => $parent_id,
 						'type'   => array( 'variation' ),
@@ -128,9 +128,9 @@ class CsvSchemasExporter extends CsvBatchExporter {
 				continue;
 			}
 
-			if ( has_filter( "woocommerce_product_export_{$this->export_type}_column_{$column_id}" ) ) {
+			if ( has_filter( "posterno_product_export_{$this->export_type}_column_{$column_id}" ) ) {
 				// Filter for 3rd parties.
-				$value = apply_filters( "woocommerce_product_export_{$this->export_type}_column_{$column_id}", '', $product, $column_id );
+				$value = apply_filters( "posterno_product_export_{$this->export_type}_column_{$column_id}", '', $product, $column_id );
 
 			} elseif ( is_callable( array( $this, "get_column_value_{$column_id}" ) ) ) {
 				// Handle special columns which don't map 1:1 to product data.
@@ -151,7 +151,7 @@ class CsvSchemasExporter extends CsvBatchExporter {
 		$this->prepare_downloads_for_export( $product, $row );
 		$this->prepare_attributes_for_export( $product, $row );
 		$this->prepare_meta_for_export( $product, $row );
-		return apply_filters( 'woocommerce_product_export_row_data', $row, $product );
+		return apply_filters( 'posterno_product_export_row_data', $row, $product );
 	}
 
 	/**

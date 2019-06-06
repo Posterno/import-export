@@ -15,21 +15,21 @@ defined( 'ABSPATH' ) || exit;
 
 $exporter = new CsvSchemasExporter();
 ?>
-<div class="wrap woocommerce">
+<div class="wrap posterno">
 	<h1><?php esc_html_e( 'Export listings schemas' ); ?></h1>
 
-	<div class="woocommerce-exporter-wrapper">
-		<form class="woocommerce-exporter">
+	<div class="posterno-exporter-wrapper">
+		<form class="posterno-exporter">
 			<header>
 				<span class="spinner is-active"></span>
-				<h2><?php esc_html_e( 'Export schemas to a CSV file', 'woocommerce' ); ?></h2>
-				<p><?php esc_html_e( 'This tool allows you to generate and download a CSV file containing a list of all listings schemas.', 'woocommerce' ); ?></p>
+				<h2><?php esc_html_e( 'Export schemas to a CSV file', 'posterno' ); ?></h2>
+				<p><?php esc_html_e( 'This tool allows you to generate and download a CSV file containing a list of all listings schemas.', 'posterno' ); ?></p>
 			</header>
 			<section>
-				<progress class="woocommerce-exporter-progress" max="100" value="0"></progress>
+				<progress class="posterno-exporter-progress" max="100" value="0"></progress>
 			</section>
-			<div class="wc-actions">
-				<button type="submit" class="woocommerce-exporter-button button button-primary" value="<?php esc_attr_e( 'Generate CSV', 'woocommerce' ); ?>"><?php esc_html_e( 'Generate CSV', 'woocommerce' ); ?></button>
+			<div class="pno-actions">
+				<button type="submit" class="posterno-exporter-button button button-primary" value="<?php esc_attr_e( 'Generate CSV', 'posterno' ); ?>"><?php esc_html_e( 'Generate CSV', 'posterno' ); ?></button>
 			</div>
 		</form>
 	</div>

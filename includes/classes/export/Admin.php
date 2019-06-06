@@ -76,7 +76,7 @@ class Admin {
 		add_action( 'admin_menu', array( $this, 'add_to_menus' ) );
 		//add_action( 'admin_head', array( $this, 'hide_from_menus' ) );
 		//add_action( 'admin_init', array( $this, 'download_export_file' ) );
-		//add_action( 'wp_ajax_woocommerce_do_ajax_product_export', array( $this, 'do_ajax_product_export' ) );
+		//add_action( 'wp_ajax_posterno_do_ajax_product_export', array( $this, 'do_ajax_product_export' ) );
 
 	}
 
