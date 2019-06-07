@@ -59,7 +59,7 @@ class CsvListingsFieldsExporter extends CsvBatchExporter {
 		$fields = [];
 
 		foreach ( $repo->get_containers() as $container ) {
-			if ( $container->get_id() === 'carbon_fields_container_pno_listings_fields_settings' ) {
+			if ( $container->get_id() === 'carbon_fields_container_pno_listings_fields_settings' || $container->get_id() === 'carbon_fields_container_pno_listings_fields_advanced_settings' ) {
 				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
 					foreach ( $container->get_fields() as $field ) {
 						$fields[ $field->get_base_name() ] = $field->get_base_name();
