@@ -38,11 +38,14 @@ class CsvEmailsExporter extends CsvBatchExporter {
 		return apply_filters(
 			"posterno_export_{$this->export_type}_default_columns",
 			array(
-				'id'            => esc_html__( 'ID', 'posterno' ),
-				'title'         => esc_html__( 'Title', 'posterno' ),
-				'schema_mode'   => esc_html__( 'Mode' ),
-				'schema_code'   => esc_html__( 'Code' ),
-				'listing_types' => esc_html__( 'Listing types' ),
+				'id'                                 => esc_html__( 'ID', 'posterno' ),
+				'post_title'                         => esc_html__( 'Title', 'posterno' ),
+				'post_content'                       => esc_html__( 'Content' ),
+				'situations'                         => esc_html__( 'Situations' ),
+				'heading'                            => esc_html__( 'Heading' ),
+				'has_admin_notification'             => esc_html__( 'Notify admin' ),
+				'administrator_notification_subject' => esc_html__( 'Admin notification subject' ),
+				'administrator_notification'         => esc_html__( 'Admin notification content' ),
 			)
 		);
 	}
@@ -105,7 +108,7 @@ class CsvEmailsExporter extends CsvBatchExporter {
 					case 'id':
 						$value = absint( $id );
 						break;
-					case 'title':
+					case 'post_title':
 						$value = $this->get_post_title( $id );
 						break;
 				}
