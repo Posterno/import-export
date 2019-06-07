@@ -38,8 +38,11 @@ class CsvSchemasExporter extends CsvBatchExporter {
 		return apply_filters(
 			"posterno_schema_export_{$this->export_type}_default_columns",
 			array(
-				'id'    => esc_html__( 'ID', 'posterno' ),
-				'title' => esc_html__( 'Title', 'posterno' ),
+				'id'            => esc_html__( 'ID', 'posterno' ),
+				'title'         => esc_html__( 'Title', 'posterno' ),
+				'schema_mode'   => esc_html__( 'Mode' ),
+				'schema_code'   => esc_html__( 'Code' ),
+				'listing_types' => esc_html__( 'Listing types' ),
 			)
 		);
 	}
@@ -104,6 +107,15 @@ class CsvSchemasExporter extends CsvBatchExporter {
 						break;
 					case 'title':
 						$value = $this->get_post_title( $id );
+						break;
+					case 'schema_mode':
+						$value = trim( get_post_meta( $id, 'schema_mode', true ) );
+						break;
+					case 'schema_code':
+						$value = trim( get_post_meta( $id, 'schema_code', true ) );
+						break;
+					case 'listing_types':
+						$value = $this->format_term_ids( get_post_meta( $id, 'schema_listing_types', true ), 'listings-types' );
 						break;
 				}
 			}
