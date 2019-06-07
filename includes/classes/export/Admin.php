@@ -13,6 +13,7 @@ namespace PosternoImportExport\Export;
 use PosternoImportExport\Export\CsvSchemasExporter;
 use PosternoImportExport\Export\CsvEmailsExporter;
 use PosternoImportExport\Export\CsvListingsFieldsExporter;
+use PosternoImportExport\Export\CsvProfileFieldsExporter;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -62,6 +63,13 @@ class Admin {
 			'callback'   => array( $this, 'listings_fields_exporter' ),
 			'url'        => admin_url( 'edit.php?post_type=listings&page=listings_fields_exporter' ),
 		);
+		$this->exporters['profile_fields_exporter']  = array(
+			'menu'       => 'edit.php?post_type=listings',
+			'name'       => esc_html__( 'Profile custom fields' ),
+			'capability' => 'manage_options',
+			'callback'   => array( $this, 'profile_fields_exporter' ),
+			'url'        => admin_url( 'edit.php?post_type=listings&page=profile_fields_exporter' ),
+		);
 
 	}
 
@@ -104,6 +112,9 @@ class Admin {
 
 		add_action( 'admin_init', array( $this, 'download_listings_fields_export_file' ) );
 		add_action( 'wp_ajax_posterno_do_ajax_listings_fields_export', array( $this, 'do_ajax_listings_fields_export' ) );
+
+		add_action( 'admin_init', array( $this, 'download_profile_fields_export_file' ) );
+		add_action( 'wp_ajax_posterno_do_ajax_profile_fields_export', array( $this, 'do_ajax_profile_fields_export' ) );
 
 	}
 
@@ -353,6 +364,85 @@ class Admin {
 	public function download_listings_fields_export_file() {
 		if ( isset( $_GET['action'], $_GET['nonce'] ) && wp_verify_nonce( wp_unslash( $_GET['nonce'] ), 'listings-fields-csv' ) && 'download_listings_fields_csv' === wp_unslash( $_GET['action'] ) ) { // WPCS: input var ok, sanitization ok.
 			$exporter = new CsvListingsFieldsExporter();
+			if ( ! empty( $_GET['filename'] ) ) { // WPCS: input var ok.
+				$exporter->set_filename( wp_unslash( $_GET['filename'] ) ); // WPCS: input var ok, sanitization ok.
+			}
+			$exporter->export();
+		}
+	}
+
+	/*---------------------PROFILE CUSTOM FIELDS EXPORTER-------------------------*/
+
+	/**
+	 * Displays content of the exporter.
+	 *
+	 * @return void
+	 */
+	public function profile_fields_exporter() {
+		require_once PNO_PLUGIN_DIR . '/vendor/posterno/import-export/resources/views/html-profile-fields-export.php';
+	}
+
+	/**
+	 * Export profile custom fields.
+	 *
+	 * @return void
+	 */
+	public function do_ajax_profile_fields_export() {
+		check_ajax_referer( 'pno-profile-fields-export', 'security' );
+
+		if ( ! $this->export_allowed() ) {
+			wp_send_json_error( array( 'message' => __( 'Insufficient privileges to export profile fields.', 'posterno' ) ) );
+		}
+
+		$step     = isset( $_POST['step'] ) ? absint( $_POST['step'] ) : 1; // WPCS: input var ok, sanitization ok.
+		$exporter = new CsvProfileFieldsExporter();
+
+		if ( ! empty( $_POST['columns'] ) ) { // WPCS: input var ok.
+			$exporter->set_column_names( wp_unslash( $_POST['columns'] ) ); // WPCS: input var ok, sanitization ok.
+		}
+
+		if ( ! empty( $_POST['filename'] ) ) { // WPCS: input var ok.
+			$exporter->set_filename( wp_unslash( $_POST['filename'] ) ); // WPCS: input var ok, sanitization ok.
+		}
+
+		$exporter->set_page( $step );
+		$exporter->generate_file();
+
+		$query_args = apply_filters(
+			'posterno_profile_fields_export_get_ajax_query_args',
+			array(
+				'nonce'    => wp_create_nonce( 'profile-fields-csv' ),
+				'action'   => 'download_profile_fields_csv',
+				'filename' => $exporter->get_filename(),
+			)
+		);
+		if ( 100 === $exporter->get_percent_complete() ) {
+			wp_send_json_success(
+				array(
+					'step'       => 'done',
+					'percentage' => 100,
+					'url'        => add_query_arg( $query_args, admin_url( 'edit.php?post_type=listings&page=profile_fields_exporter' ) ),
+				)
+			);
+		} else {
+			wp_send_json_success(
+				array(
+					'step'       => ++$step,
+					'percentage' => $exporter->get_percent_complete(),
+					'columns'    => $exporter->get_column_names(),
+				)
+			);
+		}
+	}
+
+	/**
+	 * Download export file.
+	 *
+	 * @return void
+	 */
+	public function download_profile_fields_export_file() {
+		if ( isset( $_GET['action'], $_GET['nonce'] ) && wp_verify_nonce( wp_unslash( $_GET['nonce'] ), 'profile-fields-csv' ) && 'download_profile_fields_csv' === wp_unslash( $_GET['action'] ) ) { // WPCS: input var ok, sanitization ok.
+			$exporter = new CsvProfileFieldsExporter();
 			if ( ! empty( $_GET['filename'] ) ) { // WPCS: input var ok.
 				$exporter->set_filename( wp_unslash( $_GET['filename'] ) ); // WPCS: input var ok, sanitization ok.
 			}

@@ -173,12 +173,12 @@
    */
 
 
-  $.fn.pno_schemas_export_form = function () {
+  $.fn.pno_listings_fields_export_form = function () {
     new listingsFieldsExportForm(this);
     return this;
   };
 
-  $('.posterno-exporter').pno_schemas_export_form();
+  $('.posterno-exporter').pno_listings_fields_export_form();
 })(jQuery, window);
 
 /***/ }),

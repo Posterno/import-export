@@ -1,9 +1,9 @@
-/*global ajaxurl, pno_emails_export_params */
+/*global ajaxurl, pno_profile_fields_export_params */
 ;(function ( $, window ) {
 	/**
-	 * emailsExportForm handles the export process.
+	 * profileFieldsExportForm handles the export process.
 	 */
-	var emailsExportForm = function( $form ) {
+	var profileFieldsExportForm = function( $form ) {
 		this.$form = $form;
 		this.xhr   = false;
 
@@ -14,13 +14,13 @@
 		this.processStep = this.processStep.bind( this );
 
 		// Events.
-		$form.on( 'submit', { emailsExportForm: this }, this.onSubmit );
+		$form.on( 'submit', { profileFieldsExportForm: this }, this.onSubmit );
 	};
 
 	/**
 	 * Handle export form submission.
 	 */
-	emailsExportForm.prototype.onSubmit = function( event ) {
+	profileFieldsExportForm.prototype.onSubmit = function( event ) {
 		event.preventDefault();
 
 		var currentDate    = new Date(),
@@ -28,18 +28,18 @@
 			month          = currentDate.getMonth() + 1,
 			year           = currentDate.getFullYear(),
 			timestamp      = currentDate.getTime(),
-			filename       = 'pno-emails-export-' + day + '-' + month + '-' + year + '-' + timestamp + '.csv';
+			filename       = 'pno-profile-fields-export-' + day + '-' + month + '-' + year + '-' + timestamp + '.csv';
 
-		event.data.emailsExportForm.$form.addClass( 'posterno-exporter__exporting' );
-		event.data.emailsExportForm.$form.find('.posterno-exporter-progress').val( 0 );
-		event.data.emailsExportForm.$form.find('.posterno-exporter-button').prop( 'disabled', true );
-		event.data.emailsExportForm.processStep( 1, $( this ).serialize(), '', filename );
+		event.data.profileFieldsExportForm.$form.addClass( 'posterno-exporter__exporting' );
+		event.data.profileFieldsExportForm.$form.find('.posterno-exporter-progress').val( 0 );
+		event.data.profileFieldsExportForm.$form.find('.posterno-exporter-button').prop( 'disabled', true );
+		event.data.profileFieldsExportForm.processStep( 1, $( this ).serialize(), '', filename );
 	};
 
 	/**
 	 * Process the current export step.
 	 */
-	emailsExportForm.prototype.processStep = function( step, data, columns, filename ) {
+	profileFieldsExportForm.prototype.processStep = function( step, data, columns, filename ) {
 		var $this = this;
 
 		$.ajax( {
@@ -47,11 +47,11 @@
 			url: ajaxurl,
 			data: {
 				form     : data,
-				action   : 'posterno_do_ajax_emails_export',
+				action   : 'posterno_do_ajax_profile_fields_export',
 				step     : step,
 				columns  : columns,
 				filename : filename,
-				security : pno_emails_export_params.export_nonce
+				security : pno_profile_fields_export_params.export_nonce
 			},
 			dataType: 'json',
 			success: function( response ) {
@@ -77,13 +77,13 @@
 	};
 
 	/**
-	 * Function to call emailsExportForm on jquery selector.
+	 * Function to call profileFieldsExportForm on jquery selector.
 	 */
-	$.fn.pno_emails_export_form = function() {
-		new emailsExportForm( this );
+	$.fn.pno_profile_fields_export_form = function() {
+		new profileFieldsExportForm( this );
 		return this;
 	};
 
-	$( '.posterno-exporter' ).pno_emails_export_form();
+	$( '.posterno-exporter' ).pno_profile_fields_export_form();
 
 })( jQuery, window );

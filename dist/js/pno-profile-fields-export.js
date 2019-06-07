@@ -81,26 +81,26 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./resources/js/pno-emails-export.js":
-/*!*******************************************!*\
-  !*** ./resources/js/pno-emails-export.js ***!
-  \*******************************************/
+/***/ "./resources/js/pno-profile-fields-export.js":
+/*!***************************************************!*\
+  !*** ./resources/js/pno-profile-fields-export.js ***!
+  \***************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-/*global ajaxurl, pno_emails_export_params */
+/*global ajaxurl, pno_profile_fields_export_params */
 ;
 
 (function ($, window) {
   /**
-   * emailsExportForm handles the export process.
+   * profileFieldsExportForm handles the export process.
    */
-  var emailsExportForm = function emailsExportForm($form) {
+  var profileFieldsExportForm = function profileFieldsExportForm($form) {
     this.$form = $form;
     this.xhr = false; // Initial state.
 
@@ -109,7 +109,7 @@
     this.processStep = this.processStep.bind(this); // Events.
 
     $form.on('submit', {
-      emailsExportForm: this
+      profileFieldsExportForm: this
     }, this.onSubmit);
   };
   /**
@@ -117,36 +117,36 @@
    */
 
 
-  emailsExportForm.prototype.onSubmit = function (event) {
+  profileFieldsExportForm.prototype.onSubmit = function (event) {
     event.preventDefault();
     var currentDate = new Date(),
         day = currentDate.getDate(),
         month = currentDate.getMonth() + 1,
         year = currentDate.getFullYear(),
         timestamp = currentDate.getTime(),
-        filename = 'pno-emails-export-' + day + '-' + month + '-' + year + '-' + timestamp + '.csv';
-    event.data.emailsExportForm.$form.addClass('posterno-exporter__exporting');
-    event.data.emailsExportForm.$form.find('.posterno-exporter-progress').val(0);
-    event.data.emailsExportForm.$form.find('.posterno-exporter-button').prop('disabled', true);
-    event.data.emailsExportForm.processStep(1, $(this).serialize(), '', filename);
+        filename = 'pno-profile-fields-export-' + day + '-' + month + '-' + year + '-' + timestamp + '.csv';
+    event.data.profileFieldsExportForm.$form.addClass('posterno-exporter__exporting');
+    event.data.profileFieldsExportForm.$form.find('.posterno-exporter-progress').val(0);
+    event.data.profileFieldsExportForm.$form.find('.posterno-exporter-button').prop('disabled', true);
+    event.data.profileFieldsExportForm.processStep(1, $(this).serialize(), '', filename);
   };
   /**
    * Process the current export step.
    */
 
 
-  emailsExportForm.prototype.processStep = function (step, data, columns, filename) {
+  profileFieldsExportForm.prototype.processStep = function (step, data, columns, filename) {
     var $this = this;
     $.ajax({
       type: 'POST',
       url: ajaxurl,
       data: {
         form: data,
-        action: 'posterno_do_ajax_emails_export',
+        action: 'posterno_do_ajax_profile_fields_export',
         step: step,
         columns: columns,
         filename: filename,
-        security: pno_emails_export_params.export_nonce
+        security: pno_profile_fields_export_params.export_nonce
       },
       dataType: 'json',
       success: function success(response) {
@@ -169,31 +169,31 @@
     });
   };
   /**
-   * Function to call emailsExportForm on jquery selector.
+   * Function to call profileFieldsExportForm on jquery selector.
    */
 
 
-  $.fn.pno_emails_export_form = function () {
-    new emailsExportForm(this);
+  $.fn.pno_profile_fields_export_form = function () {
+    new profileFieldsExportForm(this);
     return this;
   };
 
-  $('.posterno-exporter').pno_emails_export_form();
+  $('.posterno-exporter').pno_profile_fields_export_form();
 })(jQuery, window);
 
 /***/ }),
 
-/***/ 1:
-/*!*************************************************!*\
-  !*** multi ./resources/js/pno-emails-export.js ***!
-  \*************************************************/
+/***/ 3:
+/*!*********************************************************!*\
+  !*** multi ./resources/js/pno-profile-fields-export.js ***!
+  \*********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/alessandrotesoro/Local Sites/posterno/app/public/wp-content/plugins/import-export/resources/js/pno-emails-export.js */"./resources/js/pno-emails-export.js");
+module.exports = __webpack_require__(/*! /Users/alessandrotesoro/Local Sites/posterno/app/public/wp-content/plugins/import-export/resources/js/pno-profile-fields-export.js */"./resources/js/pno-profile-fields-export.js");
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=pno-emails-export.js.map
+//# sourceMappingURL=pno-profile-fields-export.js.map
