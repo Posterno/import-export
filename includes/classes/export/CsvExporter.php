@@ -544,4 +544,31 @@ abstract class CsvExporter {
 		return get_post_field( 'post_content', $id );
 	}
 
+	/**
+	 * Get a carbon field's setting.
+	 *
+	 * @param string $post_id the post id.
+	 * @param string $setting_id the id of the cb field.
+	 * @return mixed
+	 */
+	protected function get_carbon_setting( $post_id, $setting_id ) {
+
+		$value = carbon_get_post_meta( $post_id, $setting_id );
+
+		$description_settings = [
+			'listing_field_description',
+		];
+
+		if ( in_array( $setting_id, $description_settings, true ) ) {
+			$value = $this->filter_description_field( $value );
+		}
+
+		if ( is_array( $value ) && ! empty( $value ) ) {
+			$value = maybe_serialize( $value );
+		}
+
+		return $value;
+
+	}
+
 }

@@ -133,6 +133,9 @@ class CsvListingsFieldsExporter extends CsvBatchExporter {
 					case 'post_title':
 						$value = $this->get_post_title( $id );
 						break;
+					default:
+						$value = $this->get_carbon_setting( $id, $column_id );
+						break;
 				}
 			}
 
