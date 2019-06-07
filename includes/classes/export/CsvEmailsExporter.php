@@ -111,6 +111,24 @@ class CsvEmailsExporter extends CsvBatchExporter {
 					case 'post_title':
 						$value = $this->get_post_title( $id );
 						break;
+					case 'situations':
+						$value = $this->format_term_ids( $this->get_post_terms( $id, 'pno-email-type' ), 'pno-email-type' );
+						break;
+					case 'post_content':
+						$value = $this->filter_description_field( $this->get_post_content( $id ) );
+						break;
+					case 'heading':
+						$value = carbon_get_post_meta( $id, 'heading' );
+						break;
+					case 'has_admin_notification':
+						$value = carbon_get_post_meta( $id, 'has_admin_notification' );
+						break;
+					case 'administrator_notification_subject':
+						$value = carbon_get_post_meta( $id, 'administrator_notification_subject' );
+						break;
+					case 'administrator_notification':
+						$value = carbon_get_post_meta( $id, 'administrator_notification' );
+						break;
 				}
 			}
 

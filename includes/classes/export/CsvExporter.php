@@ -511,4 +511,37 @@ abstract class CsvExporter {
 		return esc_html( get_the_title( $id ) );
 	}
 
+	/**
+	 * Get terms assigned to a post.
+	 *
+	 * @param string $id post id.
+	 * @param string $taxonomy taxonomy terms to retrieve.
+	 * @return array
+	 */
+	protected function get_post_terms( $id, $taxonomy ) {
+
+		$terms = wp_get_post_terms( $id, $taxonomy );
+
+		$found_terms = [];
+
+		if ( ! empty( $terms ) && is_array( $terms ) ) {
+			foreach( $terms as $term ) {
+				$found_terms[] = $term->term_id;
+			}
+		}
+
+		return $found_terms;
+
+	}
+
+	/**
+	 * Get post's content.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	protected function get_post_content( $id ) {
+		return get_post_field( 'post_content', $id );
+	}
+
 }
