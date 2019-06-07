@@ -298,7 +298,7 @@ class Admin {
 	 * @return void
 	 */
 	public function do_ajax_listings_fields_export() {
-		check_ajax_referer( 'pno-emails-export', 'security' );
+		check_ajax_referer( 'pno-listings-fields-export', 'security' );
 
 		if ( ! $this->export_allowed() ) {
 			wp_send_json_error( array( 'message' => __( 'Insufficient privileges to export listings fields.', 'posterno' ) ) );
