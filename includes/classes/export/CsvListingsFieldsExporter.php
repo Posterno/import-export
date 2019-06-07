@@ -10,6 +10,8 @@
 
 namespace PosternoImportExport\Export;
 
+use Carbon_Fields\Carbon_Fields;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -32,16 +34,42 @@ class CsvListingsFieldsExporter extends CsvBatchExporter {
 	 */
 	public function get_default_column_names() {
 
+		$cols = [
+			'id'         => esc_html__( 'ID', 'posterno' ),
+			'post_title' => esc_html__( 'Title', 'posterno' ),
+		];
+
+		$cols = array_merge( $cols, $this->get_cb_fields() );
+
 		/**
 		 * Filter: allow developers to customize csv columns for the listings fields exporter.
 		 */
-		return apply_filters(
-			"posterno_export_{$this->export_type}_default_columns",
-			array(
-				'id'                                 => esc_html__( 'ID', 'posterno' ),
-				'post_title'                         => esc_html__( 'Title', 'posterno' ),
-			)
-		);
+		return apply_filters( "posterno_export_{$this->export_type}_default_columns", $cols );
+	}
+
+	/**
+	 * Get all settings registered for fields.
+	 *
+	 * @return array
+	 */
+	private function get_cb_fields() {
+
+		$repo = Carbon_Fields::resolve( 'container_repository' );
+
+		$fields = [];
+
+		foreach ( $repo->get_containers() as $container ) {
+			if ( $container->get_id() === 'carbon_fields_container_pno_listings_fields_settings' ) {
+				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
+					foreach ( $container->get_fields() as $field ) {
+						$fields[ $field->get_base_name() ] = $field->get_base_name();
+					}
+				}
+			}
+		}
+
+		return $fields;
+
 	}
 
 	/**
