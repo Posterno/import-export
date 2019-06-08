@@ -1144,9 +1144,21 @@
 	float: none;
 	margin: 0 0 24px;
 }
+.posterno-progress-form-wrapper .form-table input,
+.posterno-progress-form-wrapper .form-table select,
+.posterno-exporter-wrapper .form-table input,
+.posterno-exporter-wrapper .form-table select,
+.posterno-importer-wrapper .form-table input,
+.posterno-importer-wrapper .form-table select {
+	width: 100%;
+}
 
 .pno-pointer .pno-pointer-buttons .close {
 	float: left;
 	margin: 6px 0 0 15px;
+}
+
+.has-form {
+	padding-top: 0 !important;
 }
 /*# sourceMappingURL=screen.css.map*/

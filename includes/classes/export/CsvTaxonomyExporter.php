@@ -10,6 +10,9 @@
 
 namespace PosternoImportExport\Export;
 
+use PNO\Form\Form;
+use PNO\Form\DefaultSanitizer;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -18,12 +21,70 @@ defined( 'ABSPATH' ) || exit;
  */
 class CsvTaxonomyExporter extends CsvBatchExporter {
 
+	use DefaultSanitizer;
+
 	/**
 	 * Type of export, used in filters.
 	 *
 	 * @var string
 	 */
 	protected $export_type = 'taxonomy';
+
+	/**
+	 * Holds settings form for this exporter.
+	 *
+	 * @var Form
+	 */
+	public $form;
+
+	/**
+	 * Taxonomy to export.
+	 *
+	 * @var string
+	 */
+	public $taxonomy;
+
+	/**
+	 * Get things started.
+	 */
+	public function __construct() {
+		parent::__construct();
+		$this->form = Form::createFromConfig( $this->get_fields() );
+		$this->addSanitizer( $this->form );
+	}
+
+	/**
+	 * Get fields for the forms.
+	 *
+	 * @return array
+	 */
+	public function get_fields() {
+
+		$fields = [
+			'taxonomy_to_export' => [
+				'type'       => 'select',
+				'label'      => esc_html__( 'Taxonomy to export:', 'posterno' ),
+				'required'   => true,
+				'values'     => pno_get_registered_listings_taxonomies(),
+				'attributes' => [
+					'class' => 'form-control',
+				],
+			],
+		];
+
+		return $fields;
+
+	}
+
+	/**
+	 * Set the taxonomy to export.
+	 *
+	 * @param string $tax the taxonomy name.
+	 * @return void
+	 */
+	public function set_taxonomy_to_export( $tax ) {
+		$this->taxonomy = $tax;
+	}
 
 	/**
 	 * Get list of columns for the csv file.
@@ -50,36 +111,33 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 	 */
 	public function prepare_data_to_export() {
 
-		/*
-		$args = array(
-			'post_status'    => array( 'private', 'publish', 'draft', 'future', 'pending' ),
-			'post_type'      => 'pno_emails',
-			'posts_per_page' => $this->get_limit(),
-			'paged'          => $this->get_page(),
-			'fields'         => 'ids',
-			'orderby'        => array(
-				'ID' => 'ASC',
-			),
-		);
+		$offset = ( $this->get_page() - 1 ) * $this->get_limit();
 
-		$schemas = new \WP_Query( $args );
+		$args = [
+			'taxonomy'   => $this->taxonomy,
+			'hide_empty' => false,
+			'number'     => $this->get_limit(),
+			'offset'     => $offset,
+		];
 
-		$this->total_rows = $schemas->found_posts;
+		$terms = get_terms( $args );
+
+		$this->total_rows = count( $terms );
 		$this->row_data   = array();
 
-		foreach ( $schemas->get_posts() as $schema ) {
-			$this->row_data[] = $this->generate_row_data( $schema );
-		}*/
+		foreach ( $terms as $term ) {
+			$this->row_data[] = $this->generate_row_data( $term );
+		}
 
 	}
 
 	/**
 	 * Generate data for each row.
 	 *
-	 * @param string $id id of the post found.
+	 * @param object $term term found.
 	 * @return array
 	 */
-	protected function generate_row_data( $id ) {
+	protected function generate_row_data( $term ) {
 		$columns = $this->get_column_names();
 		$row     = array();
 		foreach ( $columns as $column_id => $column_name ) {
@@ -93,15 +151,15 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 
 			if ( has_filter( "posterno_{$this->export_type}_export_column_{$column_id}" ) ) {
 				// Filter for 3rd parties.
-				$value = apply_filters( "posterno_{$this->export_type}_export_column_{$column_id}", '', $id, $column_id );
+				$value = apply_filters( "posterno_{$this->export_type}_export_column_{$column_id}", '', $term, $column_id );
 			} elseif ( is_callable( array( $this, "get_column_value_{$column_id}" ) ) ) {
 				// Handle special columns which don't map 1:1 to product data.
-				$value = $this->{"get_column_value_{$column_id}"}( $id );
+				$value = $this->{"get_column_value_{$column_id}"}( $term );
 			} else {
 
 				switch ( $column_id ) {
 					case 'id':
-						$value = absint( $id );
+						$value = absint( $term->term_id );
 						break;
 				}
 			}
@@ -115,7 +173,7 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 		 * @param array $row row data.
 		 * @param string $id post id.
 		 */
-		return apply_filters( "posterno_{$this->export_type}_export_row_data", $row, $id );
+		return apply_filters( "posterno_{$this->export_type}_export_row_data", $row, $term );
 	}
 
 }

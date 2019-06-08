@@ -137,6 +137,7 @@
 
   taxonomyExportForm.prototype.processStep = function (step, data, columns, filename) {
     var $this = this;
+    taxonomy_to_export = $('#taxonomy_to_export').val();
     $.ajax({
       type: 'POST',
       url: ajaxurl,
@@ -146,7 +147,8 @@
         step: step,
         columns: columns,
         filename: filename,
-        security: pno_taxonomy_export_params.export_nonce
+        security: pno_taxonomy_export_params.export_nonce,
+        taxonomy_to_export: taxonomy_to_export
       },
       dataType: 'json',
       success: function success(response) {
