@@ -7,6 +7,12 @@
 		this.$form = $form;
 		this.xhr   = false;
 
+		$( '.posterno-exporter-wrapper select' ).select2({
+			theme: 'default',
+			placeholder: $(this).data('placeholder'),
+			width: '100%'
+		});
+
 		// Initial state.
 		this.$form.find('.posterno-exporter-progress').val( 0 );
 

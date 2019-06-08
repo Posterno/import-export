@@ -102,7 +102,12 @@
    */
   var listingsExportForm = function listingsExportForm($form) {
     this.$form = $form;
-    this.xhr = false; // Initial state.
+    this.xhr = false;
+    $('.posterno-exporter-wrapper select').select2({
+      theme: 'default',
+      placeholder: $(this).data('placeholder'),
+      width: '100%'
+    }); // Initial state.
 
     this.$form.find('.posterno-exporter-progress').val(0); // Methods.
 

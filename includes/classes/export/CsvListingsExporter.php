@@ -55,6 +55,7 @@ class CsvListingsExporter extends CsvBatchExporter {
 				'values'     => $this->get_default_column_names(),
 				'attributes' => [
 					'class' => 'form-control',
+					'data-placeholder' => esc_html__( 'Leave empty to export all content' )
 				],
 			],
 			'status'            => [
@@ -71,6 +72,7 @@ class CsvListingsExporter extends CsvBatchExporter {
 				],
 				'attributes' => [
 					'class' => 'form-control',
+					'data-placeholder' => esc_html__( 'Leave empty to export all listings' )
 				],
 			],
 			'categories' => [
@@ -80,6 +82,7 @@ class CsvListingsExporter extends CsvBatchExporter {
 				'values'     => pno_get_listings_categories_for_association(),
 				'attributes' => [
 					'class' => 'form-control',
+					'data-placeholder' => esc_html__( 'Leave empty to export all listings' )
 				],
 			],
 		];

@@ -123,6 +123,8 @@ add_action(
 
 		// Listings.
 		if ( $screen->id === 'listings_page_listings_exporter' ) {
+			wp_enqueue_style( 'pno-select2-style', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css', false, PNO_VERSION );
+			wp_enqueue_script( 'pno-select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js', array( 'jquery' ), PNO_VERSION, true );
 			wp_enqueue_script( 'pno-listings-export' );
 			wp_localize_script(
 				'pno-listings-export',
