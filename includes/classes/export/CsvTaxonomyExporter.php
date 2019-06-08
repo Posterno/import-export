@@ -49,9 +49,9 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 	 * Get things started.
 	 */
 	public function __construct() {
-		parent::__construct();
 		$this->form = Form::createFromConfig( $this->get_fields() );
 		$this->addSanitizer( $this->form );
+		parent::__construct();
 	}
 
 	/**
@@ -101,10 +101,6 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 			'description' => esc_html__( 'Description' ),
 			'parent'      => esc_html__( 'Parent' ),
 		];
-
-		if ( ! empty( $this->taxonomy ) ) {
-			$cols = array_merge( $cols, $this->get_cb_fields() );
-		}
 
 		/**
 		 * Filter: allow developers to customize csv columns for the registration fields exporter.

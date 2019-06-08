@@ -581,12 +581,13 @@ class Admin {
 			$exporter->set_column_names( wp_unslash( $_POST['columns'] ) ); // WPCS: input var ok, sanitization ok.
 		}
 
-		if ( ! empty( $_POST['filename'] ) ) { // WPCS: input var ok.
-			$exporter->set_filename( wp_unslash( $_POST['filename'] ) ); // WPCS: input var ok, sanitization ok.
+		if ( ! empty( $_POST['taxonomy_to_export'] ) ) { // WPCS: input var ok.
+			$exporter->set_taxonomy_to_export( sanitize_text_field( $_POST['taxonomy_to_export'] ) ); // WPCS: input var ok, sanitization ok.
+			$exporter->set_column_names( array_merge( $exporter->get_column_names(), $exporter->get_cb_fields() ) );
 		}
 
-		if ( ! empty( $_POST['taxonomy_to_export'] ) ) { // WPCS: input var ok.
-			$exporter->set_taxonomy_to_export( wp_unslash( $_POST['taxonomy_to_export'] ) ); // WPCS: input var ok, sanitization ok.
+		if ( ! empty( $_POST['filename'] ) ) { // WPCS: input var ok.
+			$exporter->set_filename( wp_unslash( $_POST['filename'] ) ); // WPCS: input var ok, sanitization ok.
 		}
 
 		$exporter->set_page( $step );
