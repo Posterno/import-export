@@ -32,12 +32,46 @@ class CsvListingsExporter extends CsvBatchExporter {
 	protected $export_type = 'listings';
 
 	/**
+	 * Statuses to export.
+	 *
+	 * @var string|array
+	 */
+	public $statuses = null;
+
+	/**
+	 * Categories to export.
+	 *
+	 * @var string|array
+	 */
+	public $categories = null;
+
+	/**
 	 * Get things started.
 	 */
 	public function __construct() {
 		$this->form = Form::createFromConfig( $this->get_fields() );
 		$this->addSanitizer( $this->form );
 		parent::__construct();
+	}
+
+	/**
+	 * Set stati to export.
+	 *
+	 * @param string|array $value stati to export.
+	 * @return void
+	 */
+	public function set_statuses( $value ) {
+		$this->statuses = array_map( 'pno_clean', $value );
+	}
+
+	/**
+	 * Set categories to export.
+	 *
+	 * @param string|array $cats categories to export.
+	 * @return void
+	 */
+	public function set_categories( $cats ) {
+		$this->categories = array_map( 'sanitize_title_with_dashes', $cats );
 	}
 
 	/**
@@ -54,8 +88,8 @@ class CsvListingsExporter extends CsvBatchExporter {
 				'required'   => true,
 				'values'     => $this->get_default_column_names(),
 				'attributes' => [
-					'class' => 'form-control',
-					'data-placeholder' => esc_html__( 'Leave empty to export all content' )
+					'class'            => 'form-control',
+					'data-placeholder' => esc_html__( 'Leave empty to export all content' ),
 				],
 			],
 			'status'            => [
@@ -71,18 +105,18 @@ class CsvListingsExporter extends CsvBatchExporter {
 					'expired' => esc_html__( 'Expired' ),
 				],
 				'attributes' => [
-					'class' => 'form-control',
-					'data-placeholder' => esc_html__( 'Leave empty to export all listings' )
+					'class'            => 'form-control',
+					'data-placeholder' => esc_html__( 'Leave empty to export all listings' ),
 				],
 			],
-			'categories' => [
+			'categories'        => [
 				'type'       => 'multiselect',
 				'label'      => esc_html__( 'Which listing category should be exported?', 'posterno' ),
 				'required'   => true,
 				'values'     => pno_get_listings_categories_for_association(),
 				'attributes' => [
-					'class' => 'form-control',
-					'data-placeholder' => esc_html__( 'Leave empty to export all listings' )
+					'class'            => 'form-control',
+					'data-placeholder' => esc_html__( 'Leave empty to export all listings' ),
 				],
 			],
 		];
@@ -99,11 +133,18 @@ class CsvListingsExporter extends CsvBatchExporter {
 	public function get_default_column_names() {
 
 		$cols = [
-			'id'         => esc_html__( 'ID', 'posterno' ),
-			'post_title' => esc_html__( 'Title', 'posterno' ),
+			'id'                => esc_html__( 'ID', 'posterno' ),
+			'post_title'        => esc_html__( 'Title', 'posterno' ),
+			'description'       => esc_html__( 'Description' ),
+			'short_description' => esc_html__( 'Short description' ),
+			'featured_image'    => esc_html__( 'Featured image' ),
+			'published'         => esc_html__( 'Published' ),
+			'status'            => esc_html__( 'Status' ),
+			'expires'           => esc_html__( 'Expires' ),
+			'opening_hours'     => esc_html__( 'Opening hours' ),
 		];
 
-		$cols = array_merge( $cols, $this->get_cb_fields() );
+		$cols = array_merge( $cols, $this->get_cb_fields(), pno_get_registered_listings_taxonomies() );
 
 		/**
 		 * Filter: allow developers to customize csv columns for the listings exporter.
@@ -122,10 +163,52 @@ class CsvListingsExporter extends CsvBatchExporter {
 
 		$fields = [];
 
+		$fields_to_skip = [
+			'listing_type',
+			'monday',
+			'monday_time_slots',
+			'monday_opening',
+			'monday_closing',
+			'monday_additional_times',
+			'tuesday',
+			'tuesday_time_slots',
+			'tuesday_opening',
+			'tuesday_closing',
+			'tuesday_additional_times',
+			'wednesday',
+			'wednesday_time_slots',
+			'wednesday_opening',
+			'wednesday_closing',
+			'wednesday_additional_times',
+			'thursday',
+			'thursday_time_slots',
+			'thursday_opening',
+			'thursday_closing',
+			'thursday_additional_times',
+			'friday',
+			'friday_time_slots',
+			'friday_opening',
+			'friday_closing',
+			'friday_additional_times',
+			'saturday',
+			'saturday_time_slots',
+			'saturday_opening',
+			'saturday_closing',
+			'saturday_additional_times',
+			'sunday',
+			'sunday_time_slots',
+			'sunday_opening',
+			'sunday_closing',
+			'sunday_additional_times',
+		];
+
 		foreach ( $repo->get_containers() as $container ) {
 			if ( $container->get_id() === 'carbon_fields_container_pno_listings_settings' ) {
 				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
 					foreach ( $container->get_fields() as $field ) {
+						if ( in_array( $field->get_base_name(), $fields_to_skip ) ) {
+							continue;
+						}
 						$fields[ $field->get_base_name() ] = $field->get_base_name();
 					}
 				}
