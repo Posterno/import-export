@@ -16,6 +16,7 @@ use PosternoImportExport\Export\CsvListingsFieldsExporter;
 use PosternoImportExport\Export\CsvProfileFieldsExporter;
 use PosternoImportExport\Export\CsvRegistrationFieldsExporter;
 use PosternoImportExport\Export\CsvTaxonomyExporter;
+use PosternoImportExport\Export\CsvListingsExporter;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -86,6 +87,13 @@ class Admin {
 			'callback'   => array( $this, 'taxonomy_exporter' ),
 			'url'        => admin_url( 'edit.php?post_type=listings&page=taxonomy_exporter' ),
 		);
+		$this->exporters['listings_exporter']            = array(
+			'menu'       => 'edit.php?post_type=listings',
+			'name'       => esc_html__( 'Listings' ),
+			'capability' => 'manage_options',
+			'callback'   => array( $this, 'listings_exporter' ),
+			'url'        => admin_url( 'edit.php?post_type=listings&page=listings_exporter' ),
+		);
 
 	}
 
@@ -137,6 +145,9 @@ class Admin {
 
 		add_action( 'admin_init', array( $this, 'download_taxonomy_export_file' ) );
 		add_action( 'wp_ajax_posterno_do_ajax_taxonomy_export', array( $this, 'do_ajax_taxonomy_export' ) );
+
+		add_action( 'admin_init', array( $this, 'download_listings_export_file' ) );
+		add_action( 'wp_ajax_posterno_do_ajax_listings_export', array( $this, 'do_ajax_listings_export' ) );
 
 	}
 
@@ -628,6 +639,85 @@ class Admin {
 	public function download_taxonomy_export_file() {
 		if ( isset( $_GET['action'], $_GET['nonce'] ) && wp_verify_nonce( wp_unslash( $_GET['nonce'] ), 'taxonomy-csv' ) && 'download_taxonomy_csv' === wp_unslash( $_GET['action'] ) ) { // WPCS: input var ok, sanitization ok.
 			$exporter = new CsvTaxonomyExporter();
+			if ( ! empty( $_GET['filename'] ) ) { // WPCS: input var ok.
+				$exporter->set_filename( wp_unslash( $_GET['filename'] ) ); // WPCS: input var ok, sanitization ok.
+			}
+			$exporter->export();
+		}
+	}
+
+	/*---------------------LISTINGS EXPORTER-------------------------*/
+
+	/**
+	 * Displays content of the exporter.
+	 *
+	 * @return void
+	 */
+	public function listings_exporter() {
+		require_once PNO_PLUGIN_DIR . '/vendor/posterno/import-export/resources/views/html-listings-export.php';
+	}
+
+	/**
+	 * Export registration custom fields.
+	 *
+	 * @return void
+	 */
+	public function do_ajax_listings_export() {
+		check_ajax_referer( 'pno-listings-export', 'security' );
+
+		if ( ! $this->export_allowed() ) {
+			wp_send_json_error( array( 'message' => __( 'Insufficient privileges to export listings.', 'posterno' ) ) );
+		}
+
+		$step     = isset( $_POST['step'] ) ? absint( $_POST['step'] ) : 1; // WPCS: input var ok, sanitization ok.
+		$exporter = new CsvListingsExporter();
+
+		if ( ! empty( $_POST['columns'] ) ) { // WPCS: input var ok.
+			$exporter->set_column_names( wp_unslash( $_POST['columns'] ) ); // WPCS: input var ok, sanitization ok.
+		}
+
+		if ( ! empty( $_POST['filename'] ) ) { // WPCS: input var ok.
+			$exporter->set_filename( wp_unslash( $_POST['filename'] ) ); // WPCS: input var ok, sanitization ok.
+		}
+
+		$exporter->set_page( $step );
+		$exporter->generate_file();
+
+		$query_args = apply_filters(
+			'posterno_listings_export_get_ajax_query_args',
+			array(
+				'nonce'    => wp_create_nonce( 'listings-csv' ),
+				'action'   => 'download_listings_csv',
+				'filename' => $exporter->get_filename(),
+			)
+		);
+		if ( 100 === $exporter->get_percent_complete() ) {
+			wp_send_json_success(
+				array(
+					'step'       => 'done',
+					'percentage' => 100,
+					'url'        => add_query_arg( $query_args, admin_url( 'edit.php?post_type=listings&page=listings_exporter' ) ),
+				)
+			);
+		} else {
+			wp_send_json_success(
+				array(
+					'step'       => ++$step,
+					'percentage' => $exporter->get_percent_complete(),
+					'columns'    => $exporter->get_column_names(),
+				)
+			);
+		}
+	}
+
+	/**
+	 * Download export file.
+	 *
+	 * @return void
+	 */
+	public function download_listings_export_file() {
+		if ( isset( $_GET['action'], $_GET['nonce'] ) && wp_verify_nonce( wp_unslash( $_GET['nonce'] ), 'listings-csv' ) && 'download_listings_csv' === wp_unslash( $_GET['action'] ) ) { // WPCS: input var ok, sanitization ok.
+			$exporter = new CsvListingsExporter();
 			if ( ! empty( $_GET['filename'] ) ) { // WPCS: input var ok.
 				$exporter->set_filename( wp_unslash( $_GET['filename'] ) ); // WPCS: input var ok, sanitization ok.
 			}
