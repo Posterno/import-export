@@ -124,7 +124,8 @@
         month = currentDate.getMonth() + 1,
         year = currentDate.getFullYear(),
         timestamp = currentDate.getTime(),
-        filename = 'pno-taxonomy-export-' + day + '-' + month + '-' + year + '-' + timestamp + '.csv';
+        taxonomy_to_export = $('#taxonomy_to_export').val();
+    filename = 'pno-taxonomy-export-' + taxonomy_to_export + '-' + day + '-' + month + '-' + year + '-' + timestamp + '.csv';
     event.data.taxonomyExportForm.$form.addClass('posterno-exporter__exporting');
     event.data.taxonomyExportForm.$form.find('.posterno-exporter-progress').val(0);
     event.data.taxonomyExportForm.$form.find('.posterno-exporter-button').prop('disabled', true);
