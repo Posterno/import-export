@@ -12,6 +12,7 @@ namespace PosternoImportExport\Export;
 
 use PNO\Form\Form;
 use PNO\Form\DefaultSanitizer;
+use Carbon_Fields\Carbon_Fields;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -101,10 +102,40 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 			'parent'      => esc_html__( 'Parent' ),
 		];
 
+		if ( ! empty( $this->taxonomy ) ) {
+			$cols = array_merge( $cols, $this->get_cb_fields() );
+		}
+
 		/**
 		 * Filter: allow developers to customize csv columns for the registration fields exporter.
 		 */
 		return apply_filters( "posterno_export_{$this->export_type}_default_columns", $cols );
+	}
+
+	/**
+	 * Get fields associated to the carbon fields.
+	 *
+	 * @return array
+	 */
+	public function get_cb_fields() {
+
+		$cols = [];
+
+		$repo = Carbon_Fields::resolve( 'container_repository' );
+
+		foreach ( $repo->get_containers() as $container ) {
+			if ( pno_ends_with( $container->get_id(), "pno_term_settings_{$this->taxonomy}" ) ) {
+				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
+					foreach ( $container->get_fields() as $field ) {
+						$cols[ $field->get_base_name() ] = $field->get_base_name();
+					}
+				}
+
+			}
+		}
+
+		return $cols;
+
 	}
 
 	/**
@@ -177,6 +208,9 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 						break;
 					case 'parent':
 						$value = $term->parent;
+						break;
+					default:
+						$value = 'test';
 						break;
 				}
 			}
