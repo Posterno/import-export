@@ -148,7 +148,7 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 			'hide_empty' => false,
 			'number'     => $this->get_limit(),
 			'offset'     => $offset,
-			'orderby'    => 'name',
+			'orderby'    => 'id',
 			'order'      => 'ASC',
 		];
 
