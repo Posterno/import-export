@@ -89,6 +89,7 @@ mix.js( `${devPath}/js/pno-emails-export.js`, 'js' );
 mix.js( `${devPath}/js/pno-listings-fields-export.js`, 'js' );
 mix.js( `${devPath}/js/pno-profile-fields-export.js`, 'js' );
 mix.js( `${devPath}/js/pno-registration-fields-export.js`, 'js' );
+mix.js( `${devPath}/js/pno-taxonomy-export.js`, 'js' );
 
 /*
  * Compile CSS. Mix supports Sass, Less, Stylus, and plain CSS, and has functions
