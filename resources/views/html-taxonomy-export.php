@@ -59,7 +59,7 @@ $exporter = new CsvTaxonomyExporter();
 					</tbody>
 				</table>
 
-				<progress class="posterno-exporter-progress" max="100" value="0"></progress>
+				<!--<progress class="posterno-exporter-progress" max="100" value="0"></progress>-->
 			</section>
 			<div class="pno-actions">
 				<button type="submit" class="posterno-exporter-button button button-primary" value="<?php esc_attr_e( 'Generate CSV', 'posterno' ); ?>"><?php esc_html_e( 'Generate CSV', 'posterno' ); ?></button>

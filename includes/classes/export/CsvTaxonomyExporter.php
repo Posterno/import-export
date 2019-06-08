@@ -93,15 +93,18 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 	 */
 	public function get_default_column_names() {
 
+		$cols = [
+			'id'          => esc_html__( 'ID', 'posterno' ),
+			'name'        => esc_html__( 'Term name' ),
+			'slug'        => esc_html__( 'Term slug' ),
+			'description' => esc_html__( 'Description' ),
+			'parent'      => esc_html__( 'Parent' ),
+		];
+
 		/**
-		 * Filter: allow developers to customize csv columns for the taxonomy exporter.
+		 * Filter: allow developers to customize csv columns for the registration fields exporter.
 		 */
-		return apply_filters(
-			"posterno_export_{$this->export_type}_default_columns",
-			array(
-				'id' => esc_html__( 'ID', 'posterno' ),
-			)
-		);
+		return apply_filters( "posterno_export_{$this->export_type}_default_columns", $cols );
 	}
 
 	/**
@@ -124,7 +127,7 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 
 		$terms = get_terms( $args );
 
-		$this->total_rows = absint( wp_count_terms( $this->taxonomy ) );
+		$this->total_rows = count( $terms );
 		$this->row_data   = array();
 
 		foreach ( $terms as $term ) {
@@ -162,6 +165,18 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 				switch ( $column_id ) {
 					case 'id':
 						$value = absint( $term->term_id );
+						break;
+					case 'name':
+						$value = $term->name;
+						break;
+					case 'slug':
+						$value = $term->slug;
+						break;
+					case 'description':
+						$value = $this->filter_description_field( $term->description );
+						break;
+					case 'parent':
+						$value = $term->parent;
 						break;
 				}
 			}

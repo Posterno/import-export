@@ -600,29 +600,20 @@ class Admin {
 				'filename' => $exporter->get_filename(),
 			)
 		);
-
-		if ( 100 === $exporter->get_percent_complete() || $exporter->get_percent_complete() > 100 ) {
+		if ( 100 === $exporter->get_percent_complete() ) {
 			wp_send_json_success(
 				array(
 					'step'       => 'done',
 					'percentage' => 100,
-					'url'        => add_query_arg( $query_args, admin_url( 'edit.php?post_type=listings&page=taxonomy_exporter' ) ),
-				)
-			);
-		} elseif ( $exporter->get_percent_complete() < 100 ) {
-			wp_send_json_success(
-				array(
-					'step'       => ++$step,
-					'percentage' => $exporter->get_percent_complete(),
-					'columns'    => $exporter->get_column_names(),
+					'url'        => add_query_arg( $query_args, admin_url( 'edit.php?post_type=listings&page=registration_fields_exporter' ) ),
 				)
 			);
 		} else {
 			wp_send_json_success(
 				array(
-					'step'       => 'done',
-					'percentage' => 100,
-					'url'        => add_query_arg( $query_args, admin_url( 'edit.php?post_type=listings&page=taxonomy_exporter' ) ),
+					'step'       => ++$step,
+					'percentage' => $exporter->get_percent_complete(),
+					'columns'    => $exporter->get_column_names(),
 				)
 			);
 		}
