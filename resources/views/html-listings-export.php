@@ -41,6 +41,22 @@ $exporter = new CsvListingsExporter();
 				<p><?php esc_html_e( 'This tool allows you to generate and download a CSV file containing a list of all listings submitted on this website.', 'posterno' ); ?></p>
 			</header>
 			<section>
+				<table class="form-table">
+					<tbody>
+						<?php foreach ( $exporter->form->getFields() as $field ) : ?>
+						<tr>
+							<th scope="row">
+								<?php if ( ! empty( $field->getLabel() ) ) : ?>
+									<label for="<?php echo esc_attr( $field->getName() ); ?>"><?php echo esc_html( $field->getLabel() ); ?></label>
+								<?php endif; ?>
+							</th>
+							<td>
+								<?php echo $field->render(); ?>
+							</td>
+						</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
 				<progress class="posterno-exporter-progress" max="100" value="0"></progress>
 			</section>
 			<div class="pno-actions">

@@ -11,6 +11,8 @@
 namespace PosternoImportExport\Export;
 
 use Carbon_Fields\Carbon_Fields;
+use PNO\Form\Form;
+use PNO\Form\DefaultSanitizer;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -20,12 +22,71 @@ defined( 'ABSPATH' ) || exit;
  */
 class CsvListingsExporter extends CsvBatchExporter {
 
+	use DefaultSanitizer;
+
 	/**
 	 * Type of export, used in filters.
 	 *
 	 * @var string
 	 */
 	protected $export_type = 'listings';
+
+	/**
+	 * Get things started.
+	 */
+	public function __construct() {
+		$this->form = Form::createFromConfig( $this->get_fields() );
+		$this->addSanitizer( $this->form );
+		parent::__construct();
+	}
+
+	/**
+	 * Get fields for the forms.
+	 *
+	 * @return array
+	 */
+	public function get_fields() {
+
+		$fields = [
+			'columns_to_export' => [
+				'type'       => 'multiselect',
+				'label'      => esc_html__( 'Which columns should be exported?', 'posterno' ),
+				'required'   => true,
+				'values'     => $this->get_default_column_names(),
+				'attributes' => [
+					'class' => 'form-control',
+				],
+			],
+			'status'            => [
+				'type'       => 'multiselect',
+				'label'      => esc_html__( 'Which statuses should be exported?', 'posterno' ),
+				'required'   => true,
+				'values'     => [
+					'publish' => esc_html__( 'Published' ),
+					'private' => esc_html__( 'Private' ),
+					'draft'   => esc_html__( 'Draft' ),
+					'future'  => esc_html__( 'Future' ),
+					'pending' => esc_html__( 'Pending' ),
+					'expired' => esc_html__( 'Expired' ),
+				],
+				'attributes' => [
+					'class' => 'form-control',
+				],
+			],
+			'categories' => [
+				'type'       => 'multiselect',
+				'label'      => esc_html__( 'Which listing category should be exported?', 'posterno' ),
+				'required'   => true,
+				'values'     => pno_get_listings_categories_for_association(),
+				'attributes' => [
+					'class' => 'form-control',
+				],
+			],
+		];
+
+		return $fields;
+
+	}
 
 	/**
 	 * Get list of columns for the csv file.
