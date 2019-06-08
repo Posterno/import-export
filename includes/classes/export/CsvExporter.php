@@ -549,11 +549,16 @@ abstract class CsvExporter {
 	 *
 	 * @param string $post_id the post id.
 	 * @param string $setting_id the id of the cb field.
+	 * @param string $type type of object, post, term.
 	 * @return mixed
 	 */
-	protected function get_carbon_setting( $post_id, $setting_id ) {
+	protected function get_carbon_setting( $object_id, $setting_id, $type = 'post' ) {
 
-		$value = carbon_get_post_meta( $post_id, $setting_id );
+		if ( $type === 'term' ) {
+			$value = carbon_get_term_meta( $object_id, $setting_id );
+		} else {
+			$value = carbon_get_post_meta( $object_id, $setting_id );
+		}
 
 		$description_settings = [
 			'listing_field_description',
