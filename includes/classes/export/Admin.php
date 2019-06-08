@@ -44,42 +44,42 @@ class Admin {
 		$this->hook();
 
 		// Register exporters.
-		$this->exporters['schemas_exporter']         = array(
+		$this->exporters['schemas_exporter']             = array(
 			'menu'       => 'edit.php?post_type=listings',
 			'name'       => esc_html__( 'Listings schemas' ),
 			'capability' => 'manage_options',
 			'callback'   => array( $this, 'schemas_exporter' ),
 			'url'        => admin_url( 'edit.php?post_type=listings&page=schemas_exporter' ),
 		);
-		$this->exporters['emails_exporter']          = array(
+		$this->exporters['emails_exporter']              = array(
 			'menu'       => 'edit.php?post_type=listings',
 			'name'       => esc_html__( 'Emails' ),
 			'capability' => 'manage_options',
 			'callback'   => array( $this, 'emails_exporter' ),
 			'url'        => admin_url( 'edit.php?post_type=listings&page=emails_exporter' ),
 		);
-		$this->exporters['listings_fields_exporter'] = array(
+		$this->exporters['listings_fields_exporter']     = array(
 			'menu'       => 'edit.php?post_type=listings',
 			'name'       => esc_html__( 'Listings custom fields' ),
 			'capability' => 'manage_options',
 			'callback'   => array( $this, 'listings_fields_exporter' ),
 			'url'        => admin_url( 'edit.php?post_type=listings&page=listings_fields_exporter' ),
 		);
-		$this->exporters['profile_fields_exporter']  = array(
+		$this->exporters['profile_fields_exporter']      = array(
 			'menu'       => 'edit.php?post_type=listings',
 			'name'       => esc_html__( 'Profile custom fields' ),
 			'capability' => 'manage_options',
 			'callback'   => array( $this, 'profile_fields_exporter' ),
 			'url'        => admin_url( 'edit.php?post_type=listings&page=profile_fields_exporter' ),
 		);
-		$this->exporters['registration_fields_exporter']  = array(
+		$this->exporters['registration_fields_exporter'] = array(
 			'menu'       => 'edit.php?post_type=listings',
 			'name'       => esc_html__( 'Registration custom fields' ),
 			'capability' => 'manage_options',
 			'callback'   => array( $this, 'registration_fields_exporter' ),
 			'url'        => admin_url( 'edit.php?post_type=listings&page=registration_fields_exporter' ),
 		);
-		$this->exporters['taxonomy_exporter']  = array(
+		$this->exporters['taxonomy_exporter']            = array(
 			'menu'       => 'edit.php?post_type=listings',
 			'name'       => esc_html__( 'Taxonomy terms' ),
 			'capability' => 'manage_options',
@@ -600,7 +600,8 @@ class Admin {
 				'filename' => $exporter->get_filename(),
 			)
 		);
-		if ( 100 === $exporter->get_percent_complete() ) {
+
+		if ( 100 === $exporter->get_percent_complete() || $exporter->get_percent_complete() > 100 ) {
 			wp_send_json_success(
 				array(
 					'step'       => 'done',
@@ -608,12 +609,20 @@ class Admin {
 					'url'        => add_query_arg( $query_args, admin_url( 'edit.php?post_type=listings&page=taxonomy_exporter' ) ),
 				)
 			);
-		} else {
+		} elseif ( $exporter->get_percent_complete() < 100 ) {
 			wp_send_json_success(
 				array(
 					'step'       => ++$step,
 					'percentage' => $exporter->get_percent_complete(),
 					'columns'    => $exporter->get_column_names(),
+				)
+			);
+		} else {
+			wp_send_json_success(
+				array(
+					'step'       => 'done',
+					'percentage' => 100,
+					'url'        => add_query_arg( $query_args, admin_url( 'edit.php?post_type=listings&page=taxonomy_exporter' ) ),
 				)
 			);
 		}

@@ -118,11 +118,13 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 			'hide_empty' => false,
 			'number'     => $this->get_limit(),
 			'offset'     => $offset,
+			'orderby'    => 'name',
+			'order'      => 'ASC',
 		];
 
 		$terms = get_terms( $args );
 
-		$this->total_rows = count( $terms );
+		$this->total_rows = absint( wp_count_terms( $this->taxonomy ) );
 		$this->row_data   = array();
 
 		foreach ( $terms as $term ) {
