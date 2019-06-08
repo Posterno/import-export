@@ -8,7 +8,6 @@
 		this.xhr   = false;
 
 		$( '.posterno-exporter-wrapper select' ).select2({
-			theme: 'default',
 			placeholder: $(this).data('placeholder'),
 			width: '100%'
 		});
