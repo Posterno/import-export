@@ -149,9 +149,9 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 				continue;
 			}
 
-			if ( has_filter( "posterno_{$this->export_type}_export_column_{$column_id}" ) ) {
+			if ( has_filter( "posterno_{$this->export_type}_{$this->taxonomy}_export_column_{$column_id}" ) ) {
 				// Filter for 3rd parties.
-				$value = apply_filters( "posterno_{$this->export_type}_export_column_{$column_id}", '', $term, $column_id );
+				$value = apply_filters( "posterno_{$this->export_type}_{$this->taxonomy}_export_column_{$column_id}", '', $term, $column_id );
 			} elseif ( is_callable( array( $this, "get_column_value_{$column_id}" ) ) ) {
 				// Handle special columns which don't map 1:1 to product data.
 				$value = $this->{"get_column_value_{$column_id}"}( $term );
@@ -173,7 +173,7 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 		 * @param array $row row data.
 		 * @param string $id post id.
 		 */
-		return apply_filters( "posterno_{$this->export_type}_export_row_data", $row, $term );
+		return apply_filters( "posterno_{$this->export_type}_{$this->taxonomy}_export_row_data", $row, $term );
 	}
 
 }
