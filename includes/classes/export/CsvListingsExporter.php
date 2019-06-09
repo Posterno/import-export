@@ -143,7 +143,7 @@ class CsvListingsExporter extends CsvBatchExporter {
 			'lat'               => esc_html__( 'Latitude' ),
 			'lng'               => esc_html__( 'Longitude' ),
 			'address'           => esc_html__( 'Address' ),
-			'gallery_images' => esc_html__( 'Gallery images' ),
+			'gallery_images'    => esc_html__( 'Gallery images' ),
 		];
 
 		$cols = array_merge( $cols, $this->get_cb_fields(), pno_get_registered_listings_taxonomies() );
