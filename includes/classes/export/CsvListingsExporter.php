@@ -289,7 +289,7 @@ class CsvListingsExporter extends CsvBatchExporter {
 				// Handle special columns which don't map 1:1 to product data.
 				$value = $this->{"get_column_value_{$column_id}"}( $id );
 			} elseif ( taxonomy_exists( $column_id ) ) {
-				$value = $this->implode_values( $this->get_post_terms( $id, $column_id ) );
+				$value = $this->format_term_ids( $this->get_post_terms( $id, $column_id ), $column_id );
 			} else {
 
 				switch ( $column_id ) {
