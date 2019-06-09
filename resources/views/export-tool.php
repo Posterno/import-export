@@ -25,7 +25,7 @@ defined( 'ABSPATH' ) || exit;
 						<strong><?php echo esc_html( $tool['name'] ); ?></strong>
 					</td>
 					<td>
-						<a href="<?php echo esc_url( $tool['url'] ); ?>" class="button2"><?php esc_html_e( 'Export' ); ?> &rarr;</a>
+						<a href="<?php echo esc_url( $tool['url'] ); ?>" class="button2"><?php esc_html_e( 'Export', 'posterno' ); ?> &rarr;</a>
 					</td>
 				</tr>
 			<?php endforeach; ?>

@@ -18,7 +18,7 @@ $exporter = new CsvSchemasExporter();
 ?>
 <div class="pno-admin-title-area">
 	<div class="wrap">
-		<h2><?php esc_html_e( 'Export listings schemas' ); ?></h2>
+		<h2><?php esc_html_e( 'Export listings schemas', 'posterno' ); ?></h2>
 		<ul class="title-links hidden-sm-and-down">
 			<li>
 				<a href="https://posterno.com/addons" rel="nofollow" target="_blank" class="page-title-action">View Addons</a>
@@ -31,7 +31,7 @@ $exporter = new CsvSchemasExporter();
 </div>
 
 <div class="wrap posterno">
-	<h1 class="screen-reader-text"><?php esc_html_e( 'Export listings schemas' ); ?></h1>
+	<h1 class="screen-reader-text"><?php esc_html_e( 'Export listings schemas', 'posterno' ); ?></h1>
 
 	<div class="posterno-exporter-wrapper">
 		<form class="posterno-exporter">

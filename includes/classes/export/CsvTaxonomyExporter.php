@@ -96,10 +96,10 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 
 		$cols = [
 			'id'          => esc_html__( 'ID', 'posterno' ),
-			'name'        => esc_html__( 'Term name' ),
-			'slug'        => esc_html__( 'Term slug' ),
-			'description' => esc_html__( 'Description' ),
-			'parent'      => esc_html__( 'Parent' ),
+			'name'        => esc_html__( 'Term name', 'posterno' ),
+			'slug'        => esc_html__( 'Term slug', 'posterno' ),
+			'description' => esc_html__( 'Description', 'posterno' ),
+			'parent'      => esc_html__( 'Parent', 'posterno' ),
 		];
 
 		/**

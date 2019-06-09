@@ -40,12 +40,12 @@ class CsvEmailsExporter extends CsvBatchExporter {
 			array(
 				'id'                                 => esc_html__( 'ID', 'posterno' ),
 				'post_title'                         => esc_html__( 'Title', 'posterno' ),
-				'post_content'                       => esc_html__( 'Content' ),
-				'situations'                         => esc_html__( 'Situations' ),
-				'heading'                            => esc_html__( 'Heading' ),
-				'has_admin_notification'             => esc_html__( 'Notify admin' ),
-				'administrator_notification_subject' => esc_html__( 'Admin notification subject' ),
-				'administrator_notification'         => esc_html__( 'Admin notification content' ),
+				'post_content'                       => esc_html__( 'Content', 'posterno' ),
+				'situations'                         => esc_html__( 'Situations', 'posterno' ),
+				'heading'                            => esc_html__( 'Heading', 'posterno' ),
+				'has_admin_notification'             => esc_html__( 'Notify admin', 'posterno' ),
+				'administrator_notification_subject' => esc_html__( 'Admin notification subject', 'posterno' ),
+				'administrator_notification'         => esc_html__( 'Admin notification content', 'posterno' ),
 			)
 		);
 	}

@@ -40,9 +40,9 @@ class CsvSchemasExporter extends CsvBatchExporter {
 			array(
 				'id'            => esc_html__( 'ID', 'posterno' ),
 				'title'         => esc_html__( 'Title', 'posterno' ),
-				'schema_mode'   => esc_html__( 'Mode' ),
-				'schema_code'   => esc_html__( 'Code' ),
-				'listing_types' => esc_html__( 'Listing types' ),
+				'schema_mode'   => esc_html__( 'Mode', 'posterno' ),
+				'schema_code'   => esc_html__( 'Code', 'posterno' ),
+				'listing_types' => esc_html__( 'Listing types', 'posterno' ),
 			)
 		);
 	}
