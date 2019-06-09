@@ -138,7 +138,12 @@ class CsvListingsExporter extends CsvBatchExporter {
 			'published'         => esc_html__( 'Published' ),
 			'status'            => esc_html__( 'Status' ),
 			'expires'           => esc_html__( 'Expires' ),
+			'is_featured'       => esc_html__( 'Featured' ),
 			'opening_hours'     => esc_html__( 'Opening hours' ),
+			'lat'               => esc_html__( 'Latitude' ),
+			'lng'               => esc_html__( 'Longitude' ),
+			'address'           => esc_html__( 'Address' ),
+			'gallery_images' => esc_html__( 'Gallery images' ),
 		];
 
 		$cols = array_merge( $cols, $this->get_cb_fields(), pno_get_registered_listings_taxonomies() );
@@ -197,6 +202,8 @@ class CsvListingsExporter extends CsvBatchExporter {
 			'sunday_opening',
 			'sunday_closing',
 			'sunday_additional_times',
+			'listing_location',
+			'listing_gallery_images',
 		];
 
 		foreach ( $repo->get_containers() as $container ) {
@@ -290,6 +297,9 @@ class CsvListingsExporter extends CsvBatchExporter {
 					case 'post_title':
 						$value = $this->get_post_title( $id );
 						break;
+					case 'description':
+						$value = $this->filter_description_field( $this->get_post_content( $id ) );
+						break;
 					default:
 						$value = $this->get_carbon_setting( $id, $column_id );
 						break;
@@ -306,6 +316,162 @@ class CsvListingsExporter extends CsvBatchExporter {
 		 * @param string $id post id.
 		 */
 		return apply_filters( "posterno_{$this->export_type}_export_row_data", $row, $id );
+	}
+
+	/**
+	 * Get the excerpt.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_short_description( $id ) {
+		return $this->filter_description_field( get_the_excerpt( $id ) );
+	}
+
+	/**
+	 * Get featured image.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_featured_image( $id ) {
+		return esc_url( get_the_post_thumbnail_url( $id, 'full' ) );
+	}
+
+	/**
+	 * Get published date.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_published( $id ) {
+		return get_the_date( get_option( 'date_format' ), $id );
+	}
+
+	/**
+	 * Get status.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_status( $id ) {
+		return get_post_status( $id );
+	}
+
+	/**
+	 * Get status.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_expires( $id ) {
+		return pno_get_the_listing_expire_date( $id );
+	}
+
+	/**
+	 * Get opening hours.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_opening_hours( $id ) {
+		return wp_json_encode( get_post_meta( $id, '_listing_opening_hours', true ) );
+	}
+
+	/**
+	 * Check if featured or not.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_is_featured( $id ) {
+		return pno_listing_is_featured( $id );
+	}
+
+	/**
+	 * Get social profiles.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_listing_social_profiles( $id ) {
+		return wp_json_encode( carbon_get_post_meta( $id, 'listing_social_profiles' ) );
+	}
+
+	/**
+	 * Get latitude.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_lat( $id ) {
+
+		$coordinates = pno_get_listing_coordinates( $id );
+
+		$lat = isset( $coordinates['lat'] ) && ! empty( $coordinates['lat'] ) ? $coordinates['lat'] : '';
+
+		if ( pno_starts_with( $lat, "'" ) ) {
+			$lat = substr( $lat, 1 );
+		}
+
+		return $lat;
+
+	}
+
+	/**
+	 * Get longitude.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_lng( $id ) {
+
+		$coordinates = pno_get_listing_coordinates( $id );
+
+		$lng = isset( $coordinates['lng'] ) && ! empty( $coordinates['lng'] ) ? $coordinates['lng'] : '';
+
+		if ( pno_starts_with( $lng, "'" ) ) {
+			$lng = substr( $lng, 1 );
+		}
+
+		return $lng;
+	}
+
+	/**
+	 * Get address.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_address( $id ) {
+		$addr = pno_get_listing_address( $id );
+		return isset( $addr['address'] ) && ! empty( $addr['address'] ) ? $addr['address'] : '';
+	}
+
+	/**
+	 * Gellery images.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_gallery_images( $id ) {
+
+		$items = pno_get_listing_media_items( $id );
+
+		$images = [];
+
+		foreach ( $items as $item_id ) {
+			if ( is_array( $item_id ) && isset( $item_id['url'] ) ) {
+				$images[] = $item_id['url'];
+			}
+		}
+
+		if ( empty( $images ) ) {
+			return;
+		}
+
+		return $this->implode_values( $images );
+
 	}
 
 }
