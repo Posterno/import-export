@@ -303,7 +303,10 @@ class CsvListingsExporter extends CsvBatchExporter {
 						$value = $this->filter_description_field( $this->get_post_content( $id ) );
 						break;
 					default:
-						$value = $this->get_carbon_setting( $id, $column_id );
+						$field = $this->get_listing_field( $column_id );
+						if ( $field ) {
+							$value = $this->format_carbon_field_value( $field, $column_id, $id );
+						}
 						break;
 				}
 			}

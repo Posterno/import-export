@@ -525,7 +525,7 @@ abstract class CsvExporter {
 		$found_terms = [];
 
 		if ( ! empty( $terms ) && is_array( $terms ) ) {
-			foreach( $terms as $term ) {
+			foreach ( $terms as $term ) {
 				$found_terms[] = $term->term_id;
 			}
 		}
@@ -547,7 +547,7 @@ abstract class CsvExporter {
 	/**
 	 * Get a carbon field's setting.
 	 *
-	 * @param string $post_id the post id.
+	 * @param string $object_id the object id.
 	 * @param string $setting_id the id of the cb field.
 	 * @param string $type type of object, post, term.
 	 * @return mixed
@@ -570,6 +570,76 @@ abstract class CsvExporter {
 
 		if ( is_array( $value ) && ! empty( $value ) ) {
 			$value = maybe_serialize( $value );
+		}
+
+		return $value;
+
+	}
+
+	/**
+	 * Get listing field.
+	 *
+	 * @param string $setting_id meta key.
+	 * @return string|boolean
+	 */
+	protected function get_listing_field( $setting_id ) {
+
+		$field = new \PNO\Database\Queries\Listing_Fields();
+
+		$found_field = $field->get_item_by( 'listing_meta_key', $setting_id );
+
+		return $found_field instanceof \PNO\Entities\Field\Listing && $found_field->getPostID() > 0 ? $found_field : false;
+
+	}
+
+	/**
+	 * Format carbon fields values from listings fields.
+	 *
+	 * @param \PNO\Entities\Field\Listing $field field details.
+	 * @param string                      $meta_key meta key.
+	 * @param string                      $object_id post id.
+	 * @return string
+	 */
+	protected function format_carbon_field_value( $field, $meta_key, $object_id ) {
+
+		$value = '';
+
+		switch ( $field->getType() ) {
+			case 'textarea':
+			case 'editor':
+				$value = $this->filter_description_field( carbon_get_post_meta( $object_id, $meta_key ) );
+				break;
+			case 'select':
+			case 'radio':
+				$value = carbon_get_post_meta( $object_id, $meta_key );
+				$value = pno_display_field_select_value( $value, [ 'options' => $field->getOptions() ] );
+				break;
+			case 'multiselect':
+			case 'multicheckbox':
+				$value = carbon_get_post_meta( $object_id, $meta_key );
+				$value = pno_display_field_multicheckbox_value( $value, [ 'options' => $field->getOptions() ] );
+				break;
+			case 'file':
+				$value = carbon_get_post_meta( $object_id, $meta_key );
+				if ( $field->isMultiple() && is_array( $value ) && ! empty( $value ) ) {
+					$files = [];
+					foreach ( $value as $file ) {
+						if ( isset( $file['url'] ) && ! empty( $file['url'] ) ) {
+							$files[] = $file['url'];
+						}
+					}
+					if ( ! empty( $files ) ) {
+						$value = $this->implode_values( $files );
+					}
+				} else {
+					if ( is_numeric( $value ) ) {
+						$value = wp_get_attachment_url( $value );
+					}
+				}
+				break;
+			default:
+				$value = $this->get_carbon_setting( $object_id, $meta_key );
+				break;
 		}
 
 		return $value;
