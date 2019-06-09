@@ -52,7 +52,7 @@
 			url: ajaxurl,
 			data: {
 				form     : data,
-				action   : 'posterno_do_ajax_listings_fields_export',
+				action   : 'posterno_do_ajax_listings_export',
 				step     : step,
 				columns  : columns,
 				filename : filename,

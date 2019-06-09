@@ -680,6 +680,28 @@ class Admin {
 			$exporter->set_filename( wp_unslash( $_POST['filename'] ) ); // WPCS: input var ok, sanitization ok.
 		}
 
+		// Get form settings.
+		if ( isset( $_POST['form'] ) && ! empty( $_POST['form'] ) ) {
+
+			$params = array();
+			parse_str( $_POST['form'], $params );
+			$params = pno_clean( $params );
+
+			$columns    = isset( $params['columns_to_export'] ) && is_array( $params['columns_to_export'] ) && ! empty( $params['columns_to_export'] ) ? $params['columns_to_export'] : false;
+			$stati      = isset( $params['status'] ) && is_array( $params['status'] ) && ! empty( $params['columns_to_export'] ) ? $params['status'] : false;
+			$categories = isset( $params['categories'] ) && is_array( $params['categories'] ) && ! empty( $params['categories'] ) ? $params['categories'] : false;
+
+			if ( $columns ) {
+				$exporter->set_columns_to_export( $columns );
+			}
+			if ( $stati ) {
+				$exporter->set_statuses( $stati );
+			}
+			if ( $categories ) {
+				$exporter->set_categories( $categories );
+			}
+		}
+
 		$exporter->set_page( $step );
 		$exporter->generate_file();
 

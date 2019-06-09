@@ -85,7 +85,6 @@ class CsvListingsExporter extends CsvBatchExporter {
 			'columns_to_export' => [
 				'type'       => 'multiselect',
 				'label'      => esc_html__( 'Which columns should be exported?', 'posterno' ),
-				'required'   => true,
 				'values'     => $this->get_default_column_names(),
 				'attributes' => [
 					'class'            => 'form-control',
@@ -95,7 +94,6 @@ class CsvListingsExporter extends CsvBatchExporter {
 			'status'            => [
 				'type'       => 'multiselect',
 				'label'      => esc_html__( 'Which statuses should be exported?', 'posterno' ),
-				'required'   => true,
 				'values'     => [
 					'publish' => esc_html__( 'Published' ),
 					'private' => esc_html__( 'Private' ),
@@ -112,7 +110,6 @@ class CsvListingsExporter extends CsvBatchExporter {
 			'categories'        => [
 				'type'       => 'multiselect',
 				'label'      => esc_html__( 'Which listing category should be exported?', 'posterno' ),
-				'required'   => true,
 				'values'     => pno_get_listings_categories_for_association(),
 				'attributes' => [
 					'class'            => 'form-control',
