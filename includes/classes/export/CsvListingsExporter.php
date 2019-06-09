@@ -144,6 +144,9 @@ class CsvListingsExporter extends CsvBatchExporter {
 			'lng'               => esc_html__( 'Longitude' ),
 			'address'           => esc_html__( 'Address' ),
 			'gallery_images'    => esc_html__( 'Gallery images' ),
+			'author_id'         => esc_html__( 'Author ID' ),
+			'author_username'   => esc_html__( 'Author username' ),
+			'author_email'      => esc_html__( 'Author email' ),
 		];
 
 		$cols = array_merge( $cols, $this->get_cb_fields(), pno_get_registered_listings_taxonomies() );
@@ -487,6 +490,56 @@ class CsvListingsExporter extends CsvBatchExporter {
 	 */
 	private function get_column_value_listing_email( $id ) {
 		return carbon_get_post_meta( $id, 'listing_email' );
+	}
+
+	/**
+	 * Get listing author id.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_author_id( $id ) {
+		return pno_get_listing_author( $id );
+	}
+
+	/**
+	 * Get listing author username
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_author_username( $id ) {
+
+		$author_id = pno_get_listing_author( $id );
+		$username  = false;
+
+		$user = get_user_by( 'id', $author_id );
+
+		if ( isset( $user->user_login ) ) {
+			$username = $user->user_login;
+		}
+
+		return $username;
+
+	}
+
+	/**
+	 * Get listing author email
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_author_email( $id ) {
+
+		$author_id = pno_get_listing_author( $id );
+		$email     = false;
+
+		if ( $author_id ) {
+			$email = pno_get_user_email( $author_id );
+		}
+
+		return $email;
+
 	}
 
 }
