@@ -479,4 +479,14 @@ class CsvListingsExporter extends CsvBatchExporter {
 
 	}
 
+	/**
+	 * Get email address.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_listing_email( $id ) {
+		return carbon_get_post_meta( $id, 'listing_email' );
+	}
+
 }
