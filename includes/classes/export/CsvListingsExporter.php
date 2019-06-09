@@ -233,6 +233,19 @@ class CsvListingsExporter extends CsvBatchExporter {
 			),
 		);
 
+		if ( ! empty( $this->statuses ) ) {
+			$args['post_status'] = $this->statuses;
+		}
+
+		if ( ! empty( $this->categories ) ) {
+			$args['tax_query'] = [
+				[
+					'taxonomy' => 'listings-categories',
+					'terms'    => $this->categories,
+				],
+			];
+		}
+
 		$schemas = new \WP_Query( apply_filters( 'posterno_listings_export_query', $args ) );
 
 		$this->total_rows = $schemas->found_posts;
