@@ -10,6 +10,8 @@
 
 namespace PosternoImportExport\Export;
 
+use Carbon_Fields\Carbon_Fields;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -640,6 +642,58 @@ abstract class CsvExporter {
 			default:
 				$value = $this->get_carbon_setting( $object_id, $meta_key );
 				break;
+		}
+
+		return $value;
+
+	}
+
+	/**
+	 * Get value of term settings.
+	 *
+	 * @param string $taxonomy taxonomy.
+	 * @param string $id object id.
+	 * @param string $setting_id setting id.
+	 * @return string
+	 */
+	protected function get_carbon_term_setting( $taxonomy, $id, $setting_id ) {
+
+		$value = '';
+
+		$repo = Carbon_Fields::resolve( 'container_repository' );
+
+		foreach ( $repo->get_containers() as $container ) {
+			if ( pno_ends_with( $container->get_id(), "pno_term_settings_{$taxonomy}" ) ) {
+				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
+					foreach ( $container->get_fields() as $field ) {
+						if ( $field->get_base_name() === $setting_id ) {
+
+							$taxonomy_selectors = [
+								'associated_categories',
+								'associated_tags',
+							];
+
+							if ( in_array( $setting_id, $taxonomy_selectors, true ) ) {
+								$tax = false;
+
+								if ( $setting_id === 'associated_categories' ) {
+									$tax = 'listings-categories';
+								} elseif ( $setting_id === 'associated_tags' ) {
+									$tax = 'listings-tags';
+								}
+
+								$value = $this->format_term_ids( carbon_get_term_meta( $id, $setting_id ), $tax );
+							} else {
+								$value = carbon_get_term_meta( $id, $setting_id );
+
+								if ( is_array( $value ) ) {
+									$value = maybe_serialize( $value );
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 
 		return $value;

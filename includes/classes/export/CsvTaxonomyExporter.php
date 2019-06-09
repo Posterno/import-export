@@ -206,7 +206,7 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 						$value = $term->parent;
 						break;
 					default:
-						$value = $this->get_carbon_setting( $term->term_id, $column_id, 'term' );
+						$value = $this->get_carbon_term_setting( $this->taxonomy, $term->term_id, $column_id );
 						break;
 				}
 			}
