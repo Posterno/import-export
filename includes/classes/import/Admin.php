@@ -33,7 +33,6 @@ class Admin {
 		}
 
 		add_action( 'admin_menu', array( $this, 'add_to_menus' ) );
-		add_action( 'admin_init', array( $this, 'register_importers' ) );
 		add_action( 'admin_head', array( $this, 'hide_from_menus' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		add_action( 'pno_tools_import', [ $this, 'register_tool' ], 20 );
@@ -116,15 +115,6 @@ class Admin {
 
 		$importer = new Schema();
 		$importer->dispatch();
-	}
-
-	/**
-	 * Register WordPress based importers.
-	 */
-	public function register_importers() {
-		if ( defined( 'WP_LOAD_IMPORTERS' ) ) {
-			register_importer( 'posterno_schema_csv', esc_html__( 'Posterno schema (CSV)', 'posterno' ), __( 'Import <strong>schemas</strong> to your site via a csv file.', 'posterno' ), array( $this, 'schema_importer' ) );
-		}
 	}
 
 	/**
