@@ -12,6 +12,7 @@ namespace PosternoImportExport\Import;
 
 use PosternoImportExport\Import\DataImporter;
 use PosternoImportExport\Import\Controllers\Schema;
+use WP_Error;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -516,12 +517,11 @@ class SchemaImporter extends DataImporter {
 
 		foreach ( $this->parsed_data as $parsed_data_key => $parsed_data ) {
 
-			/*
 			do_action( 'posterno_schema_import_before_import', $parsed_data );
 
-			$id         = isset( $parsed_data['id'] ) ? absint( $parsed_data['id'] ) : 0;
-			$sku        = isset( $parsed_data['sku'] ) ? $parsed_data['sku'] : '';
-			$id_exists  = false;
+			$id = isset( $parsed_data['id'] ) ? absint( $parsed_data['id'] ) : 0;
+
+			/*$id_exists  = false;
 			$sku_exists = false;
 
 			if ( $id ) {
@@ -590,6 +590,15 @@ class SchemaImporter extends DataImporter {
 				break;
 			}
 			*/
+
+			$data['imported'][] = $id;
+
+			$index ++;
+
+			if ( $this->params['prevent_timeouts'] && ( $this->time_exceeded() || $this->memory_exceeded() ) ) {
+				$this->file_position = $this->file_positions[ $index ];
+				break;
+			}
 
 		}
 

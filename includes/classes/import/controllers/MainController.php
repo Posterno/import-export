@@ -10,6 +10,8 @@
 
 namespace PosternoImportExport\Import\Controllers;
 
+use WP_Error;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 

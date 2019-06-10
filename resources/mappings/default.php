@@ -45,7 +45,7 @@ function pno_importer_default_english_mappings( $mappings ) {
 
 	return array_merge( $mappings, $new_mappings );
 }
-add_filter( 'posterno_csv_product_import_mapping_default_columns', 'pno_importer_default_english_mappings', 100 );
+add_filter( 'posterno_csv_schema_import_mapping_default_columns', 'pno_importer_default_english_mappings', 100 );
 
 /**
  * Add English special mapping placeholders when not using English as current language.
@@ -65,4 +65,4 @@ function pno_importer_default_special_english_mappings( $mappings ) {
 
 	return array_merge( $mappings, $new_mappings );
 }
-add_filter( 'posterno_csv_product_import_mapping_special_columns', 'pno_importer_default_special_english_mappings', 100 );
+add_filter( 'posterno_csv_schema_import_mapping_special_columns', 'pno_importer_default_special_english_mappings', 100 );

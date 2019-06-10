@@ -29,4 +29,4 @@ function pno_importer_wordpress_mappings( $mappings ) {
 
 	return array_merge( $mappings, $wp_mappings );
 }
-add_filter( 'posterno_csv_product_import_mapping_default_columns', 'pno_importer_wordpress_mappings' );
+add_filter( 'posterno_csv_schema_import_mapping_default_columns', 'pno_importer_wordpress_mappings' );

@@ -112,7 +112,7 @@ class Schema extends MainController {
 				__( 'The file is empty or using a different encoding than UTF-8, please try again with a new file.', 'posterno' ),
 				array(
 					array(
-						'url'   => admin_url( 'edit.php?post_type=product&page=product_importer' ),
+						'url'   => admin_url( 'edit.php?post_type=listings&page=schema_importer' ),
 						'label' => __( 'Upload a new file', 'posterno' ),
 					),
 				)
@@ -142,7 +142,6 @@ class Schema extends MainController {
 			return;
 		}
 
-		// phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification -- Nonce already verified in WC_Admin_Importers::do_ajax_product_import()
 		if ( ! empty( $_POST['map_from'] ) && ! empty( $_POST['map_to'] ) ) {
 			$mapping_from = pno_clean( wp_unslash( $_POST['map_from'] ) );
 			$mapping_to   = pno_clean( wp_unslash( $_POST['map_to'] ) );
@@ -155,6 +154,7 @@ class Schema extends MainController {
 		}
 		// phpcs:enable
 
+		wp_enqueue_script( 'pno-schema-import' );
 		wp_localize_script(
 			'pno-schema-import',
 			'pno_schema_import_params',
@@ -169,7 +169,6 @@ class Schema extends MainController {
 				'delimiter'       => $this->delimiter,
 			)
 		);
-		wp_enqueue_script( 'pno-schema-import' );
 
 		include_once PNO_PLUGIN_DIR . 'vendor/posterno/import-export/resources/views/html-csv-import-progress.php';
 	}
@@ -183,7 +182,7 @@ class Schema extends MainController {
 		$updated  = isset( $_GET['schemas-updated'] ) ? absint( $_GET['schemas-updated'] ) : 0;
 		$failed   = isset( $_GET['schemas-failed'] ) ? absint( $_GET['schemas-failed'] ) : 0;
 		$skipped  = isset( $_GET['schemas-skipped'] ) ? absint( $_GET['schemas-skipped'] ) : 0;
-		$errors   = array_filter( (array) get_user_option( 'product_import_error_log' ) );
+		$errors   = array_filter( (array) get_user_option( 'schema_import_error_log' ) );
 		// phpcs:enable
 
 		include_once PNO_PLUGIN_DIR . 'vendor/posterno/import-export/resources/views/html-csv-import-done.php';
