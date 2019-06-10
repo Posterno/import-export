@@ -34,8 +34,9 @@ class Admin {
 
 		add_action( 'admin_menu', array( $this, 'add_to_menus' ) );
 		add_action( 'admin_init', array( $this, 'register_importers' ) );
-		//add_action( 'admin_head', array( $this, 'hide_from_menus' ) );
+		add_action( 'admin_head', array( $this, 'hide_from_menus' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
+		add_action( 'pno_tools_import', [ $this, 'register_tool' ], 20 );
 
 		add_action( 'wp_ajax_posterno_do_ajax_schema_import', array( $this, 'do_ajax_schema_import' ) );
 
@@ -44,6 +45,7 @@ class Admin {
 			'menu'       => 'edit.php?post_type=listings',
 			'name'       => esc_html__( 'Schema Import', 'posterno' ),
 			'capability' => 'manage_options',
+			'url'        => admin_url( 'edit.php?post_type=listings&page=schema_importer' ),
 			'callback'   => array( $this, 'schema_importer' ),
 		);
 	}
@@ -81,6 +83,17 @@ class Admin {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Register tool within Posterno tools.
+	 *
+	 * @return void
+	 */
+	public function register_tool() {
+
+		include PNO_PLUGIN_DIR . 'vendor/posterno/import-export/resources/views/import-tool.php';
+
 	}
 
 	/**
