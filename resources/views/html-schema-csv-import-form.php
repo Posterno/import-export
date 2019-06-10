@@ -14,8 +14,8 @@ defined( 'ABSPATH' ) || exit;
 ?>
 <form class="pno-progress-form-content posterno-importer" enctype="multipart/form-data" method="post">
 	<header>
-		<h2><?php esc_html_e( 'Import products from a CSV file', 'posterno' ); ?></h2>
-		<p><?php esc_html_e( 'This tool allows you to import (or merge) product data to your store from a CSV file.', 'posterno' ); ?></p>
+		<h2><?php esc_html_e( 'Import schema from a CSV file', 'posterno' ); ?></h2>
+		<p><?php esc_html_e( 'This tool allows you to import (or merge) schema data to your site from a CSV file.', 'posterno' ); ?></p>
 	</header>
 	<section>
 		<table class="form-table posterno-importer-options">
@@ -56,11 +56,11 @@ defined( 'ABSPATH' ) || exit;
 					</td>
 				</tr>
 				<tr>
-					<th><label for="posterno-importer-update-existing"><?php esc_html_e( 'Update existing products', 'posterno' ); ?></label><br/></th>
+					<th><label for="posterno-importer-update-existing"><?php esc_html_e( 'Update existing schemas', 'posterno' ); ?></label><br/></th>
 					<td>
 						<input type="hidden" name="update_existing" value="0" />
 						<input type="checkbox" id="posterno-importer-update-existing" name="update_existing" value="1" />
-						<label for="posterno-importer-update-existing"><?php esc_html_e( 'Existing products that match by ID or SKU will be updated. Products that do not exist will be skipped.', 'posterno' ); ?></label>
+						<label for="posterno-importer-update-existing"><?php esc_html_e( 'Existing schemas that match by ID or SKU will be updated. Products that do not exist will be skipped.', 'posterno' ); ?></label>
 					</td>
 				</tr>
 				<tr class="posterno-importer-advanced hidden">
