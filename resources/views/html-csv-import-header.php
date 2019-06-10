@@ -17,10 +17,10 @@ defined( 'ABSPATH' ) || exit;
 		<h2><?php esc_html_e( 'Import data', 'posterno' ); ?></h2>
 		<ul class="title-links hidden-sm-and-down">
 			<li>
-				<a href="https://posterno.com/addons" rel="nofollow" target="_blank" class="page-title-action">View Addons</a>
+				<a href="https://posterno.com/addons" rel="nofollow" target="_blank" class="page-title-action"><?php esc_html_e( 'View Addons' ); ?></a>
 			</li>
 			<li>
-				<a href="https://docs.posterno.com/" rel="nofollow" target="_blank" class="page-title-action">Documentation</a>
+				<a href="https://docs.posterno.com/" rel="nofollow" target="_blank" class="page-title-action"><?php esc_html_e( 'Documentation' ); ?></a>
 			</li>
 		</ul>
 	</div>
