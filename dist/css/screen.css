@@ -1914,11 +1914,11 @@
 	float: none;
 	margin: 0 0 24px;
 }
-.posterno-progress-form-wrapper .form-table input,
+.posterno-progress-form-wrapper .form-table input:not([type=checkbox]),
 .posterno-progress-form-wrapper .form-table select,
-.posterno-exporter-wrapper .form-table input,
+.posterno-exporter-wrapper .form-table input:not([type=checkbox]),
 .posterno-exporter-wrapper .form-table select,
-.posterno-importer-wrapper .form-table input,
+.posterno-importer-wrapper .form-table input:not([type=checkbox]),
 .posterno-importer-wrapper .form-table select {
 	width: 100%;
 }

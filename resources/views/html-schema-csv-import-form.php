@@ -60,7 +60,7 @@ defined( 'ABSPATH' ) || exit;
 					<td>
 						<input type="hidden" name="update_existing" value="0" />
 						<input type="checkbox" id="posterno-importer-update-existing" name="update_existing" value="1" />
-						<label for="posterno-importer-update-existing"><?php esc_html_e( 'Existing schemas that match by ID or SKU will be updated. Products that do not exist will be skipped.', 'posterno' ); ?></label>
+						<label for="posterno-importer-update-existing"><?php esc_html_e( 'Existing schemas that match by ID will be updated. Schema that do not exist will be skipped.', 'posterno' ); ?></label>
 					</td>
 				</tr>
 				<tr class="posterno-importer-advanced hidden">
