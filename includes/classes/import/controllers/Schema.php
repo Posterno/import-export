@@ -179,10 +179,10 @@ class Schema extends MainController {
 	 */
 	protected function done() {
 		// phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification
-		$imported = isset( $_GET['products-imported'] ) ? absint( $_GET['products-imported'] ) : 0;
-		$updated  = isset( $_GET['products-updated'] ) ? absint( $_GET['products-updated'] ) : 0;
-		$failed   = isset( $_GET['products-failed'] ) ? absint( $_GET['products-failed'] ) : 0;
-		$skipped  = isset( $_GET['products-skipped'] ) ? absint( $_GET['products-skipped'] ) : 0;
+		$imported = isset( $_GET['schemas-imported'] ) ? absint( $_GET['schemas-imported'] ) : 0;
+		$updated  = isset( $_GET['schemas-updated'] ) ? absint( $_GET['schemas-updated'] ) : 0;
+		$failed   = isset( $_GET['schemas-failed'] ) ? absint( $_GET['schemas-failed'] ) : 0;
+		$skipped  = isset( $_GET['schemas-skipped'] ) ? absint( $_GET['schemas-skipped'] ) : 0;
 		$errors   = array_filter( (array) get_user_option( 'product_import_error_log' ) );
 		// phpcs:enable
 
@@ -267,7 +267,6 @@ class Schema extends MainController {
 		$options        = array(
 			'id'                => __( 'ID', 'posterno' ),
 			'type'              => __( 'Type', 'posterno' ),
-			'sku'               => __( 'SKU', 'posterno' ),
 			'name'              => __( 'Name', 'posterno' ),
 			'short_description' => __( 'Short description', 'posterno' ),
 			'description'       => __( 'Description', 'posterno' ),

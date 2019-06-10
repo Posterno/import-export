@@ -99,9 +99,7 @@ class Admin {
 	 * Register importer scripts.
 	 */
 	public function admin_scripts() {
-
 		wp_register_script( 'pno-schema-import', PNO_PLUGIN_URL . 'vendor/posterno/import-export/dist/js/pno-schema-import.js', array( 'jquery' ), PNO_VERSION, true );
-
 	}
 
 	/**
