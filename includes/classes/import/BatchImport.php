@@ -13,6 +13,9 @@ namespace PosternoImportExport\Import;
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * The batch import class.
+ */
 class BatchImport {
 
 	/**
