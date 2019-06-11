@@ -112,26 +112,20 @@ jQuery(document).ready(function ($) {
       });
     },
     before_submit: function before_submit(arr, $form, options) {
-      $form.find('.notice-wrap').remove();
-      $form.append('<div class="notice-wrap"><span class="spinner is-active"></span><div class="pno-progress"><div></div></div></div>'); //check whether client browser fully supports all File API
-
-      if (window.File && window.FileReader && window.FileList && window.Blob) {// HTML5 File API is supported by browser
-      } else {
-        var import_form = $('.pno-import-form').find('.pno-progress').parent().parent();
-        var notice_wrap = import_form.find('.notice-wrap');
-        import_form.find('.button-disabled').removeClass('button-disabled'); //Error for older unsupported browsers that doesn't support HTML5 File API
-
-        notice_wrap.html('<div class="update error"><p>' + pno_vars.unsupported_browser + '</p></div>');
-        return false;
-      }
+      $form.find('.notice-wrap').empty();
+      $form.find('.spinner').show();
+      $form.find('progress').val(0).show();
+      $form.find('.button-primary').prop("disabled", true);
     },
     success: function success(responseText, statusText, xhr, $form) {},
     complete: function complete(xhr) {
       var response = jQuery.parseJSON(xhr.responseText);
 
       if (response.success) {
-        var $form = $('.pno-import-form .notice-wrap').parent();
+        var $form = $('.pno-import-form').parent();
         $form.find('.pno-import-file-wrap,.notice-wrap').remove();
+        console.log('hehehe yup');
+        return;
         $form.find('.pno-import-options').slideDown(); // Show column mapping
 
         var select = $form.find('select.pno-import-csv-column');
@@ -175,15 +169,22 @@ jQuery(document).ready(function ($) {
     error: function error(xhr) {
       // Something went wrong. This will display error on form
       var response = jQuery.parseJSON(xhr.responseText);
-      var import_form = $('.pno-import-form').find('.pno-progress').parent().parent();
+      var import_form = $('.pno-import-form');
       var notice_wrap = import_form.find('.notice-wrap');
+      var spinner = import_form.find('.spinner');
+      var progress = import_form.find('progress');
+      var button = import_form.find('.button-primary');
       import_form.find('.button-disabled').removeClass('button-disabled');
 
       if (response.data.error) {
-        notice_wrap.html('<div class="update error"><p>' + response.data.error + '</p></div>');
+        notice_wrap.html('<div style="margin:10px 0;" class="carbon-wp-notice notice-error is-alt"><p style="margin:0">' + response.data.error + '</p></div>');
       } else {
         notice_wrap.remove();
       }
+
+      progress.hide().val(0);
+      spinner.hide();
+      button.removeAttr('disabled');
     },
     process_step: function process_step(step, import_data, self) {
       $.ajax({
@@ -202,24 +203,21 @@ jQuery(document).ready(function ($) {
         success: function success(response) {
           if ('done' == response.data.step || response.data.error) {
             // We need to get the actual in progress form, not all forms on the page
-            var import_form = $('.pno-import-form').find('.pno-progress').parent().parent();
+            var import_form = $('.pno-import-form');
             var notice_wrap = import_form.find('.notice-wrap');
-            import_form.find('.button-disabled').removeClass('button-disabled');
+            import_form.find('.button-primary').removeAttr('disabled');
 
             if (response.data.error) {
-              notice_wrap.html('<div class="update error"><p>' + response.data.error + '</p></div>');
+              notice_wrap.html('<div style="margin:10px 0;" class="carbon-wp-notice notice-error is-alt"><p style="margin:0">' + response.data.error + '</p></div>');
             } else {
               import_form.find('.pno-import-options').hide();
               $('html, body').animate({
                 scrollTop: import_form.parent().offset().top
               }, 500);
-              notice_wrap.html('<div class="updated"><p>' + response.data.message + '</p></div>');
+              notice_wrap.html('<div style="margin:10px 0;" class="carbon-wp-notice notice-success is-alt"><p style="margin:0">' + response.data.message + '</p></div>');
             }
           } else {
-            $('.pno-progress div').animate({
-              width: response.data.percentage + '%'
-            }, 50, function () {// Animation complete.
-            });
+            $('progress').val(response.data.percentage);
             PNO_Import.process_step(parseInt(response.data.step), import_data, self);
           }
         }

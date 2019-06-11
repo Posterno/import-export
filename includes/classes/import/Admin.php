@@ -10,6 +10,8 @@
 
 namespace PosternoImportExport\Import;
 
+use PosternoImportExport\Import\BatchImportSchemas;
+
 use PNO\Form\Form;
 use PNO\Form\DefaultSanitizer;
 
@@ -84,8 +86,8 @@ class Admin {
 		add_action( 'admin_head', array( $this, 'hide_from_menus' ) );
 		add_action( 'pno_tools_import', [ $this, 'register_importers_list' ], 20 );
 
-		add_action( 'pno_upload_import_file', 'do_ajax_import_file_upload' );
-		add_action( 'wp_ajax_pno_do_ajax_import', 'do_ajax_import' );
+		add_action( 'pno_upload_import_file', [ $this, 'do_ajax_import_file_upload' ] );
+		add_action( 'wp_ajax_pno_do_ajax_import', [ $this, 'do_ajax_import' ] );
 
 	}
 
@@ -153,7 +155,7 @@ class Admin {
 		$importer = $this->get_current_importer();
 
 		$fields = [
-			'csv_file' => [
+			'pno-import-file' => [
 				'type'  => 'file',
 				'label' => esc_html__( 'Select CSV file', 'posterno' ),
 			],
@@ -260,7 +262,13 @@ class Admin {
 
 			do_action( 'pno_batch_import_class_include', $_POST['pno-import-class'] );
 
-			$import = new $_POST['pno-import-class']( $import_file['file'] );
+			$class_name = sanitize_text_field( $_POST['pno-import-class'] );
+
+			$import = false;
+
+			if ( $class_name === 'BatchImportSchemas' ) {
+				$import = new BatchImportSchemas( $import_file['file'] );
+			}
 
 			if ( ! $import->can_import() ) {
 				wp_send_json_error( array( 'error' => __( 'You do not have permission to import data', 'posterno' ) ) );

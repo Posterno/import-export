@@ -82,13 +82,10 @@ class BatchImport {
 	 */
 	public function __construct( $_file = '', $_step = 1 ) {
 
-		// if ( ! class_exists( 'parseCSV' ) ) {
-		// require_once EDD_PLUGIN_DIR . 'includes/libraries/parsecsv.lib.php';
-		// }
 		$this->step = $_step;
 		$this->file = $_file;
 		$this->done = false;
-		$this->csv  = new parseCSV();
+		$this->csv  = new \ParseCsv\Csv();
 		$this->csv->auto( $this->file );
 		$this->total = count( $this->csv->data );
 		$this->init();

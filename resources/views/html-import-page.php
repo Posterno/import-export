@@ -30,13 +30,16 @@ defined( 'ABSPATH' ) || exit;
 	<h1 class="screen-reader-text"><?php echo esc_html( $title ); ?></h1>
 
 	<div class="posterno-exporter-wrapper">
-		<form class="posterno-exporter">
+		<form class="posterno-exporter pno-import-form" action="<?php echo esc_url( add_query_arg( 'pno_action', 'upload_import_file', admin_url() ) ); ?>" method="post" enctype="multipart/form-data">
 			<header>
 				<span class="spinner is-active"></span>
 				<h2><?php echo esc_html( $title ); ?></h2>
 				<p><?php echo esc_html( $description ); ?></p>
 			</header>
 			<section class="has-form">
+
+				<div class="notice-wrap"></div>
+
 				<table class="form-table">
 					<tbody>
 						<?php foreach ( $form->getFields() as $field ) : ?>
@@ -53,6 +56,12 @@ defined( 'ABSPATH' ) || exit;
 						<?php endforeach; ?>
 					</tbody>
 				</table>
+
+				<progress class="posterno-exporter-progress" max="100" value="0"></progress>
+
+				<?php wp_nonce_field( 'pno_ajax_import', 'pno_ajax_import' ); ?>
+				<input type="hidden" name="pno-import-class" value="BatchImportSchemas"/>
+
 			</section>
 			<div class="pno-actions">
 				<button type="submit" class="posterno-exporter-button button button-primary" value="<?php esc_attr_e( 'Upload CSV', 'posterno' ); ?>"><?php esc_html_e( 'Upload CSV', 'posterno' ); ?></button>
