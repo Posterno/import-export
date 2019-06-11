@@ -37,7 +37,22 @@ defined( 'ABSPATH' ) || exit;
 				<p><?php echo esc_html( $description ); ?></p>
 			</header>
 			<section class="has-form">
-
+				<table class="form-table">
+					<tbody>
+						<?php foreach ( $form->getFields() as $field ) : ?>
+						<tr>
+							<th scope="row">
+								<?php if ( ! empty( $field->getLabel() ) ) : ?>
+									<label for="<?php echo esc_attr( $field->getName() ); ?>"><?php echo esc_html( $field->getLabel() ); ?></label>
+								<?php endif; ?>
+							</th>
+							<td>
+								<?php echo $field->render(); ?>
+							</td>
+						</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
 			</section>
 			<div class="pno-actions">
 				<button type="submit" class="posterno-exporter-button button button-primary" value="<?php esc_attr_e( 'Upload CSV', 'posterno' ); ?>"><?php esc_html_e( 'Upload CSV', 'posterno' ); ?></button>

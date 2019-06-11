@@ -10,6 +10,9 @@
 
 namespace PosternoImportExport\Import;
 
+use PNO\Form\Form;
+use PNO\Form\DefaultSanitizer;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -17,6 +20,8 @@ defined( 'ABSPATH' ) || exit;
  * Hook to the admin panel.
  */
 class Admin {
+
+	use DefaultSanitizer;
 
 	/**
 	 * List of registered importers.
@@ -102,7 +107,7 @@ class Admin {
 	/**
 	 * Get the currently activate importer.
 	 *
-	 * @return strign
+	 * @return string
 	 */
 	public function get_current_importer() {
 
@@ -135,6 +140,24 @@ class Admin {
 		return $this->importers[ $this->get_current_importer() ]['page_description'];
 	}
 
+	public function get_importer_form() {
+
+		$importer = $this->get_current_importer();
+
+		$fields = [
+			'csv_file' => [
+				'type'  => 'file',
+				'label' => esc_html__( 'Select CSV file', 'posterno' ),
+			],
+		];
+
+		$form = Form::createFromConfig( $fields );
+		$this->addSanitizer( $form );
+
+		return $form;
+
+	}
+
 	/**
 	 * Display content for the importers.
 	 *
@@ -144,6 +167,7 @@ class Admin {
 
 		$title       = $this->get_importer_title();
 		$description = $this->get_importer_description();
+		$form = $this->get_importer_form();
 
 		include PNO_PLUGIN_DIR . 'vendor/posterno/import-export/resources/views/html-import-page.php';
 
