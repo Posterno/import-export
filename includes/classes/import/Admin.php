@@ -45,8 +45,8 @@ class Admin {
 			'capability'       => 'manage_options',
 			'callback'         => array( $this, 'importer_page' ),
 			'url'              => admin_url( 'edit.php?post_type=listings&page=schemas_importer' ),
-			'page_title'       => esc_html__( 'Import listings schemas' ),
-			'page_description' => esc_html__( 'This tool allows you to import listings schemas from a CSV file.' ),
+			'page_title'       => esc_html__( 'Import listings schemas', 'posterno' ),
+			'page_description' => esc_html__( 'This tool allows you to import listings schemas from a CSV file.', 'posterno' ),
 		);
 
 		$this->hook();
