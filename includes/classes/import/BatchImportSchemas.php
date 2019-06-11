@@ -186,7 +186,7 @@ class BatchImportSchemas extends BatchImport {
 	 * @return string
 	 */
 	public function get_import_type_label() {
-		return esc_html__( 'Schemas' );
+		return esc_html__( 'Schemas', 'posterno' );
 	}
 
 }
