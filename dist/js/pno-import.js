@@ -124,7 +124,7 @@ jQuery(document).ready(function ($) {
       if (response.success) {
         var $form = $('.pno-import-form').parent();
         $form.find('.pno-import-file-wrap,.notice-wrap').remove();
-        console.log('hehehe yup');
+        console.log(response.data);
         return;
         $form.find('.pno-import-options').slideDown(); // Show column mapping
 
