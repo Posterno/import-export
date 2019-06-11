@@ -13,7 +13,6 @@ defined( 'ABSPATH' ) || exit;
 
 if ( is_admin() ) {
 	new PosternoImportExport\Export\Admin();
-	new PosternoImportExport\Import\Admin();
 }
 
 /**
