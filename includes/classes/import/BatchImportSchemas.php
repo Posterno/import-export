@@ -189,4 +189,13 @@ class BatchImportSchemas extends BatchImport {
 		return esc_html__( 'Schemas', 'posterno' );
 	}
 
+	/**
+	 * Undocumented function
+	 *
+	 * @return void
+	 */
+	public function get_mapping_options() {
+
+	}
+
 }

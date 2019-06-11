@@ -302,14 +302,18 @@ class Admin {
 			if ( ! $import->can_import() ) {
 				wp_send_json_error( array( 'error' => __( 'You do not have permission to import data', 'posterno' ) ) );
 			}
+
+			$mapping_form = $this->get_mapping_form( $import_file, $class_name );
+
 			wp_send_json_success(
 				array(
-					'form'      => $_POST,
-					'class'     => $_POST['pno-import-class'],
-					'upload'    => $import_file,
-					'first_row' => $import->get_first_row(),
-					'columns'   => $import->get_columns(),
-					'nonce'     => wp_create_nonce( 'pno_ajax_import', 'pno_ajax_import' ),
+					'form'         => $_POST,
+					'class'        => $class_name,
+					'upload'       => $import_file,
+					'first_row'    => $import->get_first_row(),
+					'columns'      => $import->get_columns(),
+					'nonce'        => wp_create_nonce( 'pno_ajax_import', 'pno_ajax_import' ),
+					'mapping_form' => esc_js( str_replace( "\n", '', $mapping_form ) ),
 				)
 			);
 		} else {
@@ -324,6 +328,60 @@ class Admin {
 			wp_send_json_error( array( 'error' => $import_file['error'] ) );
 		}
 		exit;
+
+	}
+
+	/**
+	 * Get output of the mapping form.
+	 *
+	 * @param array $file CSV file to parse.
+	 * @param string $importer importer class.
+	 * @return string
+	 */
+	public function get_mapping_form( $file, $importer ) {
+
+		$fields = [
+			'test' => [
+				'type'  => 'select',
+				'label' => esc_html__( 'Select CSV file', 'posterno' ),
+			],
+		];
+
+		$form = Form::createFromConfig( $fields );
+		$this->addSanitizer( $form );
+
+		$output = false;
+
+		ob_start();
+
+		?>
+		<table class="widefat striped" style="margin:30px 0;">
+			<thead>
+				<tr>
+					<th><strong><?php esc_html_e( 'Data field' ); ?></strong></th>
+					<th><strong><?php esc_html_e( 'CSV Column' ); ?></strong></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ( $form->getFields() as $field ) : ?>
+				<tr>
+					<td>
+						<?php if ( ! empty( $field->getLabel() ) ) : ?>
+							<label for="<?php echo esc_attr( $field->getName() ); ?>"><?php echo esc_html( $field->getLabel() ); ?></label>
+						<?php endif; ?>
+					</td>
+					<td>
+						<?php echo $field->render(); ?>
+					</td>
+				</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		<?php
+
+		$output = ob_get_clean();
+
+		return $output;
 
 	}
 

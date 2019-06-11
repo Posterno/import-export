@@ -124,38 +124,46 @@ jQuery(document).ready(function ($) {
       if (response.success) {
         var $form = $('.pno-import-form').parent();
         $form.find('.pno-import-file-wrap,.notice-wrap').remove();
-        console.log(response.data);
-        return;
-        $form.find('.pno-import-options').slideDown(); // Show column mapping
+        $form.find('progress').val(100);
+        $form.find('.spinner').hide();
+        setTimeout(function () {
+          $form.find('progress').hide().val(0);
+          $form.find('.button-primary').removeAttr('disabled');
+        }, 200);
+        $form.find('.fields-container').empty().hide();
+        var html = $($.parseHTML(response.data.mapping_form)).text();
+        console.log(html);
+        $form.find('.fields-container').html(html);
+        $form.find('.fields-container').slideDown(); // Show column mapping
 
-        var select = $form.find('select.pno-import-csv-column');
+        /*var select = $form.find('select.pno-import-csv-column');
         var row = select.parents('tr').first();
         var options = '';
-        var columns = response.data.columns.sort(function (a, b) {
-          if (a < b) return -1;
-          if (a > b) return 1;
-          return 0;
+        	var columns = response.data.columns.sort(function (a, b) {
+        	if (a < b) return -1;
+        	if (a > b) return 1;
+        	return 0;
         });
-        $.each(columns, function (key, value) {
-          options += '<option value="' + value + '">' + value + '</option>';
+        	$.each(columns, function (key, value) {
+        	options += '<option value="' + value + '">' + value + '</option>';
         });
-        select.append(options);
-        select.on('change', function () {
-          var $key = $(this).val();
+        	select.append(options);
+        	select.on('change', function () {
+        	var $key = $(this).val();
+        		if (!$key) {
+        			$(this).parent().next().html('');
+        		} else {
+        			if (false != response.data.first_row[$key]) {
+        			$(this).parent().next().html(response.data.first_row[$key]);
+        		} else {
+        			$(this).parent().next().html('');
+        		}
+        		}
+        	});
+        	$.each(select, function () {
+        	$(this).val($(this).attr('data-field')).change();
+        }); */
 
-          if (!$key) {
-            $(this).parent().next().html('');
-          } else {
-            if (false != response.data.first_row[$key]) {
-              $(this).parent().next().html(response.data.first_row[$key]);
-            } else {
-              $(this).parent().next().html('');
-            }
-          }
-        });
-        $.each(select, function () {
-          $(this).val($(this).attr('data-field')).change();
-        });
         $(document.body).on('click', '.pno-import-proceed', function (e) {
           e.preventDefault();
           $form.append('<div class="notice-wrap"><span class="spinner is-active"></span><div class="pno-progress"><div></div></div></div>');

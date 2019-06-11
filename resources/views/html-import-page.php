@@ -40,22 +40,24 @@ defined( 'ABSPATH' ) || exit;
 
 				<div class="notice-wrap"></div>
 
-				<table class="form-table">
-					<tbody>
-						<?php foreach ( $form->getFields() as $field ) : ?>
-						<tr>
-							<th scope="row">
-								<?php if ( ! empty( $field->getLabel() ) ) : ?>
-									<label for="<?php echo esc_attr( $field->getName() ); ?>"><?php echo esc_html( $field->getLabel() ); ?></label>
-								<?php endif; ?>
-							</th>
-							<td>
-								<?php echo $field->render(); ?>
-							</td>
-						</tr>
-						<?php endforeach; ?>
-					</tbody>
-				</table>
+				<div class="fields-container">
+					<table class="form-table">
+						<tbody>
+							<?php foreach ( $form->getFields() as $field ) : ?>
+							<tr>
+								<th scope="row">
+									<?php if ( ! empty( $field->getLabel() ) ) : ?>
+										<label for="<?php echo esc_attr( $field->getName() ); ?>"><?php echo esc_html( $field->getLabel() ); ?></label>
+									<?php endif; ?>
+								</th>
+								<td>
+									<?php echo $field->render(); ?>
+								</td>
+							</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
+				</div>
 
 				<progress class="posterno-exporter-progress" max="100" value="0"></progress>
 
