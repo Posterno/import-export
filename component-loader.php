@@ -46,6 +46,9 @@ add_action(
 		wp_register_script( 'pno-taxonomy-export', PNO_PLUGIN_URL . '/vendor/posterno/import-export/dist/js/pno-taxonomy-export.js', array( 'jquery' ), PNO_VERSION, true );
 		wp_register_script( 'pno-listings-export', PNO_PLUGIN_URL . '/vendor/posterno/import-export/dist/js/pno-listings-export.js', array( 'jquery' ), PNO_VERSION, true );
 
+		wp_register_script( 'pno-ajax-import-script', 'https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.2.2/jquery.form.min.js', false, PNO_VERSION, true );
+		wp_register_script( 'pno-importers', PNO_PLUGIN_URL . '/vendor/posterno/import-export/dist/js/pno-import.js', array( 'jquery' ), PNO_VERSION, true );
+
 		if ( in_array( $screen->id, $ids, true ) ) {
 			wp_enqueue_style( 'pno-admin-export-import' );
 			wp_enqueue_style( 'pno-options-panel', PNO_PLUGIN_URL . '/assets/css/admin/admin-settings-panel.min.css', false, PNO_VERSION );
@@ -135,6 +138,15 @@ add_action(
 					'export_nonce' => wp_create_nonce( 'pno-listings-export' ),
 				)
 			);
+		}
+
+		$importers = [
+			'listings_page_schemas_importer',
+		];
+
+		if ( in_array( $screen->id, $importers, true ) ) {
+			wp_enqueue_script( 'pno-ajax-import-script' );
+			wp_enqueue_script( 'pno-importers' );
 		}
 
 	},
