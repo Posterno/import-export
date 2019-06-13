@@ -97,11 +97,6 @@ class Schema extends BaseController {
 	protected function auto_map_columns( $raw_headers, $num_indexes = true ) {
 		include PNO_PLUGIN_DIR . 'vendor/posterno/import-export/resources/mappings/mappings.php';
 
-		/*
-		 * @hooked pno_importer_generic_mappings - 10
-		 * @hooked pno_importer_wordpress_mappings - 10
-		 * @hooked pno_importer_default_english_mappings - 100
-		 */
 		$default_columns = $this->normalize_columns_names(
 			apply_filters(
 				'posterno_csv_schema_import_mapping_default_columns',
@@ -166,13 +161,11 @@ class Schema extends BaseController {
 
 		// Available options.
 		$options = array(
-			'id'                => __( 'ID', 'posterno' ),
-			'type'              => __( 'Type', 'posterno' ),
-			'name'              => __( 'Name', 'posterno' ),
-			'short_description' => __( 'Short description', 'posterno' ),
-			'description'       => __( 'Description', 'posterno' ),
-			'meta:' . $meta     => __( 'Import as meta', 'posterno' ),
-			'menu_order'        => __( 'Position', 'posterno' ),
+			'id'            => esc_html__( 'ID', 'posterno' ),
+			'name'          => esc_html__( 'Schema name', 'posterno' ),
+			'mode'          => esc_html__( 'Schema mode', 'posterno' ),
+			'code'          => esc_html__( 'Schema code', 'posterno' ),
+			'listing_types' => esc_html__( 'Listing types', 'posterno' ),
 		);
 
 		return apply_filters( 'posterno_csv_schema_import_mapping_options', $options, $item );
