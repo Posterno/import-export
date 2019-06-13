@@ -10,6 +10,7 @@
 
 namespace PosternoImportExport\Import;
 
+use PosternoImportExport\Import\Controllers\BaseController;
 use PosternoImportExport\Import\Controllers\Schema;
 
 // Exit if accessed directly.
@@ -35,8 +36,8 @@ class Admin {
 			return;
 		}
 
-		add_action( 'admin_menu', array( $this, 'add_to_menus' ) );
 		add_action( 'admin_init', [ $this, 'dispatcher' ] );
+		add_action( 'admin_menu', array( $this, 'add_to_menus' ) );
 		add_action( 'admin_head', array( $this, 'hide_from_menus' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		add_action( 'pno_tools_import', [ $this, 'register_importers_list' ], 20 );
@@ -105,13 +106,18 @@ class Admin {
 		// wp_register_script( 'pno-schema-import', WC()->plugin_url() . '/assets/js/admin/pno-schema-import' . $suffix . '.js', array( 'jquery' ), WC_VERSION, true );
 	}
 
+	/**
+	 * Detect step handler on forms submission.
+	 *
+	 * @return void
+	 */
 	public function dispatcher() {
-		$importer = new Schema();
-		$importer->dispatch_step();
+		$importer = new BaseController();
+		$importer->trigger_step_handler();
 	}
 
 	/**
-	 * The importer.
+	 * The schema importer page.
 	 */
 	public function schema_importer() {
 		$importer = new Schema();
@@ -130,8 +136,6 @@ class Admin {
 			wp_send_json_error( array( 'message' => __( 'Insufficient privileges to import.', 'posterno' ) ) );
 		}
 
-		// include_once WC_ABSPATH . 'includes/admin/importers/class-pno-schema-csv-importer-controller.php';
-		// include_once WC_ABSPATH . 'includes/import/class-pno-schema-csv-importer.php';
 		$file   = pno_clean( wp_unslash( $_POST['file'] ) ); // PHPCS: input var ok.
 		$params = array(
 			'delimiter'       => ! empty( $_POST['delimiter'] ) ? pno_clean( wp_unslash( $_POST['delimiter'] ) ) : ',', // PHPCS: input var ok.
