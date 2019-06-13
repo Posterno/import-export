@@ -457,8 +457,8 @@ class BaseController {
 		// phpcs:enable
 
 		wp_localize_script(
-			"pno-{$this->type}-import",
-			"pno_{$this->type}_import_params",
+			'pno-data-import',
+			'pno_data_import_params',
 			array(
 				'import_nonce'    => wp_create_nonce( "pno-{$this->type}-import" ),
 				'mapping'         => array(
@@ -468,9 +468,10 @@ class BaseController {
 				'file'            => $this->file,
 				'update_existing' => $this->update_existing,
 				'delimiter'       => $this->delimiter,
+				'type'            => $this->type,
 			)
 		);
-		wp_enqueue_script( "pno-{$this->type}-import" );
+		wp_enqueue_script( 'pno-data-import' );
 
 		include_once PNO_PLUGIN_DIR . 'vendor/posterno/import-export/resources/views/html-csv-import-progress.php';
 	}
@@ -480,10 +481,10 @@ class BaseController {
 	 */
 	protected function done() {
 		// phpcs:disable WordPress.Security.NonceVerification.NoNonceVerification
-		$imported = isset( $_GET['schemas-imported'] ) ? absint( $_GET['schemas-imported'] ) : 0;
-		$updated  = isset( $_GET['schemas-updated'] ) ? absint( $_GET['schemas-updated'] ) : 0;
-		$failed   = isset( $_GET['schemas-failed'] ) ? absint( $_GET['schemas-failed'] ) : 0;
-		$skipped  = isset( $_GET['schemas-skipped'] ) ? absint( $_GET['schemas-skipped'] ) : 0;
+		$imported = isset( $_GET['items-imported'] ) ? absint( $_GET['items-imported'] ) : 0;
+		$updated  = isset( $_GET['items-updated'] ) ? absint( $_GET['items-updated'] ) : 0;
+		$failed   = isset( $_GET['items-failed'] ) ? absint( $_GET['items-failed'] ) : 0;
+		$skipped  = isset( $_GET['items-skipped'] ) ? absint( $_GET['items-skipped'] ) : 0;
 		$errors   = array_filter( (array) get_user_option( 'schema_import_error_log' ) );
 		// phpcs:enable
 

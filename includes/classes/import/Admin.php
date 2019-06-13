@@ -102,8 +102,7 @@ class Admin {
 	 * Register importer scripts.
 	 */
 	public function admin_scripts() {
-		// $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-		// wp_register_script( 'pno-schema-import', WC()->plugin_url() . '/assets/js/admin/pno-schema-import' . $suffix . '.js', array( 'jquery' ), WC_VERSION, true );
+		wp_register_script( 'pno-data-import', PNO_PLUGIN_URL . 'vendor/posterno/import-export/dist/js/pno-import.js', array( 'jquery' ), PNO_VERSION, true );
 	}
 
 	/**
