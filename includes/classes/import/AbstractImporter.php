@@ -447,21 +447,6 @@ abstract class AbstractImporter implements ImporterInterface {
 	}
 
 	/**
-	 * Parse relative comma-delineated field and return object ID.
-	 *
-	 * @param string $value Field value.
-	 *
-	 * @return array
-	 */
-	public function parse_relative_comma_field( $value ) {
-		if ( empty( $value ) ) {
-			return array();
-		}
-
-		return array_filter( array_map( array( $this, 'parse_relative_field' ), $this->explode_values( $value ) ) );
-	}
-
-	/**
 	 * Parse a comma-delineated field from a CSV.
 	 *
 	 * @param string $value Field value.

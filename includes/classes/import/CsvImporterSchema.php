@@ -67,79 +67,6 @@ class CsvImporterSchema extends AbstractImporter {
 	}
 
 	/**
-	 * Parse relative field and return schema ID.
-	 *
-	 * Handles `id:xx` and SKUs.
-	 *
-	 * If mapping to an id: and the schema ID does not exist, this link is not
-	 * valid.
-	 *
-	 * If mapping to a SKU and the schema ID does not exist, a temporary object
-	 * will be created so it can be updated later.
-	 *
-	 * @param string $value Field value.
-	 *
-	 * @return int|string
-	 */
-	public function parse_relative_field( $value ) {
-		global $wpdb;
-
-		if ( empty( $value ) ) {
-			return '';
-		}
-
-		// IDs are prefixed with id:.
-		if ( preg_match( '/^id:(\d+)$/', $value, $matches ) ) {
-			$id = intval( $matches[1] );
-
-			// If original_id is found, use that instead of the given ID since a new placeholder must have been created already.
-			$original_id = $wpdb->get_var( $wpdb->prepare( "SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_original_id' AND meta_value = %s;", $id ) ); // WPCS: db call ok, cache ok.
-
-			if ( $original_id ) {
-				return absint( $original_id );
-			}
-
-			// See if the given ID maps to a valid schema allready.
-			$existing_id = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM {$wpdb->posts} WHERE post_type IN ( 'schema', 'schema_variation' ) AND ID = %d;", $id ) ); // WPCS: db call ok, cache ok.
-
-			if ( $existing_id ) {
-				return absint( $existing_id );
-			}
-
-			// If we're not updating existing posts, we may need a placeholder schema to map to.
-			if ( ! $this->params['update_existing'] ) {
-				// $schema = new WC_Product_Simple();
-				// $schema->set_name( 'Import placeholder for ' . $id );
-				// $schema->set_status( 'importing' );
-				// $schema->add_meta_data( '_original_id', $id, true );
-				// $id = $schema->save();
-			}
-
-			return $id;
-		}
-
-		// $id = pno_get_schema_id_by_sku( $value );
-		if ( $id ) {
-			return $id;
-		}
-
-		try {
-			// $schema = new WC_Product_Simple();
-			// $schema->set_name( 'Import placeholder for ' . $value );
-			// $schema->set_status( 'importing' );
-			// $schema->set_sku( $value );
-			// $id = $schema->save();
-			if ( $id && ! is_wp_error( $id ) ) {
-				return $id;
-			}
-		} catch ( Exception $e ) {
-			return '';
-		}
-
-		return '';
-	}
-
-	/**
 	 * Parse the ID field.
 	 *
 	 * If we're not doing an update, create a placeholder schema so mapping works
@@ -167,27 +94,21 @@ class CsvImporterSchema extends AbstractImporter {
 
 		// Not updating? Make sure we have a new placeholder for this ID.
 		if ( ! $this->params['update_existing'] ) {
-			/*
-			$mapped_keys      = $this->get_mapped_keys();
-			$sku_column_index = absint( array_search( 'sku', $mapped_keys, true ) );
-			$row_sku          = isset( $this->raw_data[ $this->parsing_raw_data_index ][ $sku_column_index ] ) ? $this->raw_data[ $this->parsing_raw_data_index ][ $sku_column_index ] : '';
-			$id_from_sku      = $row_sku ? pno_get_schema_id_by_sku( $row_sku ) : '';
+			$mapped_keys = $this->get_mapped_keys();
 
-			// If row has a SKU, make sure placeholder was not made already.
-			if ( $id_from_sku ) {
-				return $id_from_sku;
+			$args = [
+				'post_type'   => 'pno_schema',
+				'post_title'  => 'Import placeholder for ' . $id,
+				'post_status' => 'importing',
+			];
+
+			$schema = wp_insert_post( $args );
+
+			if ( $schema ) {
+				update_post_meta( $schema, '_original_id', $id );
 			}
 
-			$schema = new WC_Product_Simple();
-			$schema->set_name( 'Import placeholder for ' . $id );
-			$schema->set_status( 'importing' );
-			$schema->add_meta_data( '_original_id', $id, true );
-
-			// If row has a SKU, make sure placeholder has it too.
-			if ( $row_sku ) {
-				$schema->set_sku( $row_sku );
-			}
-			$id = $schema->save();*/
+			$id = $schema;
 		}
 
 		return $id && ! is_wp_error( $id ) ? $id : 0;
@@ -352,8 +273,9 @@ class CsvImporterSchema extends AbstractImporter {
 		foreach ( $this->parsed_data as $parsed_data_key => $parsed_data ) {
 			do_action( 'posterno_schema_import_before_import', $parsed_data );
 
-			$id         = isset( $parsed_data['id'] ) ? absint( $parsed_data['id'] ) : 0;
-			/*$sku        = isset( $parsed_data['sku'] ) ? $parsed_data['sku'] : '';
+			$id = isset( $parsed_data['id'] ) ? absint( $parsed_data['id'] ) : 0;
+			/*
+			$sku        = isset( $parsed_data['sku'] ) ? $parsed_data['sku'] : '';
 			$id_exists  = false;
 			$sku_exists = false;
 
