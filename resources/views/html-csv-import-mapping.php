@@ -14,8 +14,8 @@ defined( 'ABSPATH' ) || exit;
 ?>
 <form class="pno-progress-form-content posterno-importer" method="post" action="<?php echo esc_url( $this->get_next_step_link() ); ?>">
 	<header>
-		<h2><?php esc_html_e( 'Map CSV fields to products', 'posterno' ); ?></h2>
-		<p><?php esc_html_e( 'Select fields from your CSV file to map against products fields, or to ignore during import.', 'posterno' ); ?></p>
+		<h2><?php esc_html_e( 'Map CSV fields', 'posterno' ); ?></h2>
+		<p><?php esc_html_e( 'Select fields from your CSV file to map against database fields, or to ignore during import.', 'posterno' ); ?></p>
 	</header>
 	<section class="pno-importer-mapping-table-wrapper">
 		<table class="widefat pno-importer-mapping-table">
