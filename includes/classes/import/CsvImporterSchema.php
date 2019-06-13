@@ -196,9 +196,9 @@ class CsvImporterSchema extends AbstractImporter {
 	/**
 	 * Process importer.
 	 *
-	 * Do not import schemas with IDs or SKUs that already exist if option
+	 * Do not import schemas with IDs that already exist if option
 	 * update existing is false, and likewise, if updating schemas, do not
-	 * process rows which do not exist if an ID/SKU is provided.
+	 * process rows which do not exist if an ID is provided.
 	 *
 	 * @return array
 	 */
@@ -214,23 +214,14 @@ class CsvImporterSchema extends AbstractImporter {
 		);
 
 		foreach ( $this->parsed_data as $parsed_data_key => $parsed_data ) {
+
 			do_action( 'posterno_schema_import_before_import', $parsed_data );
 
 			$id = isset( $parsed_data['id'] ) ? absint( $parsed_data['id'] ) : 0;
-			/*
-			$sku        = isset( $parsed_data['sku'] ) ? $parsed_data['sku'] : '';
-			$id_exists  = false;
-			$sku_exists = false;
 
 			if ( $id ) {
-				$schema    = pno_get_schema( $id );
-				$id_exists = $schema && 'importing' !== $schema->get_status();
-			}
-
-			if ( $sku ) {
-				$id_from_sku = pno_get_schema_id_by_sku( $sku );
-				$schema      = $id_from_sku ? pno_get_schema( $id_from_sku ) : false;
-				$sku_exists  = $schema && 'importing' !== $schema->get_status();
+				$schema_status = get_post_status( $id );
+				$id_exists     = $schema_status && 'importing' !== $schema_status;
 			}
 
 			if ( $id_exists && ! $update_existing ) {
@@ -245,25 +236,12 @@ class CsvImporterSchema extends AbstractImporter {
 				continue;
 			}
 
-			if ( $sku_exists && ! $update_existing ) {
-				$data['skipped'][] = new WP_Error(
-					'posterno_schema_importer_error',
-					esc_html__( 'A schema with this SKU already exists.', 'posterno' ),
-					array(
-						'sku' => esc_attr( $sku ),
-						'row' => $this->get_row_id( $parsed_data ),
-					)
-				);
-				continue;
-			}
-
-			if ( $update_existing && ( $id || $sku ) && ! $id_exists && ! $sku_exists ) {
+			if ( $update_existing && ( $id ) && ! $id_exists ) {
 				$data['skipped'][] = new WP_Error(
 					'posterno_schema_importer_error',
 					esc_html__( 'No matching schema exists to update.', 'posterno' ),
 					array(
 						'id'  => $id,
-						'sku' => esc_attr( $sku ),
 						'row' => $this->get_row_id( $parsed_data ),
 					)
 				);
@@ -279,7 +257,7 @@ class CsvImporterSchema extends AbstractImporter {
 				$data['updated'][] = $result['id'];
 			} else {
 				$data['imported'][] = $result['id'];
-			} */
+			}
 
 			$index ++;
 
