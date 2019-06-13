@@ -171,62 +171,7 @@ class CsvImporterSchema extends AbstractImporter {
 	protected function expand_data( $data ) {
 		$data = apply_filters( 'posterno_schema_importer_pre_expand_data', $data );
 
-		// Images field maps to image and gallery id fields.
-		if ( isset( $data['images'] ) ) {
-			$images               = $data['images'];
-			$data['raw_image_id'] = array_shift( $images );
-
-			if ( ! empty( $images ) ) {
-				$data['raw_gallery_image_ids'] = $images;
-			}
-			unset( $data['images'] );
-		}
-
-		// Type, virtual and downloadable are all stored in the same column.
-		if ( isset( $data['type'] ) ) {
-			$data['type']         = array_map( 'strtolower', $data['type'] );
-			$data['virtual']      = in_array( 'virtual', $data['type'], true );
-			$data['downloadable'] = in_array( 'downloadable', $data['type'], true );
-
-			// Convert type to string.
-			$data['type'] = current( array_diff( $data['type'], array( 'virtual', 'downloadable' ) ) );
-		}
-
-		// Status is mapped from a special published field.
-		if ( isset( $data['published'] ) ) {
-			$statuses       = array(
-				-1 => 'draft',
-				0  => 'private',
-				1  => 'publish',
-			);
-			$data['status'] = isset( $statuses[ $data['published'] ] ) ? $statuses[ $data['published'] ] : -1;
-
-			unset( $data['published'] );
-		}
-
-		if ( isset( $data['stock_quantity'] ) ) {
-			if ( '' === $data['stock_quantity'] ) {
-				$data['manage_stock'] = false;
-				$data['stock_status'] = isset( $data['stock_status'] ) ? $data['stock_status'] : true;
-			} else {
-				$data['manage_stock'] = true;
-			}
-		}
-
-		// Stock is bool or 'backorder'.
-		if ( isset( $data['stock_status'] ) ) {
-			if ( 'backorder' === $data['stock_status'] ) {
-				$data['stock_status'] = 'onbackorder';
-			} else {
-				$data['stock_status'] = $data['stock_status'] ? 'instock' : 'outofstock';
-			}
-		}
-
-		// Prepare grouped schemas.
-		if ( isset( $data['grouped_schemas'] ) ) {
-			$data['children'] = $data['grouped_schemas'];
-			unset( $data['grouped_schemas'] );
-		}
+		$data['test'] = 'val';
 
 		// Handle special column names which span multiple columns.
 		$meta_data = array();
