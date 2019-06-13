@@ -10,6 +10,8 @@
 
 namespace PosternoImportExport\Import;
 
+use PosternoImportExport\Import\Controllers\Schema;
+
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
@@ -34,6 +36,7 @@ class Admin {
 		}
 
 		add_action( 'admin_menu', array( $this, 'add_to_menus' ) );
+		add_action( 'admin_init', [ $this, 'dispatcher' ] );
 		// add_action( 'admin_head', array( $this, 'hide_from_menus' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		add_action( 'pno_tools_import', [ $this, 'register_importers_list' ], 20 );
@@ -102,11 +105,16 @@ class Admin {
 		// wp_register_script( 'pno-schema-import', WC()->plugin_url() . '/assets/js/admin/pno-schema-import' . $suffix . '.js', array( 'jquery' ), WC_VERSION, true );
 	}
 
+	public function dispatcher() {
+		$importer = new Schema();
+		$importer->dispatch_step();
+	}
+
 	/**
 	 * The importer.
 	 */
 	public function schema_importer() {
-		$importer = new ControllerSchemaImporter();
+		$importer = new Schema();
 		$importer->dispatch();
 	}
 
@@ -141,7 +149,7 @@ class Admin {
 			$error_log = array();
 		}
 
-		$importer         = ControllerSchemaImporter::get_importer( $file, $params );
+		$importer         = Schema::get_importer( $file, $params );
 		$results          = $importer->import();
 		$percent_complete = $importer->get_percent_complete();
 		$error_log        = array_merge( $error_log, $results['failed'], $results['skipped'] );
