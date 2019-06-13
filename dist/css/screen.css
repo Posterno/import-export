@@ -1890,7 +1890,7 @@
 .posterno-importer-wrapper .posterno-exporter .posterno-importer-done::before,
 .posterno-importer-wrapper .posterno-importer .posterno-importer-done::before,
 .posterno-importer-wrapper .pno-progress-form-content .posterno-importer-done::before {
-	font-family: "WooCommerce";
+	font-family: "Dashicons";
 	speak: none;
 	font-weight: normal;
 	-webkit-font-feature-settings: normal;
@@ -1898,6 +1898,7 @@
 	font-variant: normal;
 	text-transform: none;
 	line-height: 1;
+	-webkit-font-smoothing: antialiased;
 	margin: 0;
 	text-indent: 0;
 	position: absolute;
@@ -1906,7 +1907,7 @@
 	width: 100%;
 	height: 100%;
 	text-align: center;
-	content: "\E015";
+	content: "\F12A";
 	color: #0073aa;
 	position: static;
 	font-size: 100px;
