@@ -53,6 +53,39 @@ class Schema extends BaseController {
 	}
 
 	/**
+	 * Mapping step.
+	 */
+	protected function mapping_form() {
+		$args = array(
+			'lines'     => 1,
+			'delimiter' => $this->delimiter,
+		);
+
+		$importer     = self::get_importer( $this->file, $args );
+		$headers      = $importer->get_raw_keys();
+		$mapped_items = $this->auto_map_columns( $headers );
+		$sample       = current( $importer->get_raw_data() );
+
+		if ( empty( $sample ) ) {
+			$this->add_error(
+				__( 'The file is empty or using a different encoding than UTF-8, please try again with a new file.', 'posterno' ),
+				array(
+					array(
+						'url'   => admin_url( "edit.php?post_type=listings&page={$this->type}_importer" ),
+						'label' => __( 'Upload a new file', 'posterno' ),
+					),
+				)
+			);
+
+			// Force output the errors in the same page.
+			$this->output_errors();
+			return;
+		}
+
+		include_once PNO_PLUGIN_DIR . 'vendor/posterno/import-export/resources/views/html-csv-import-mapping.php';
+	}
+
+	/**
 	 * Auto map column names.
 	 *
 	 * @param  array $raw_headers Raw header columns.

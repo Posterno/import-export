@@ -353,7 +353,7 @@ class CsvImporterSchema extends AbstractImporter {
 			do_action( 'posterno_schema_import_before_import', $parsed_data );
 
 			$id         = isset( $parsed_data['id'] ) ? absint( $parsed_data['id'] ) : 0;
-			$sku        = isset( $parsed_data['sku'] ) ? $parsed_data['sku'] : '';
+			/*$sku        = isset( $parsed_data['sku'] ) ? $parsed_data['sku'] : '';
 			$id_exists  = false;
 			$sku_exists = false;
 
@@ -414,7 +414,7 @@ class CsvImporterSchema extends AbstractImporter {
 				$data['updated'][] = $result['id'];
 			} else {
 				$data['imported'][] = $result['id'];
-			}
+			} */
 
 			$index ++;
 
