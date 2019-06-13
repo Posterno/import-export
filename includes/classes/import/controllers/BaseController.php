@@ -77,6 +77,34 @@ class BaseController {
 	public $type = '';
 
 	/**
+	 * Holds the title of the page.
+	 *
+	 * @var string
+	 */
+	public $page_title = '';
+
+	/**
+	 * Holds the description displayed within the upload form.
+	 *
+	 * @var string
+	 */
+	public $page_description = '';
+
+	/**
+	 * Holds the update label option.
+	 *
+	 * @var string
+	 */
+	public $page_update_label = '';
+
+	/**
+	 * Holds the update label checkbox description.
+	 *
+	 * @var string
+	 */
+	public $page_update_description = '';
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -301,7 +329,7 @@ class BaseController {
 		$size       = size_format( $bytes );
 		$upload_dir = wp_upload_dir();
 
-		include PNO_PLUGIN_DIR . 'vendor/posterno/import-export/resources/views/html-schema-csv-import-form.php';
+		include PNO_PLUGIN_DIR . 'vendor/posterno/import-export/resources/views/html-csv-import-form.php';
 	}
 
 	/**

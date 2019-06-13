@@ -1,18 +1,21 @@
 <?php
 /**
- * Admin View: Product import form
+ * Import first step.
  *
- * @package WooCommerce/Admin
+ * @package     posterno-import-export
+ * @copyright   Copyright (c) 2019, Sematico, LTD
+ * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
+ * @since       0.1.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
 ?>
 <form class="pno-progress-form-content posterno-importer" enctype="multipart/form-data" method="post">
 	<header>
-		<h2><?php esc_html_e( 'Import products from a CSV file', 'posterno' ); ?></h2>
-		<p><?php esc_html_e( 'This tool allows you to import (or merge) product data to your store from a CSV file.', 'posterno' ); ?></p>
+		<h2><?php echo esc_html( $this->page_title ); ?></h2>
+		<p><?php echo esc_html( $this->page_description ); ?></p>
 	</header>
 	<section>
 		<table class="form-table posterno-importer-options">
@@ -53,11 +56,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</td>
 				</tr>
 				<tr>
-					<th><label for="posterno-importer-update-existing"><?php esc_html_e( 'Update existing products', 'posterno' ); ?></label><br/></th>
+					<th><label for="posterno-importer-update-existing"><?php echo esc_html( $this->page_update_label ); ?></label><br/></th>
 					<td>
 						<input type="hidden" name="update_existing" value="0" />
 						<input type="checkbox" id="posterno-importer-update-existing" name="update_existing" value="1" />
-						<label for="posterno-importer-update-existing"><?php esc_html_e( 'Existing products that match by ID or SKU will be updated. Products that do not exist will be skipped.', 'posterno' ); ?></label>
+						<label for="posterno-importer-update-existing"><?php echo esc_html( $this->page_update_description ); ?></label>
 					</td>
 				</tr>
 				<tr class="posterno-importer-advanced hidden">

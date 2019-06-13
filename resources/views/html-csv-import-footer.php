@@ -1,13 +1,16 @@
 <?php
 /**
- * Admin View: Header
+ * Import page footer.
  *
- * @package WooCommerce\Admin\Importers
+ * @package     posterno-import-export
+ * @copyright   Copyright (c) 2019, Sematico, LTD
+ * @license     http://opensource.org/licenses/gpl-2.0.php GNU Public License
+ * @since       0.1.0
  */
 
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
 ?>
 	</div>
 </div>
