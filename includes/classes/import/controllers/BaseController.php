@@ -105,6 +105,20 @@ class BaseController {
 	public $page_update_description = '';
 
 	/**
+	 * URL for the view button on the "done" step.
+	 *
+	 * @var string
+	 */
+	public $page_done_url = '';
+
+	/**
+	 * Generic label for items being imported.
+	 *
+	 * @var string
+	 */
+	public $page_item_label = '';
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {

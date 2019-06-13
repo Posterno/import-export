@@ -95,6 +95,6 @@ defined( 'ABSPATH' ) || exit;
 		} );
 	</script>
 	<div class="pno-actions">
-		<a class="button button-primary" href="<?php echo esc_url( admin_url( 'edit.php?post_type=product' ) ); ?>"><?php esc_html_e( 'View products', 'posterno' ); ?></a>
+		<a class="button button-primary" href="<?php echo esc_url( $this->page_done_url ); ?>"><?php echo sprintf( esc_html__( 'View %s' ), esc_html( $this->page_item_label ) ); ?></a>
 	</div>
 </div>
