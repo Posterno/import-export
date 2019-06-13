@@ -68,6 +68,10 @@ class Schema extends BaseController {
 		$mapped_items = $this->auto_map_columns( $headers );
 		$sample       = current( $importer->get_raw_data() );
 
+		if ( ! $this->update_existing ) {
+			unset( $headers[0] );
+		}
+
 		if ( empty( $sample ) ) {
 			$this->add_error(
 				__( 'The file is empty or using a different encoding than UTF-8, please try again with a new file.', 'posterno' ),
