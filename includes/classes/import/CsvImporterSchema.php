@@ -217,7 +217,8 @@ class CsvImporterSchema extends AbstractImporter {
 
 			do_action( 'posterno_schema_import_before_import', $parsed_data );
 
-			$id = isset( $parsed_data['id'] ) ? absint( $parsed_data['id'] ) : 0;
+			$id        = isset( $parsed_data['id'] ) ? absint( $parsed_data['id'] ) : 0;
+			$id_exists = false;
 
 			if ( $id ) {
 				$schema_status = get_post_status( $id );
@@ -269,4 +270,49 @@ class CsvImporterSchema extends AbstractImporter {
 
 		return $data;
 	}
+
+	/**
+	 * Process a single item and save.
+	 *
+	 * @throws Exception If item cannot be processed.
+	 * @param  array $data Raw CSV data.
+	 * @return array|WP_Error
+	 */
+	protected function process_item( $data ) {
+		try {
+
+			do_action( 'posterno_schema_import_before_process_item', $data );
+
+			$id       = isset( $data['id'] );
+			$updating = false;
+
+			if ( ! $id ) {
+				throw new Exception( esc_html__( 'No ID was found.' ) );
+			}
+
+			if ( $id && 'importing' !== get_post_status( $id ) ) {
+				$updating = true;
+			}
+
+			$mode          = isset( $data['mode'] ) ? $data['mode'] : false;
+			$title         = isset( $data['name'] ) ? $data['name'] : false;
+			$listing_types = [];
+			$code          = isset( $data['code'] ) ? $data['code'] : false;
+			$status        = 'importing';
+
+			if ( 'importing' === get_post_status( $id ) ) {
+				$status = 'publish';
+			}
+
+			\PNO\SchemaOrg\Settings\SettingsStorage::save( $id, $mode, $title, $listing_types, $code, $status );
+
+			return array(
+				'id'      => $id,
+				'updated' => $updating,
+			);
+		} catch ( Exception $e ) {
+			return new WP_Error( 'posterno_schema_importer_error', $e->getMessage(), array( 'status' => $e->getCode() ) );
+		}
+	}
+
 }

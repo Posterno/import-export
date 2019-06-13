@@ -163,22 +163,6 @@ abstract class AbstractImporter implements ImporterInterface {
 	}
 
 	/**
-	 * Process a single item and save.
-	 *
-	 * @throws Exception If item cannot be processed.
-	 * @param  array $data Raw CSV data.
-	 * @return array|WP_Error
-	 */
-	protected function process_item( $data ) {
-		try {
-
-			return new WP_Error( 'posterno_product_importer_error', 'Error message process', array( 'status' => 422 ) );
-		} catch ( Exception $e ) {
-			return new WP_Error( 'posterno_product_importer_error', $e->getMessage(), array( 'status' => $e->getCode() ) );
-		}
-	}
-
-	/**
 	 * Get attachment ID.
 	 *
 	 * @param  string $url        Attachment URL.
