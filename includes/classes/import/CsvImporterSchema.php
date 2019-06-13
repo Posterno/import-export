@@ -126,11 +126,9 @@ class CsvImporterSchema extends AbstractImporter {
 		 * column_name => callback.
 		 */
 		$data_formatting = array(
-			'id'                => array( $this, 'parse_id_field' ),
-			'name'              => array( $this, 'parse_skip_field' ),
-			'short_description' => array( $this, 'parse_description_field' ),
-			'description'       => array( $this, 'parse_description_field' ),
-			'menu_order'        => 'intval',
+			'id'   => [ $this, 'parse_id_field' ],
+			'name' => [ $this, 'parse_skip_field' ],
+			'code' => [ $this, 'parse_json_field' ],
 		);
 
 		/**

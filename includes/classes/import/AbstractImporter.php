@@ -501,6 +501,28 @@ abstract class AbstractImporter implements ImporterInterface {
 	}
 
 	/**
+	 * Decode json strings and clean them up.
+	 *
+	 * @param string $value Field value.
+	 * @return array
+	 */
+	public function parse_json_field( $value ) {
+
+		if ( '' === $value ) {
+			return $value;
+		}
+
+		$json = json_decode( $value, true );
+
+		if ( is_array( $json ) && ! empty( $json ) ) {
+			$value = pno_clean( $json );
+		}
+
+		return $value;
+
+	}
+
+	/**
 	 * Parse a category field from a CSV.
 	 * Categories are separated by commas and subcategories are "parent > subcategory".
 	 *
