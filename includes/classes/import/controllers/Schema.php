@@ -156,9 +156,6 @@ class Schema extends BaseController {
 			$index = $matches[0];
 		}
 
-		// Properly format for meta field.
-		$meta = str_replace( 'meta:', '', $item );
-
 		// Available options.
 		$options = array(
 			'id'            => esc_html__( 'ID', 'posterno' ),
