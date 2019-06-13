@@ -889,25 +889,25 @@
 .posterno-progress-form-wrapper .pno-progress-steps li.active,
 .posterno-exporter-wrapper .pno-progress-steps li.active,
 .posterno-importer-wrapper .pno-progress-steps li.active {
-	border-color: #a16696;
-	color: #a16696;
+	border-color: #0073aa;
+	color: #0073aa;
 }
 .posterno-progress-form-wrapper .pno-progress-steps li.active::before,
 .posterno-exporter-wrapper .pno-progress-steps li.active::before,
 .posterno-importer-wrapper .pno-progress-steps li.active::before {
-	border-color: #a16696;
+	border-color: #0073aa;
 }
 .posterno-progress-form-wrapper .pno-progress-steps li.done,
 .posterno-exporter-wrapper .pno-progress-steps li.done,
 .posterno-importer-wrapper .pno-progress-steps li.done {
-	border-color: #a16696;
-	color: #a16696;
+	border-color: #0073aa;
+	color: #0073aa;
 }
 .posterno-progress-form-wrapper .pno-progress-steps li.done::before,
 .posterno-exporter-wrapper .pno-progress-steps li.done::before,
 .posterno-importer-wrapper .pno-progress-steps li.done::before {
-	border-color: #a16696;
-	background: #a16696;
+	border-color: #0073aa;
+	background: #0073aa;
 }
 .posterno-progress-form-wrapper .button,
 .posterno-exporter-wrapper .button,
@@ -1907,7 +1907,7 @@
 	height: 100%;
 	text-align: center;
 	content: "\E015";
-	color: #a16696;
+	color: #0073aa;
 	position: static;
 	font-size: 100px;
 	display: block;

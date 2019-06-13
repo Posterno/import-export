@@ -55,21 +55,21 @@
 		}
 
 		li.active {
-			border-color: #a16696;
-			color: #a16696;
+			border-color: #0073aa;
+			color: #0073aa;
 
 			&::before {
-				border-color: #a16696;
+				border-color: #0073aa;
 			}
 		}
 
 		li.done {
-			border-color: #a16696;
-			color: #a16696;
+			border-color: #0073aa;
+			color: #0073aa;
 
 			&::before {
-				border-color: #a16696;
-				background: #a16696;
+				border-color: #0073aa;
+				background: #0073aa;
 			}
 		}
 	}
@@ -351,7 +351,7 @@
 			&::before {
 
 				@include icon("\e015");
-				color: #a16696;
+				color: #0073aa;
 				position: static;
 				font-size: 100px;
 				display: block;
