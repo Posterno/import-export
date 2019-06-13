@@ -126,7 +126,7 @@ class CsvImporterSchema extends AbstractImporter {
 		 * column_name => callback.
 		 */
 		$data_formatting = array(
-			'id'   => [ $this, 'parse_id_field' ],
+			'id'   => 'absint',
 			'name' => [ $this, 'parse_skip_field' ],
 			'code' => [ $this, 'parse_json_field' ],
 		);
@@ -283,8 +283,27 @@ class CsvImporterSchema extends AbstractImporter {
 
 			do_action( 'posterno_schema_import_before_process_item', $data );
 
-			$id       = isset( $data['id'] );
+			$id       = false;
 			$updating = false;
+
+			if ( $this->params['update_existing'] ) {
+				$id = isset( $data['id'] ) ? $data['id'] : false;
+			} else {
+
+				$args = [
+					'post_type'   => 'pno_schema',
+					'post_title'  => 'Import placeholder for ' . $id,
+					'post_status' => 'publish',
+				];
+
+				$schema = wp_insert_post( $args );
+
+				if ( is_wp_error( $schema ) ) {
+					throw new Exception( $schema->get_error_message() );
+				} else {
+					$id = $schema;
+				}
+			}
 
 			if ( ! $id ) {
 				throw new Exception( esc_html__( 'No ID was found.' ) );
@@ -298,11 +317,7 @@ class CsvImporterSchema extends AbstractImporter {
 			$title         = isset( $data['name'] ) ? $data['name'] : false;
 			$listing_types = [];
 			$code          = isset( $data['code'] ) ? $data['code'] : false;
-			$status        = 'importing';
-
-			if ( 'importing' === get_post_status( $id ) ) {
-				$status = 'publish';
-			}
+			$status        = 'publish';
 
 			\PNO\SchemaOrg\Settings\SettingsStorage::save( $id, $mode, $title, $listing_types, $code, $status );
 
