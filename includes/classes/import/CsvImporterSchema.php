@@ -749,13 +749,13 @@ class CsvImporterSchema extends AbstractImporter {
 			$sku_exists = false;
 
 			if ( $id ) {
-				$schema   = pno_get_schema( $id );
+				$schema    = pno_get_schema( $id );
 				$id_exists = $schema && 'importing' !== $schema->get_status();
 			}
 
 			if ( $sku ) {
 				$id_from_sku = pno_get_schema_id_by_sku( $sku );
-				$schema     = $id_from_sku ? pno_get_schema( $id_from_sku ) : false;
+				$schema      = $id_from_sku ? pno_get_schema( $id_from_sku ) : false;
 				$sku_exists  = $schema && 'importing' !== $schema->get_status();
 			}
 

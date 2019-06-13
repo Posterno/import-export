@@ -19,7 +19,7 @@ defined( 'ABSPATH' ) || exit;
 	</h2>
 	<div class="inside">
 		<table class="widefat striped health-check-table" role="presentation">
-			<?php foreach( $this->importers as $tool ) : ?>
+			<?php foreach ( $this->importers as $tool ) : ?>
 				<tr>
 					<td style="width:200px">
 						<strong><?php echo esc_html( $tool['name'] ); ?></strong>
