@@ -171,8 +171,6 @@ class CsvImporterSchema extends AbstractImporter {
 	protected function expand_data( $data ) {
 		$data = apply_filters( 'posterno_schema_importer_pre_expand_data', $data );
 
-		$data['test'] = 'val';
-
 		// Handle special column names which span multiple columns.
 		$meta_data = array();
 
