@@ -10,7 +10,6 @@
 
 namespace PosternoImportExport\Import;
 
-use PosternoImportExport\Import\Controllers\Schema;
 use WP_Error;
 use Exception;
 
@@ -18,16 +17,16 @@ use Exception;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * CSV Schema importer class.
+ * CSV ListingsField importer class.
  */
-class CsvImporterSchema extends AbstractImporter {
+class CsvImporterListingsField extends AbstractImporter {
 
 	/**
 	 * Type of importer used for filters.
 	 *
 	 * @var string
 	 */
-	public $type = 'schema';
+	public $type = 'listingsfield';
 
 	/**
 	 * Tracks current row being parsed.
@@ -81,14 +80,14 @@ class CsvImporterSchema extends AbstractImporter {
 			$callbacks[] = $callback;
 		}
 
-		return apply_filters( 'posterno_schema_importer_formatting_callbacks', $callbacks, $this );
+		return apply_filters( 'posterno_listingsfield_importer_formatting_callbacks', $callbacks, $this );
 	}
 
 	/**
 	 * Process importer.
 	 *
-	 * Do not import schemas with IDs that already exist if option
-	 * update existing is false, and likewise, if updating schemas, do not
+	 * Do not import listingsfields with IDs that already exist if option
+	 * update existing is false, and likewise, if updating listingsfields, do not
 	 * process rows which do not exist if an ID is provided.
 	 *
 	 * @return array
@@ -106,20 +105,20 @@ class CsvImporterSchema extends AbstractImporter {
 
 		foreach ( $this->parsed_data as $parsed_data_key => $parsed_data ) {
 
-			do_action( 'posterno_schema_import_before_import', $parsed_data );
+			do_action( 'posterno_listingsfield_import_before_import', $parsed_data );
 
 			$id        = isset( $parsed_data['id'] ) ? absint( $parsed_data['id'] ) : 0;
 			$id_exists = false;
 
 			if ( $id ) {
-				$schema_status = get_post_status( $id );
-				$id_exists     = $schema_status && 'publish' === $schema_status;
+				$listingsfield_status = get_post_status( $id );
+				$id_exists            = $listingsfield_status && 'publish' === $listingsfield_status;
 			}
 
 			if ( $id_exists && ! $update_existing ) {
 				$data['skipped'][] = new WP_Error(
-					'posterno_schema_importer_error',
-					esc_html__( 'A schema with this ID already exists.', 'posterno' ),
+					'posterno_listingsfield_importer_error',
+					esc_html__( 'A listings field with this ID already exists.', 'posterno' ),
 					array(
 						'id'  => $id,
 						'row' => $this->get_row_id( $parsed_data ),
@@ -128,9 +127,9 @@ class CsvImporterSchema extends AbstractImporter {
 				continue;
 			}
 
-			if ( $update_existing && get_post_type( $id ) !== 'pno_schema' ) {
+			if ( $update_existing && get_post_type( $id ) !== 'pno_listingsfield' ) {
 				$data['skipped'][] = new WP_Error(
-					'posterno_schema_importer_error',
+					'posterno_listingsfield_importer_error',
 					esc_html__( 'ID found but post type not matching.', 'posterno' ),
 					array(
 						'id'  => $id,
@@ -142,8 +141,8 @@ class CsvImporterSchema extends AbstractImporter {
 
 			if ( $update_existing && ( $id ) && ! $id_exists ) {
 				$data['skipped'][] = new WP_Error(
-					'posterno_schema_importer_error',
-					esc_html__( 'No matching schema exists to update.', 'posterno' ),
+					'posterno_listingsfield_importer_error',
+					esc_html__( 'No matching listings field exists to update.', 'posterno' ),
 					array(
 						'id'  => $id,
 						'row' => $this->get_row_id( $parsed_data ),
@@ -184,52 +183,15 @@ class CsvImporterSchema extends AbstractImporter {
 	protected function process_item( $data ) {
 		try {
 
-			do_action( 'posterno_schema_import_before_process_item', $data );
+			do_action( 'posterno_listingsfield_import_before_process_item', $data );
 
 			$id       = false;
 			$updating = false;
 
-			if ( $this->params['update_existing'] ) {
+			error_log( print_r( $data, true ) );
 
-				$id       = isset( $data['id'] ) ? $data['id'] : false;
-				$updating = true;
-
-			} else {
-
-				$args = [
-					'post_type'   => 'pno_schema',
-					'post_title'  => 'Import placeholder for ' . $id,
-					'post_status' => 'publish',
-				];
-
-				$schema = wp_insert_post( $args );
-
-				if ( is_wp_error( $schema ) ) {
-					throw new Exception( $schema->get_error_message() );
-				} else {
-					$id = $schema;
-				}
-			}
-
-			if ( ! $id ) {
-				throw new Exception( esc_html__( 'No ID was found.' ) );
-			}
-
-			$mode          = isset( $data['mode'] ) ? $data['mode'] : false;
-			$title         = isset( $data['name'] ) ? $data['name'] : false;
-			$listing_types = isset( $data['listing_types'] ) && is_array( $data['listing_types'] ) ? $data['listing_types'] : false;
-
-			$code   = isset( $data['code'] ) ? $data['code'] : false;
-			$status = 'publish';
-
-			\PNO\SchemaOrg\Settings\SettingsStorage::save( $id, $mode, $title, $listing_types, $code, $status );
-
-			return array(
-				'id'      => $id,
-				'updated' => $updating,
-			);
 		} catch ( Exception $e ) {
-			return new WP_Error( 'posterno_schema_importer_error', $e->getMessage(), array( 'status' => $e->getCode() ) );
+			return new WP_Error( 'posterno_listingsfield_importer_error', $e->getMessage(), array( 'status' => $e->getCode() ) );
 		}
 	}
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Email importer controller.
+ * Listings Field importer controller.
  *
  * @package     posterno-import-export
  * @copyright   Copyright (c) 2019, Sematico, LTD
@@ -10,22 +10,23 @@
 
 namespace PosternoImportExport\Import\Controllers;
 
+use Carbon_Fields\Carbon_Fields;
 use WP_Error;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Email importer controller - handles file upload and forms in admin.
+ * Listings Field importer controller - handles file upload and forms in admin.
  */
-class Email extends BaseController {
+class ListingsField extends BaseController {
 
 	/**
 	 * Import type name used for filters.
 	 *
 	 * @var string
 	 */
-	public $type = 'email';
+	public $type = 'listingsfield';
 
 	/**
 	 * Get things started.
@@ -33,13 +34,13 @@ class Email extends BaseController {
 	public function __construct() {
 		parent::__construct();
 
-		$this->page_title              = esc_html__( 'Import emails from a CSV File' );
-		$this->page_description        = esc_html__( 'This tool allows you to import (or merge) email settings to your webiste from a CSV file.' );
-		$this->page_update_label       = esc_html__( 'Update existing emails' );
-		$this->page_update_description = esc_html__( 'Existing emails that match by ID will be updated. Emails that do not exist will be skipped.' );
-		$this->page_done_url           = admin_url( 'edit.php?post_type=pno_emails' );
-		$this->page_item_label         = esc_html__( 'Email' );
-		$this->page_url                = admin_url( 'edit.php?post_type=listings&page=email_importer' );
+		$this->page_title              = esc_html__( 'Import listings fields from a CSV File' );
+		$this->page_description        = esc_html__( 'This tool allows you to import (or merge) listings fields to your webiste from a CSV file.' );
+		$this->page_update_label       = esc_html__( 'Update existing listings fields' );
+		$this->page_update_description = esc_html__( 'Existing listings fields that match by ID will be updated. Listings Fields that do not exist will be skipped.' );
+		$this->page_done_url           = admin_url( 'edit.php?post_type=listings&page=posterno-custom-listings-fields' );
+		$this->page_item_label         = esc_html__( 'Listings Field' );
+		$this->page_url                = admin_url( 'edit.php?post_type=listings&page=listingsfield_importer' );
 	}
 
 	/**
@@ -47,11 +48,11 @@ class Email extends BaseController {
 	 *
 	 * @param  string $file File to import.
 	 * @param  array  $args Importer arguments.
-	 * @return \PosternoImportExport\Import\CsvImporterEmail
+	 * @return \PosternoImportExport\Import\CsvImporterListingsField
 	 */
 	public static function get_importer( $file, $args = array() ) {
-		$importer_class = apply_filters( 'posterno_email_csv_importer_class', '\PosternoImportExport\Import\CsvImporterEmail' );
-		$args           = apply_filters( 'posterno_email_csv_importer_args', $args, $importer_class );
+		$importer_class = apply_filters( 'posterno_listingsfield_csv_importer_class', '\PosternoImportExport\Import\CsvImporterListingsField' );
+		$args           = apply_filters( 'posterno_listingsfield_csv_importer_args', $args, $importer_class );
 		return new $importer_class( $file, $args );
 	}
 
@@ -102,26 +103,36 @@ class Email extends BaseController {
 	protected function auto_map_columns( $raw_headers, $num_indexes = true ) {
 		include PNO_PLUGIN_DIR . 'vendor/posterno/import-export/resources/mappings/mappings.php';
 
-		$default_columns = $this->normalize_columns_names(
+		$initial_columns = $this->normalize_columns_names(
 			apply_filters(
-				'posterno_csv_email_import_mapping_default_columns',
+				'posterno_csv_listingsfield_import_mapping_default_columns',
 				array(
 					__( 'ID', 'posterno' )           => 'id',
 					__( 'Title', 'posterno' )        => 'title',
-					__( 'Content', 'posterno' )      => 'content',
-					__( 'Situations', 'posterno' )   => 'situations',
-					__( 'Heading', 'posterno' )      => 'heading',
-					__( 'Notify admin', 'posterno' ) => 'notify_admin',
-					__( 'Admin notification subject', 'posterno' ) => 'admin_subject',
-					__( 'Admin notification content', 'posterno' ) => 'admin_content',
 				)
 			)
 		);
 
+		$repo = Carbon_Fields::resolve( 'container_repository' );
+
+		$fields = [];
+
+		foreach ( $repo->get_containers() as $container ) {
+			if ( $container->get_id() === 'carbon_fields_container_pno_listings_fields_settings' || $container->get_id() === 'carbon_fields_container_pno_listings_fields_advanced_settings' ) {
+				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
+					foreach ( $container->get_fields() as $field ) {
+						$fields[ ! empty( $field->get_label() ) ? $field->get_label() : $field->get_base_name() ] = $field->get_base_name();
+					}
+				}
+			}
+		}
+
+		$default_columns = array_merge( $initial_columns, $fields );
+
 		$special_columns = $this->get_special_columns(
 			$this->normalize_columns_names(
 				apply_filters(
-					'posterno_csv_email_import_mapping_special_columns',
+					'posterno_csv_listingsfield_import_mapping_special_columns',
 					array(
 						__( 'Meta: %s', 'posterno' ) => 'meta:',
 					)
@@ -147,7 +158,7 @@ class Email extends BaseController {
 			}
 		}
 
-		return apply_filters( 'posterno_csv_email_import_mapped_columns', $headers, $raw_headers );
+		return apply_filters( 'posterno_csv_listingsfield_import_mapped_columns', $headers, $raw_headers );
 	}
 
 	/**
@@ -165,17 +176,27 @@ class Email extends BaseController {
 		}
 
 		// Available options.
-		$options = array(
-			'id'            => esc_html__( 'ID', 'posterno' ),
-			'title'         => esc_html__( 'Email title', 'posterno' ),
-			'content'       => esc_html__( 'Email content', 'posterno' ),
-			'situations'    => esc_html__( 'Situations' ),
-			'heading'       => esc_html__( 'Heading title' ),
-			'notify_admin'  => esc_html__( 'Notify admin' ),
-			'admin_subject' => esc_html__( 'Admin email subject' ),
-			'admin_content' => esc_html__( 'Admin email content' ),
+		$default = array(
+			'id'    => esc_html__( 'ID', 'posterno' ),
+			'title' => esc_html__( 'Field title', 'posterno' ),
 		);
 
-		return apply_filters( 'posterno_csv_email_import_mapping_options', $options, $item );
+		$repo = Carbon_Fields::resolve( 'container_repository' );
+
+		$fields = [];
+
+		foreach ( $repo->get_containers() as $container ) {
+			if ( $container->get_id() === 'carbon_fields_container_pno_listings_fields_settings' || $container->get_id() === 'carbon_fields_container_pno_listings_fields_advanced_settings' ) {
+				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
+					foreach ( $container->get_fields() as $field ) {
+						$fields[ $field->get_base_name() ] = ! empty( $field->get_label() ) ? $field->get_label() : $field->get_base_name();
+					}
+				}
+			}
+		}
+
+		$options = array_merge( $default, $fields );
+
+		return apply_filters( 'posterno_csv_listingsfield_import_mapping_options', $options, $item );
 	}
 }
