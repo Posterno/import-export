@@ -537,6 +537,25 @@ abstract class AbstractImporter implements ImporterInterface {
 	}
 
 	/**
+	 * Decode serialized strings and clean them up.
+	 *
+	 * @param string $value Field value.
+	 * @return array
+	 */
+	public function parse_serialized_field( $value ) {
+
+		if ( '' === $value ) {
+			return $value;
+		}
+
+		$string = maybe_unserialize( $value, true );
+		$value  = pno_clean( $string );
+
+		return $value;
+
+	}
+
+	/**
 	 * Expand special and internal data into the correct formats for the email CRUD.
 	 *
 	 * @param array $data Data to import.

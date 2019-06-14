@@ -10,6 +10,7 @@
 
 namespace PosternoImportExport\Import;
 
+use Carbon_Fields\Carbon_Fields;
 use WP_Error;
 use Exception;
 
@@ -47,11 +48,32 @@ class CsvImporterListingsField extends AbstractImporter {
 		 * column_name => callback.
 		 */
 		$data_formatting = array(
-			'id'            => 'intval',
-			'name'          => [ $this, 'parse_skip_field' ],
-			'code'          => [ $this, 'parse_json_field' ],
-			'listing_types' => [ $this, 'parse_listing_types_field' ],
+			'id'    => 'intval',
+			'title' => [ $this, 'parse_skip_field' ],
 		);
+
+		// Get formatting for custom fields.
+		$repo = Carbon_Fields::resolve( 'container_repository' );
+
+		foreach ( $repo->get_containers() as $container ) {
+			if ( $container->get_id() === 'carbon_fields_container_pno_listings_fields_settings' || $container->get_id() === 'carbon_fields_container_pno_listings_fields_advanced_settings' ) {
+				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
+					foreach ( $container->get_fields() as $field ) {
+						$field_type = $field->get_type();
+						switch ( $field_type ) {
+							case 'select':
+							case 'multiselect':
+							case 'complex':
+								$data_formatting[ $field->get_base_name() ] = [ $this, 'parse_serialized_field' ];
+								break;
+							case 'checkbox':
+								$data_formatting[ $field->get_base_name() ] = [ $this, 'parse_bool_field' ];
+								break;
+						}
+					}
+				}
+			}
+		}
 
 		/**
 		 * Match special column names.

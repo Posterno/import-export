@@ -107,8 +107,8 @@ class ListingsField extends BaseController {
 			apply_filters(
 				'posterno_csv_listingsfield_import_mapping_default_columns',
 				array(
-					__( 'ID', 'posterno' )           => 'id',
-					__( 'Title', 'posterno' )        => 'title',
+					__( 'ID', 'posterno' )    => 'id',
+					__( 'Title', 'posterno' ) => 'title',
 				)
 			)
 		);
