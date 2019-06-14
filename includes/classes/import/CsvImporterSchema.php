@@ -191,7 +191,7 @@ class CsvImporterSchema extends AbstractImporter {
 
 			if ( $id ) {
 				$schema_status = get_post_status( $id );
-				$id_exists     = $schema_status && 'importing' !== $schema_status;
+				$id_exists     = $schema_status && 'publish' === $schema_status;
 			}
 
 			if ( $id_exists && ! $update_existing ) {
