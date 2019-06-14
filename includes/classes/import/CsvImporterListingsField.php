@@ -149,10 +149,10 @@ class CsvImporterListingsField extends AbstractImporter {
 				continue;
 			}
 
-			if ( $update_existing && get_post_type( $id ) !== 'pno_listingsfield' ) {
+			if ( $update_existing && ( $id ) && ! $id_exists ) {
 				$data['skipped'][] = new WP_Error(
 					'posterno_listingsfield_importer_error',
-					esc_html__( 'ID found but post type not matching.', 'posterno' ),
+					esc_html__( 'No matching listings field exists to update.', 'posterno' ),
 					array(
 						'id'  => $id,
 						'row' => $this->get_row_id( $parsed_data ),
@@ -161,10 +161,10 @@ class CsvImporterListingsField extends AbstractImporter {
 				continue;
 			}
 
-			if ( $update_existing && ( $id ) && ! $id_exists ) {
+			if ( $update_existing && get_post_type( $id ) !== 'pno_listings_fields' ) {
 				$data['skipped'][] = new WP_Error(
 					'posterno_listingsfield_importer_error',
-					esc_html__( 'No matching listings field exists to update.', 'posterno' ),
+					esc_html__( 'ID found but post type not matching.', 'posterno' ),
 					array(
 						'id'  => $id,
 						'row' => $this->get_row_id( $parsed_data ),
