@@ -322,6 +322,10 @@ class BaseController {
 	public function upload_form_handler() {
 		check_admin_referer( 'posterno-csv-importer' );
 
+		if ( current_user_can( 'manage_options' ) ) {
+			define( 'ALLOW_UNFILTERED_UPLOADS', true );
+		}
+
 		$file = $this->handle_upload();
 
 		if ( is_wp_error( $file ) ) {
