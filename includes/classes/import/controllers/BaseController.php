@@ -466,7 +466,7 @@ class BaseController {
 		$updated  = isset( $_GET['items-updated'] ) ? absint( $_GET['items-updated'] ) : 0;
 		$failed   = isset( $_GET['items-failed'] ) ? absint( $_GET['items-failed'] ) : 0;
 		$skipped  = isset( $_GET['items-skipped'] ) ? absint( $_GET['items-skipped'] ) : 0;
-		$errors   = array_filter( (array) get_user_option( 'schema_import_error_log' ) );
+		$errors   = array_filter( (array) get_user_option( "{$this->type}_import_error_log" ) );
 		// phpcs:enable
 
 		include_once PNO_PLUGIN_DIR . 'vendor/posterno/import-export/resources/views/html-csv-import-done.php';
