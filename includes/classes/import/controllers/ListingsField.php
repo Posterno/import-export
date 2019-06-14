@@ -34,12 +34,12 @@ class ListingsField extends BaseController {
 	public function __construct() {
 		parent::__construct();
 
-		$this->page_title              = esc_html__( 'Import listings fields from a CSV File' );
-		$this->page_description        = esc_html__( 'This tool allows you to import (or merge) listings fields to your webiste from a CSV file.' );
-		$this->page_update_label       = esc_html__( 'Update existing listings fields' );
-		$this->page_update_description = esc_html__( 'Existing listings fields that match by ID will be updated. Listings Fields that do not exist will be skipped.' );
+		$this->page_title              = esc_html__( 'Import listings fields from a CSV File', 'posterno' );
+		$this->page_description        = esc_html__( 'This tool allows you to import (or merge) listings fields to your webiste from a CSV file.', 'posterno' );
+		$this->page_update_label       = esc_html__( 'Update existing listings fields', 'posterno' );
+		$this->page_update_description = esc_html__( 'Existing listings fields that match by ID will be updated. Listings Fields that do not exist will be skipped.', 'posterno' );
 		$this->page_done_url           = admin_url( 'edit.php?post_type=listings&page=posterno-custom-listings-fields' );
-		$this->page_item_label         = esc_html__( 'Listings Field' );
+		$this->page_item_label         = esc_html__( 'Listings Field', 'posterno' );
 		$this->page_url                = admin_url( 'edit.php?post_type=listings&page=listingsfield_importer' );
 	}
 

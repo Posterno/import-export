@@ -264,7 +264,7 @@ class CsvImporterEmail extends AbstractImporter {
 			}
 
 			if ( ! $id ) {
-				throw new Exception( esc_html__( 'No ID was found.' ) );
+				throw new Exception( esc_html__( 'No ID was found.', 'posterno' ) );
 			}
 
 			if ( ! empty( $types ) ) {

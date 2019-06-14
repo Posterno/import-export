@@ -33,12 +33,12 @@ class Email extends BaseController {
 	public function __construct() {
 		parent::__construct();
 
-		$this->page_title              = esc_html__( 'Import emails from a CSV File' );
-		$this->page_description        = esc_html__( 'This tool allows you to import (or merge) email settings to your webiste from a CSV file.' );
-		$this->page_update_label       = esc_html__( 'Update existing emails' );
-		$this->page_update_description = esc_html__( 'Existing emails that match by ID will be updated. Emails that do not exist will be skipped.' );
+		$this->page_title              = esc_html__( 'Import emails from a CSV File', 'posterno' );
+		$this->page_description        = esc_html__( 'This tool allows you to import (or merge) email settings to your webiste from a CSV file.', 'posterno' );
+		$this->page_update_label       = esc_html__( 'Update existing emails', 'posterno' );
+		$this->page_update_description = esc_html__( 'Existing emails that match by ID will be updated. Emails that do not exist will be skipped.', 'posterno' );
 		$this->page_done_url           = admin_url( 'edit.php?post_type=pno_emails' );
-		$this->page_item_label         = esc_html__( 'Email' );
+		$this->page_item_label         = esc_html__( 'Email', 'posterno' );
 		$this->page_url                = admin_url( 'edit.php?post_type=listings&page=email_importer' );
 	}
 
@@ -169,11 +169,11 @@ class Email extends BaseController {
 			'id'            => esc_html__( 'ID', 'posterno' ),
 			'title'         => esc_html__( 'Email title', 'posterno' ),
 			'content'       => esc_html__( 'Email content', 'posterno' ),
-			'situations'    => esc_html__( 'Situations' ),
-			'heading'       => esc_html__( 'Heading title' ),
-			'notify_admin'  => esc_html__( 'Notify admin' ),
-			'admin_subject' => esc_html__( 'Admin email subject' ),
-			'admin_content' => esc_html__( 'Admin email content' ),
+			'situations'    => esc_html__( 'Situations', 'posterno' ),
+			'heading'       => esc_html__( 'Heading title', 'posterno' ),
+			'notify_admin'  => esc_html__( 'Notify admin', 'posterno' ),
+			'admin_subject' => esc_html__( 'Admin email subject', 'posterno' ),
+			'admin_content' => esc_html__( 'Admin email content', 'posterno' ),
 		);
 
 		return apply_filters( 'posterno_csv_email_import_mapping_options', $options, $item );

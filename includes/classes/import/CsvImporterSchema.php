@@ -212,7 +212,7 @@ class CsvImporterSchema extends AbstractImporter {
 			}
 
 			if ( ! $id ) {
-				throw new Exception( esc_html__( 'No ID was found.' ) );
+				throw new Exception( esc_html__( 'No ID was found.', 'posterno' ) );
 			}
 
 			$mode          = isset( $data['mode'] ) ? $data['mode'] : false;
