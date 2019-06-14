@@ -210,11 +210,102 @@ class CsvImporterListingsField extends AbstractImporter {
 			$id       = false;
 			$updating = false;
 
-			error_log( print_r( $data, true ) );
+			if ( $this->params['update_existing'] ) {
+				$id       = isset( $data['id'] ) ? $data['id'] : false;
+				$updating = true;
 
+				if ( ! $id ) {
+					throw new Exception( esc_html__( 'No ID was found.', 'posterno' ) );
+				}
+			}
+
+			// Verify if the field's metakey being processed already exists or is a default one.
+			$meta_key    = isset( $data['listing_field_meta_key'] ) && ! empty( $data['listing_field_meta_key'] ) ? $data['listing_field_meta_key'] : false;
+			$field_in_db = $this->field_exists( $meta_key );
+
+			if ( pno_is_default_field( $meta_key ) ) {
+				$updating = true;
+			} elseif ( $field_in_db ) {
+				$updating = true;
+				$id       = $field_in_db;
+			}
+
+			// Now update or create a new field.
+			$title    = isset( $data['title'] ) ? $data['title'] : false;
+			$type     = isset( $data['listing_field_type'] ) ? $data['listing_field_type'] : false;
+			$priority = isset( $data['listing_field_priority'] ) ? $data['listing_field_priority'] : 100;
+
+			if ( $updating ) {
+				$args = [
+					'ID' => $id,
+				];
+				if ( $title ) {
+					$args['post_title'] = $title;
+				}
+				wp_update_post( $args );
+			} else {
+				if ( ! $title ) {
+					throw new Exception( esc_html__( 'No title assigned for import.', 'posterno' ) );
+				}
+				if ( ! $type ) {
+					throw new Exception( esc_html__( 'No type assigned for import.', 'posterno' ) );
+				}
+				if ( ! $meta_key ) {
+					throw new Exception( esc_html__( 'No meta key assigned for import.', 'posterno' ) );
+				}
+				$new_field = \PNO\Entities\Field\Listing::create(
+					[
+						'name'     => $title,
+						'priority' => $priority,
+						'type'     => $type,
+					]
+				);
+
+				$id = $new_field->getPostID();
+
+			}
+
+			// Now update all other settings found.
+			$keys_to_skip = [
+				'ID',
+				'title',
+			];
+
+			foreach ( $data as $key => $value ) {
+				if ( empty( $value ) || in_array( $key, $keys_to_skip, true ) ) {
+					continue;
+				}
+				carbon_set_post_meta( $id, $key, $value );
+			}
+
+			return array(
+				'id'      => $id,
+				'updated' => $updating,
+			);
 		} catch ( Exception $e ) {
 			return new WP_Error( 'posterno_listingsfield_importer_error', $e->getMessage(), array( 'status' => $e->getCode() ) );
 		}
+	}
+
+	/**
+	 * Verify the field exists in the db by the meta key.
+	 *
+	 * @param string $key the meta key to verify.
+	 * @return string|bool
+	 */
+	private function field_exists( $key ) {
+
+		$field_id = false;
+
+		$field       = new \PNO\Database\Queries\Listing_Fields();
+		$found_field = $field->get_item_by( 'listing_meta_key', $key );
+
+		if ( $found_field instanceof \PNO\Entities\Field\Listing && $found_field->getPostID() > 0 ) {
+			$field_id = $found_field->getPostID();
+		}
+
+		return $field_id;
+
 	}
 
 }

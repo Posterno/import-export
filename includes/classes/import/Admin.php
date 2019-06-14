@@ -344,6 +344,9 @@ class Admin {
 		update_user_option( get_current_user_id(), 'listingsfield_import_error_log', $error_log );
 
 		if ( 100 === $percent_complete ) {
+
+			\PNO\Cache\Helper::flush_all_fields_cache();
+
 			// Send success.
 			wp_send_json_success(
 				array(
