@@ -591,6 +591,50 @@ abstract class AbstractImporter implements ImporterInterface {
 	}
 
 	/**
+	 * Parse a simple taxonomy field from a CSV.
+	 *
+	 * @param string $value Field value.
+	 * @param string $taxonomy the taxonomy id.
+	 * @return array
+	 */
+	public function parse_simple_taxonomy_field( $value, $taxonomy ) {
+
+		if ( empty( $value ) ) {
+			return array();
+		}
+
+		$value = $this->unescape_data( $value );
+		$names = $this->explode_values( $value );
+		$tags  = array();
+
+		foreach ( $names as $name ) {
+			$term = get_term_by( 'name', $name, $taxonomy );
+
+			if ( ! $term || is_wp_error( $term ) ) {
+				$term = (object) wp_insert_term( $name, $taxonomy );
+			}
+
+			if ( ! is_wp_error( $term ) ) {
+				$tags[] = $term->term_id;
+			}
+		}
+
+		return $tags;
+
+	}
+
+	/**
+	 * Parse a tag field from a CSV.
+	 *
+	 * @param string $value Field value.
+	 *
+	 * @return array
+	 */
+	public function parse_listing_types_field( $value ) {
+		return $this->parse_simple_taxonomy_field( $value, 'listings-types' );
+	}
+
+	/**
 	 * Parse images list from a CSV. Images can be filenames or URLs.
 	 *
 	 * @param string $value Field value.

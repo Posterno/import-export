@@ -126,9 +126,10 @@ class CsvImporterSchema extends AbstractImporter {
 		 * column_name => callback.
 		 */
 		$data_formatting = array(
-			'id'   => 'intval',
-			'name' => [ $this, 'parse_skip_field' ],
-			'code' => [ $this, 'parse_json_field' ],
+			'id'            => 'intval',
+			'name'          => [ $this, 'parse_skip_field' ],
+			'code'          => [ $this, 'parse_json_field' ],
+			'listing_types' => [ $this, 'parse_listing_types_field' ],
 		);
 
 		/**
@@ -324,9 +325,10 @@ class CsvImporterSchema extends AbstractImporter {
 
 			$mode          = isset( $data['mode'] ) ? $data['mode'] : false;
 			$title         = isset( $data['name'] ) ? $data['name'] : false;
-			$listing_types = [];
-			$code          = isset( $data['code'] ) ? $data['code'] : false;
-			$status        = 'publish';
+			$listing_types = isset( $data['listing_types'] ) && is_array( $data['listing_types'] ) ? $data['listing_types'] : false;
+
+			$code   = isset( $data['code'] ) ? $data['code'] : false;
+			$status = 'publish';
 
 			\PNO\SchemaOrg\Settings\SettingsStorage::save( $id, $mode, $title, $listing_types, $code, $status );
 
