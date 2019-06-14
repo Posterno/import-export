@@ -95,6 +95,36 @@ abstract class AbstractImporter implements ImporterInterface {
 	public $type = '';
 
 	/**
+	 * Initialize importer.
+	 *
+	 * @param string $file   File to read.
+	 * @param array  $params Arguments for the parser.
+	 */
+	public function __construct( $file, $params = array() ) {
+		$default_args = array(
+			'start_pos'        => 0, // File pointer start.
+			'end_pos'          => -1, // File pointer end.
+			'lines'            => -1, // Max lines to read.
+			'mapping'          => array(), // Column mapping. csv_heading => email_heading.
+			'parse'            => false, // Whether to sanitize and format data.
+			'update_existing'  => false, // Whether to update existing items.
+			'delimiter'        => ',', // CSV delimiter.
+			'prevent_timeouts' => true, // Check memory and time usage and abort if reaching limit.
+			'enclosure'        => '"', // The character used to wrap text in the CSV.
+			'escape'           => "\0", // PHP uses '\' as the default escape character. This is not RFC-4180 compliant. This disables the escape character.
+		);
+
+		$this->params = wp_parse_args( $params, $default_args );
+		$this->file   = $file;
+
+		if ( isset( $this->params['mapping']['from'], $this->params['mapping']['to'] ) ) {
+			$this->params['mapping'] = array_combine( $this->params['mapping']['from'], $this->params['mapping']['to'] );
+		}
+
+		$this->read_file();
+	}
+
+	/**
 	 * Get file raw headers.
 	 *
 	 * @return array
@@ -504,6 +534,36 @@ abstract class AbstractImporter implements ImporterInterface {
 
 		return $value;
 
+	}
+
+	/**
+	 * Expand special and internal data into the correct formats for the email CRUD.
+	 *
+	 * @param array $data Data to import.
+	 *
+	 * @return array
+	 */
+	protected function expand_data( $data ) {
+		$data = apply_filters( "posterno_{$this->type}_importer_pre_expand_data", $data );
+
+		// Handle special column names which span multiple columns.
+		$meta_data = array();
+
+		foreach ( $data as $key => $value ) {
+			if ( $this->starts_with( $key, 'meta:' ) ) {
+				$meta_data[] = array(
+					'key'   => str_replace( 'meta:', '', $key ),
+					'value' => $value,
+				);
+				unset( $data[ $key ] );
+			}
+		}
+
+		if ( ! empty( $meta_data ) ) {
+			$data['meta_data'] = $meta_data;
+		}
+
+		return $data;
 	}
 
 	/**

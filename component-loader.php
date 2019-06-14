@@ -34,6 +34,7 @@ add_action(
 			'listings_page_taxonomy_exporter',
 			'listings_page_listings_exporter',
 			'listings_page_schema_importer',
+			'listings_page_email_importer',
 		];
 
 		wp_register_style( 'pno-admin-export-import', PNO_PLUGIN_URL . '/vendor/posterno/import-export/dist/css/screen.css', false, PNO_VERSION );
@@ -138,15 +139,6 @@ add_action(
 					'export_nonce' => wp_create_nonce( 'pno-listings-export' ),
 				)
 			);
-		}
-
-		$importers = [
-			'listings_page_schemas_importer',
-		];
-
-		if ( in_array( $screen->id, $importers, true ) ) {
-			wp_enqueue_script( 'pno-ajax-import-script' );
-			wp_enqueue_script( 'pno-importers' );
 		}
 
 	},
