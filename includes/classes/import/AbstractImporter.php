@@ -773,8 +773,11 @@ abstract class AbstractImporter implements ImporterInterface {
 	 * @return string
 	 */
 	protected function get_row_id( $parsed_data ) {
-		$id       = isset( $parsed_data['id'] ) ? absint( $parsed_data['id'] ) : 0;
-		$name     = isset( $parsed_data['name'] ) ? esc_attr( $parsed_data['name'] ) : '';
+		$id   = isset( $parsed_data['id'] ) ? absint( $parsed_data['id'] ) : 0;
+		$name = isset( $parsed_data['name'] ) ? esc_attr( $parsed_data['name'] ) : '';
+		if ( isset( $parsed_data['title'] ) ) {
+			$name = esc_attr( $parsed_data['title'] );
+		}
 		$row_data = array();
 
 		if ( $name ) {

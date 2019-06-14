@@ -179,6 +179,21 @@ class CsvImporterEmail extends AbstractImporter {
 				continue;
 			}
 
+			// Verify the email type exists.
+			$email_type = isset( $parsed_data['situations'] ) ? pno_clean( $parsed_data['situations'] ) : [];
+
+			if ( empty( $email_type ) ) {
+				$data['skipped'][] = new WP_Error(
+					'posterno_email_importer_error',
+					esc_html__( 'No matching email situation exists.', 'posterno' ),
+					array(
+						'id'  => $id,
+						'row' => $this->get_row_id( $parsed_data ),
+					)
+				);
+				continue;
+			}
+
 			$result = $this->process_item( $parsed_data );
 
 			if ( is_wp_error( $result ) ) {
