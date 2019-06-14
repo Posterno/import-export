@@ -86,6 +86,32 @@ class CsvImporterEmail extends AbstractImporter {
 	}
 
 	/**
+	 * Parse email situations field.
+	 *
+	 * @param mixed $value the value of the field.
+	 * @return array
+	 */
+	public function parse_email_situations_field( $value ) {
+		if ( empty( $value ) ) {
+			return array();
+		}
+
+		$value = $this->unescape_data( $value );
+		$names = $this->explode_values( $value );
+		$terms = array();
+
+		foreach ( $names as $name ) {
+			$term = get_term_by( 'name', $name, 'pno-email-type' );
+
+			if ( isset( $term->term_id ) ) {
+				$terms[] = $term->term_id;
+			}
+		}
+
+		return $terms;
+	}
+
+	/**
 	 * Process importer.
 	 *
 	 * Do not import emails with IDs that already exist if option
