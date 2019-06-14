@@ -20,32 +20,32 @@ defined( 'ABSPATH' ) || exit;
 
 		if ( 0 < $imported ) {
 			$results[] = sprintf(
-				/* translators: %d: products count */
-				_n( '%s product imported', '%s products imported', $imported, 'posterno' ),
+				/* translators: %d: items count */
+				_n( '%s item imported', '%s items imported', $imported, 'posterno' ),
 				'<strong>' . number_format_i18n( $imported ) . '</strong>'
 			);
 		}
 
 		if ( 0 < $updated ) {
 			$results[] = sprintf(
-				/* translators: %d: products count */
-				_n( '%s product updated', '%s products updated', $updated, 'posterno' ),
+				/* translators: %d: items count */
+				_n( '%s item updated', '%s items updated', $updated, 'posterno' ),
 				'<strong>' . number_format_i18n( $updated ) . '</strong>'
 			);
 		}
 
 		if ( 0 < $skipped ) {
 			$results[] = sprintf(
-				/* translators: %d: products count */
-				_n( '%s product was skipped', '%s products were skipped', $skipped, 'posterno' ),
+				/* translators: %d: items count */
+				_n( '%s item was skipped', '%s items were skipped', $skipped, 'posterno' ),
 				'<strong>' . number_format_i18n( $skipped ) . '</strong>'
 			);
 		}
 
 		if ( 0 < $failed ) {
 			$results [] = sprintf(
-				/* translators: %d: products count */
-				_n( 'Failed to import %s product', 'Failed to import %s products', $failed, 'posterno' ),
+				/* translators: %d: items count */
+				_n( 'Failed to import %s item', 'Failed to import %s items', $failed, 'posterno' ),
 				'<strong>' . number_format_i18n( $failed ) . '</strong>'
 			);
 		}
@@ -62,7 +62,7 @@ defined( 'ABSPATH' ) || exit;
 		<table class="widefat pno-importer-error-log-table">
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'Product', 'posterno' ); ?></th>
+					<th><?php esc_html_e( 'Item', 'posterno' ); ?></th>
 					<th><?php esc_html_e( 'Reason for failure', 'posterno' ); ?></th>
 				</tr>
 			</thead>
