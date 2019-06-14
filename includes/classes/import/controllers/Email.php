@@ -39,6 +39,7 @@ class Email extends BaseController {
 		$this->page_update_description = esc_html__( 'Existing emails that match by ID will be updated. Emails that do not exist will be skipped.' );
 		$this->page_done_url           = admin_url( 'edit.php?post_type=listings&page=posterno-listings-email#/' );
 		$this->page_item_label         = esc_html__( 'Email' );
+		$this->page_url                = admin_url( 'edit.php?post_type=listings&page=email_importer' );
 	}
 
 	/**

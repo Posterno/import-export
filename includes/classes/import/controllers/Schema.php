@@ -39,6 +39,7 @@ class Schema extends BaseController {
 		$this->page_update_description = esc_html__( 'Existing schemas that match by ID will be updated. Schemas that do not exist will be skipped.' );
 		$this->page_done_url           = admin_url( 'edit.php?post_type=listings&page=posterno-listings-schema#/' );
 		$this->page_item_label         = esc_html__( 'Schema' );
+		$this->page_url                = admin_url( 'edit.php?post_type=listings&page=schema_importer' );
 	}
 
 	/**

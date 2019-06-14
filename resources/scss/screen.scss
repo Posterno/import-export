@@ -98,6 +98,9 @@
 
 		.button {
 			float: right;
+			&:not(.button-primary) {
+				margin-right: 10px;
+			}
 		}
 
 		.posterno-importer-toggle-advanced-options {

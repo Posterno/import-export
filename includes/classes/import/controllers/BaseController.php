@@ -119,6 +119,13 @@ class BaseController {
 	public $page_item_label = '';
 
 	/**
+	 * URL of this importer.
+	 *
+	 * @var string
+	 */
+	public $page_url = '';
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {

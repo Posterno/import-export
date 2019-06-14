@@ -940,6 +940,11 @@
 .posterno-importer-wrapper .pno-actions .button {
 	float: right;
 }
+.posterno-progress-form-wrapper .pno-actions .button:not(.button-primary),
+.posterno-exporter-wrapper .pno-actions .button:not(.button-primary),
+.posterno-importer-wrapper .pno-actions .button:not(.button-primary) {
+	margin-right: 10px;
+}
 .posterno-progress-form-wrapper .pno-actions .posterno-importer-toggle-advanced-options,
 .posterno-exporter-wrapper .pno-actions .posterno-importer-toggle-advanced-options,
 .posterno-importer-wrapper .pno-actions .posterno-importer-toggle-advanced-options {
