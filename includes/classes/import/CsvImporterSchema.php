@@ -126,7 +126,7 @@ class CsvImporterSchema extends AbstractImporter {
 		 * column_name => callback.
 		 */
 		$data_formatting = array(
-			'id'   => 'absint',
+			'id'   => 'intval',
 			'name' => [ $this, 'parse_skip_field' ],
 			'code' => [ $this, 'parse_json_field' ],
 		);
@@ -235,6 +235,18 @@ class CsvImporterSchema extends AbstractImporter {
 				continue;
 			}
 
+			if ( $update_existing && get_post_type( $id ) !== 'pno_schema' ) {
+				$data['skipped'][] = new WP_Error(
+					'posterno_schema_importer_error',
+					esc_html__( 'ID found but post type not matching.', 'posterno' ),
+					array(
+						'id'  => $id,
+						'row' => $this->get_row_id( $parsed_data ),
+					)
+				);
+				continue;
+			}
+
 			if ( $update_existing && ( $id ) && ! $id_exists ) {
 				$data['skipped'][] = new WP_Error(
 					'posterno_schema_importer_error',
@@ -281,9 +293,20 @@ class CsvImporterSchema extends AbstractImporter {
 
 			do_action( 'posterno_schema_import_before_process_item', $data );
 
+			error_log( print_r( $data, true ) );
+
 			$id       = false;
 			$updating = false;
 
+			if ( $this->params['update_existing'] ) {
+
+				$id = isset( $data['id'] ) ? $data['id'] : false;
+
+			} else {
+
+			}
+
+			/*
 			if ( $this->params['update_existing'] ) {
 				$id = isset( $data['id'] ) ? $data['id'] : false;
 			} else {
@@ -322,7 +345,7 @@ class CsvImporterSchema extends AbstractImporter {
 			return array(
 				'id'      => $id,
 				'updated' => $updating,
-			);
+			);*/
 		} catch ( Exception $e ) {
 			return new WP_Error( 'posterno_schema_importer_error', $e->getMessage(), array( 'status' => $e->getCode() ) );
 		}
