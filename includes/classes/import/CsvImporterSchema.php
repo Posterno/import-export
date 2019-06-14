@@ -293,22 +293,14 @@ class CsvImporterSchema extends AbstractImporter {
 
 			do_action( 'posterno_schema_import_before_process_item', $data );
 
-			error_log( print_r( $data, true ) );
-
 			$id       = false;
 			$updating = false;
 
 			if ( $this->params['update_existing'] ) {
 
-				$id = isset( $data['id'] ) ? $data['id'] : false;
+				$id       = isset( $data['id'] ) ? $data['id'] : false;
+				$updating = true;
 
-			} else {
-
-			}
-
-			/*
-			if ( $this->params['update_existing'] ) {
-				$id = isset( $data['id'] ) ? $data['id'] : false;
 			} else {
 
 				$args = [
@@ -330,10 +322,6 @@ class CsvImporterSchema extends AbstractImporter {
 				throw new Exception( esc_html__( 'No ID was found.' ) );
 			}
 
-			if ( $id && 'importing' !== get_post_status( $id ) ) {
-				$updating = true;
-			}
-
 			$mode          = isset( $data['mode'] ) ? $data['mode'] : false;
 			$title         = isset( $data['name'] ) ? $data['name'] : false;
 			$listing_types = [];
@@ -345,7 +333,7 @@ class CsvImporterSchema extends AbstractImporter {
 			return array(
 				'id'      => $id,
 				'updated' => $updating,
-			);*/
+			);
 		} catch ( Exception $e ) {
 			return new WP_Error( 'posterno_schema_importer_error', $e->getMessage(), array( 'status' => $e->getCode() ) );
 		}
