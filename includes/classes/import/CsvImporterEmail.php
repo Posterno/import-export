@@ -140,7 +140,7 @@ class CsvImporterEmail extends AbstractImporter {
 
 			if ( $id ) {
 				$email_status = get_post_status( $id );
-				$id_exists    = $email_status && 'importing' !== $email_status;
+				$id_exists    = $email_status && 'publish' === $email_status;
 			}
 
 			if ( $id_exists && ! $update_existing ) {
@@ -155,7 +155,7 @@ class CsvImporterEmail extends AbstractImporter {
 				continue;
 			}
 
-			if ( $update_existing && get_post_type( $id ) !== 'pno_email' ) {
+			if ( $update_existing && get_post_type( $id ) !== 'pno_emails' ) {
 				$data['skipped'][] = new WP_Error(
 					'posterno_email_importer_error',
 					esc_html__( 'ID found but post type not matching.', 'posterno' ),
@@ -231,8 +231,55 @@ class CsvImporterEmail extends AbstractImporter {
 			$id       = false;
 			$updating = false;
 
-			error_log( print_r( $data, true ) );
+			// Grab details.
+			$title         = isset( $data['title'] ) ? $data['title'] : 'null';
+			$content       = isset( $data['content'] ) ? $data['content'] : false;
+			$types         = isset( $data['situations'] ) ? $data['situations'] : [];
+			$heading       = isset( $data['heading'] ) ? $data['heading'] : false;
+			$notify_admin  = isset( $data['notify_admin'] ) ? $data['notify_admin'] : false;
+			$admin_subject = isset( $data['admin_subject'] ) ? $data['admin_subject'] : false;
+			$admin_content = isset( $data['admin_content'] ) ? $data['admin_content'] : false;
 
+			if ( $this->params['update_existing'] ) {
+
+				$id       = isset( $data['id'] ) ? $data['id'] : false;
+				$updating = true;
+
+			} else {
+
+				$args = [
+					'post_type'    => 'pno_emails',
+					'post_title'   => $title,
+					'post_content' => $content,
+					'post_status'  => 'publish',
+				];
+
+				$schema = wp_insert_post( $args );
+
+				if ( is_wp_error( $schema ) ) {
+					throw new Exception( $schema->get_error_message() );
+				} else {
+					$id = $schema;
+				}
+			}
+
+			if ( ! $id ) {
+				throw new Exception( esc_html__( 'No ID was found.' ) );
+			}
+
+			if ( ! empty( $types ) ) {
+				wp_set_post_terms( $id, array_map( 'absint', $types ), 'pno-email-type' );
+			}
+
+			carbon_set_post_meta( $id, 'heading', $heading );
+			carbon_set_post_meta( $id, 'has_admin_notification', $notify_admin );
+			carbon_set_post_meta( $id, 'administrator_notification_subject', $admin_subject );
+			carbon_set_post_meta( $id, 'administrator_notification', $admin_content );
+
+			return array(
+				'id'      => $id,
+				'updated' => $updating,
+			);
 		} catch ( Exception $e ) {
 			return new WP_Error( 'posterno_email_importer_error', $e->getMessage(), array( 'status' => $e->getCode() ) );
 		}
