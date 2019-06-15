@@ -134,13 +134,13 @@ class CsvImporterRegistrationField extends AbstractImporter {
 
 			if ( $id ) {
 				$registrationfield_status = get_post_status( $id );
-				$id_exists            = $registrationfield_status && 'publish' === $registrationfield_status;
+				$id_exists                = $registrationfield_status && 'publish' === $registrationfield_status;
 			}
 
 			if ( $id_exists && ! $update_existing ) {
 				$data['skipped'][] = new WP_Error(
 					'posterno_registrationfield_importer_error',
-					esc_html__( 'A profiles field with this ID already exists.', 'posterno' ),
+					esc_html__( 'A registration field with this ID already exists.', 'posterno' ),
 					array(
 						'id'  => $id,
 						'row' => $this->get_row_id( $parsed_data ),
@@ -152,7 +152,7 @@ class CsvImporterRegistrationField extends AbstractImporter {
 			if ( $update_existing && ( $id ) && ! $id_exists ) {
 				$data['skipped'][] = new WP_Error(
 					'posterno_registrationfield_importer_error',
-					esc_html__( 'No matching profiles field exists to update.', 'posterno' ),
+					esc_html__( 'No matching registration field exists to update.', 'posterno' ),
 					array(
 						'id'  => $id,
 						'row' => $this->get_row_id( $parsed_data ),
@@ -210,9 +210,6 @@ class CsvImporterRegistrationField extends AbstractImporter {
 			$id       = false;
 			$updating = false;
 
-			error_log( print_r( $data, true ) );
-
-			/*
 			if ( $this->params['update_existing'] ) {
 				$id       = isset( $data['id'] ) ? $data['id'] : false;
 				$updating = true;
@@ -222,21 +219,33 @@ class CsvImporterRegistrationField extends AbstractImporter {
 				}
 			}
 
-			// Verify if the field's metakey being processed already exists or is a default one.
-			$meta_key    = isset( $data['profile_field_meta_key'] ) && ! empty( $data['profile_field_meta_key'] ) ? $data['profile_field_meta_key'] : false;
-			$field_in_db = $this->field_exists( $meta_key );
+			$is_default_field = false;
 
-			if ( pno_is_default_field( $meta_key ) ) {
-				$updating = true;
-			} elseif ( $field_in_db ) {
-				$updating = true;
-				$id       = $field_in_db;
+			$default_meta_key = isset( $data['registration_field_is_default'] ) ? $data['registration_field_is_default'] : false;
+			$profile_field_id = isset( $data['registration_field_profile_field_id'] ) ? $data['registration_field_profile_field_id'] : false;
+
+			if ( ! empty( $default_meta_key ) && empty( $profile_field_id ) ) {
+				$is_default_field = true;
+			} elseif ( empty( $default_meta_key ) && ! empty( $profile_field_id ) ) {
+				$is_default_field = false;
+			} else {
+				$is_default_field = false;
 			}
 
-			// Now update or create a new field.
+			if ( $is_default_field === true ) {
+				$updating = true;
+				$id       = $this->get_default_registration_field( $default_meta_key );
+			} else {
+
+				$profile_field_exists = $this->profile_field_exists( $profile_field_id );
+
+				if ( ! $profile_field_exists ) {
+					throw new Exception( esc_html__( 'Assigned profile field ID does not exists.', 'posterno' ) );
+				}
+			}
+
 			$title    = isset( $data['title'] ) ? $data['title'] : false;
-			$type     = isset( $data['profile_field_type'] ) ? $data['profile_field_type'] : false;
-			$priority = isset( $data['profile_field_priority'] ) ? $data['profile_field_priority'] : 100;
+			$priority = isset( $data['registration_field_priority'] ) ? $data['registration_field_priority'] : 100;
 
 			if ( $updating ) {
 				$args = [
@@ -250,17 +259,11 @@ class CsvImporterRegistrationField extends AbstractImporter {
 				if ( ! $title ) {
 					throw new Exception( esc_html__( 'No title assigned for import.', 'posterno' ) );
 				}
-				if ( ! $type ) {
-					throw new Exception( esc_html__( 'No type assigned for import.', 'posterno' ) );
-				}
-				if ( ! $meta_key ) {
-					throw new Exception( esc_html__( 'No meta key assigned for import.', 'posterno' ) );
-				}
-				$new_field = \PNO\Entities\Field\Profile::create(
+				$new_field = \PNO\Entities\Field\Registration::create(
 					[
-						'name'     => $title,
-						'priority' => $priority,
-						'type'     => $type,
+						'name'             => $title,
+						'profile_field_id' => $profile_field_id,
+						'priority'         => $priority,
 					]
 				);
 
@@ -268,7 +271,6 @@ class CsvImporterRegistrationField extends AbstractImporter {
 
 			}
 
-			// Now update all other settings found.
 			$keys_to_skip = [
 				'ID',
 				'title',
@@ -279,7 +281,7 @@ class CsvImporterRegistrationField extends AbstractImporter {
 					continue;
 				}
 				carbon_set_post_meta( $id, $key, $value );
-			}*/
+			}
 
 			return array(
 				'id'      => $id,
@@ -291,19 +293,41 @@ class CsvImporterRegistrationField extends AbstractImporter {
 	}
 
 	/**
-	 * Verify the field exists in the db by the meta key.
+	 * Get a registration field id by the meta key assigned to it.
 	 *
-	 * @param string $key the meta key to verify.
-	 * @return string|bool
+	 * @param string $meta_key meta key of the field.
+	 * @return string
 	 */
-	private function field_exists( $key ) {
+	private function get_default_registration_field( $meta_key ) {
+
+		$id = false;
+
+		$fields = new \PNO\Database\Queries\Registration_Fields( [ 'number' => 100 ] );
+
+		foreach ( $fields->items as $field ) {
+			if ( $field->getProfileFieldID() === $meta_key ) {
+				return $field->getPostID();
+			}
+		}
+
+		return $id;
+
+	}
+
+	/**
+	 * Verify if a profile field exists matching the id.
+	 *
+	 * @param string $id profile post id.
+	 * @return bool
+	 */
+	private function profile_field_exists( $id ) {
 
 		$field_id = false;
 
-		$field       = new \PNO\Database\Queries\Registration_Fields();
-		$found_field = $field->get_item_by( 'profile_field_id', $key );
+		$field       = new \PNO\Database\Queries\Profile_Fields();
+		$found_field = $field->get_item_by( 'post_id', $id );
 
-		if ( $found_field instanceof \PNO\Entities\Field\Registration && $found_field->getPostID() > 0 ) {
+		if ( $found_field instanceof \PNO\Entities\Field\Profile && $found_field->getPostID() > 0 ) {
 			$field_id = $found_field->getPostID();
 		}
 
