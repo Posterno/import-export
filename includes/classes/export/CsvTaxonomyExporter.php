@@ -100,6 +100,7 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 			'slug'        => esc_html__( 'Term slug', 'posterno' ),
 			'description' => esc_html__( 'Description', 'posterno' ),
 			'parent'      => esc_html__( 'Parent', 'posterno' ),
+			'taxonomy' => esc_html__( 'Taxonomy' ),
 		];
 
 		/**
@@ -204,6 +205,9 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 						break;
 					case 'parent':
 						$value = $term->parent;
+						break;
+					case 'taxonomy':
+						$value = $this->taxonomy;
 						break;
 					default:
 						$value = $this->get_carbon_term_setting( $this->taxonomy, $term->term_id, $column_id );
