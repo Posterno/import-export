@@ -36,6 +36,7 @@ add_action(
 			'listings_page_schema_importer',
 			'listings_page_email_importer',
 			'listings_page_listingsfield_importer',
+			'listings_page_profilesfield_importer',
 		];
 
 		wp_register_style( 'pno-admin-export-import', PNO_PLUGIN_URL . '/vendor/posterno/import-export/dist/css/screen.css', false, PNO_VERSION );
