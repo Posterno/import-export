@@ -57,17 +57,6 @@ class Taxonomy extends BaseController {
 	}
 
 	/**
-	 * Output information about the uploading process.
-	 */
-	protected function upload_form() {
-		$bytes      = apply_filters( 'import_upload_size_limit', wp_max_upload_size() );
-		$size       = size_format( $bytes );
-		$upload_dir = wp_upload_dir();
-
-		include PNO_PLUGIN_DIR . 'vendor/posterno/import-export/resources/views/html-csv-import-taxonomy-form.php';
-	}
-
-	/**
 	 * Mapping step.
 	 */
 	protected function mapping_form() {
