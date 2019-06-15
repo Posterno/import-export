@@ -107,8 +107,12 @@ class Taxonomy extends BaseController {
 			apply_filters(
 				'posterno_csv_taxonomyterm_import_mapping_default_columns',
 				array(
-					__( 'ID', 'posterno' )    => 'id',
-					__( 'Title', 'posterno' ) => 'title',
+					__( 'ID', 'posterno' )          => 'id',
+					__( 'Term name', 'posterno' )   => 'term_name',
+					__( 'Term slug', 'posterno' )   => 'term_slug',
+					__( 'Description', 'posterno' ) => 'description',
+					__( 'Parent', 'posterno' )      => 'parent',
+					__( 'Taxonomy', 'posterno' )    => 'taxonomy',
 				)
 			)
 		);
@@ -117,6 +121,7 @@ class Taxonomy extends BaseController {
 
 		$fields = [];
 
+		/*
 		foreach ( $repo->get_containers() as $container ) {
 			if ( pno_ends_with( $container->get_id(), "pno_term_settings_{$this->taxonomy}" ) ) {
 				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
@@ -125,7 +130,7 @@ class Taxonomy extends BaseController {
 					}
 				}
 			}
-		}
+		}*/
 
 		$default_columns = array_merge( $initial_columns, $fields );
 
@@ -177,14 +182,19 @@ class Taxonomy extends BaseController {
 
 		// Available options.
 		$default = array(
-			'id'    => esc_html__( 'ID', 'posterno' ),
-			'title' => esc_html__( 'Field title', 'posterno' ),
+			'id'          => esc_html__( 'ID', 'posterno' ),
+			'term_name'   => esc_html__( 'Term name', 'posterno' ),
+			'term_slug'   => esc_html__( 'Term slug', 'posterno' ),
+			'description' => esc_html__( 'Description', 'posterno' ),
+			'parent'      => esc_html__( 'Parent', 'posterno' ),
+			'taxonomy'    => esc_html__( 'Taxonomy', 'posterno' ),
 		);
 
 		$repo = Carbon_Fields::resolve( 'container_repository' );
 
 		$fields = [];
 
+		/*
 		foreach ( $repo->get_containers() as $container ) {
 			if ( pno_ends_with( $container->get_id(), "pno_term_settings_{$this->taxonomy}" ) ) {
 				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
@@ -193,7 +203,7 @@ class Taxonomy extends BaseController {
 					}
 				}
 			}
-		}
+		}*/
 
 		$options = array_merge( $default, $fields );
 
