@@ -48,32 +48,11 @@ class CsvImporterTaxonomyTerm extends AbstractImporter {
 		 * column_name => callback.
 		 */
 		$data_formatting = array(
-			'id'    => 'intval',
-			'title' => [ $this, 'parse_skip_field' ],
+			'id'          => 'intval',
+			'term_name'   => [ $this, 'parse_skip_field' ],
+			'description' => [ $this, 'parse_description_field' ],
+			'parent'      => 'intval',
 		);
-
-		// Get formatting for custom fields.
-		$repo = Carbon_Fields::resolve( 'container_repository' );
-
-		foreach ( $repo->get_containers() as $container ) {
-			if ( pno_ends_with( $container->get_id(), "pno_term_settings_{$this->taxonomy}" ) ) {
-				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
-					foreach ( $container->get_fields() as $field ) {
-						$field_type = $field->get_type();
-						switch ( $field_type ) {
-							case 'select':
-							case 'multiselect':
-							case 'complex':
-								$data_formatting[ $field->get_base_name() ] = [ $this, 'parse_serialized_field' ];
-								break;
-							case 'checkbox':
-								$data_formatting[ $field->get_base_name() ] = [ $this, 'parse_bool_field' ];
-								break;
-						}
-					}
-				}
-			}
-		}
 
 		/**
 		 * Match special column names.
@@ -130,18 +109,12 @@ class CsvImporterTaxonomyTerm extends AbstractImporter {
 			do_action( 'posterno_taxonomyterm_import_before_import', $parsed_data );
 
 			$id        = isset( $parsed_data['id'] ) ? absint( $parsed_data['id'] ) : 0;
-			$id_exists = false;
+			$taxonomy  = isset( $parsed_data['taxonomy'] ) ? sanitize_text_field( $parsed_data['taxonomy'] ) : '';
 
-			/*
-			if ( $id ) {
-				$taxonomyterm_status = get_post_status( $id );
-				$id_exists            = $taxonomyterm_status && 'publish' === $taxonomyterm_status;
-			}
-
-			if ( $id_exists && ! $update_existing ) {
+			if ( empty( $taxonomy ) || ! taxonomy_exists( $taxonomy ) ) {
 				$data['skipped'][] = new WP_Error(
 					'posterno_taxonomyterm_importer_error',
-					esc_html__( 'A listings field with this ID already exists.', 'posterno' ),
+					esc_html__( 'Taxonomy not found.', 'posterno' ),
 					array(
 						'id'  => $id,
 						'row' => $this->get_row_id( $parsed_data ),
@@ -150,30 +123,22 @@ class CsvImporterTaxonomyTerm extends AbstractImporter {
 				continue;
 			}
 
-			if ( $update_existing && ( $id ) && ! $id_exists ) {
-				$data['skipped'][] = new WP_Error(
-					'posterno_taxonomyterm_importer_error',
-					esc_html__( 'No matching listings field exists to update.', 'posterno' ),
-					array(
-						'id'  => $id,
-						'row' => $this->get_row_id( $parsed_data ),
-					)
-				);
-				continue;
-			}
+			if ( $update_existing ) {
 
-			if ( $update_existing && get_post_type( $id ) !== 'pno_listings_fields' ) {
-				$data['skipped'][] = new WP_Error(
-					'posterno_taxonomyterm_importer_error',
-					esc_html__( 'ID found but post type not matching.', 'posterno' ),
-					array(
-						'id'  => $id,
-						'row' => $this->get_row_id( $parsed_data ),
-					)
-				);
-				continue;
+				$term_exists = term_exists( $id, $taxonomy );
+
+				if ( ! $term_exists ) {
+					$data['skipped'][] = new WP_Error(
+						'posterno_taxonomyterm_importer_error',
+						esc_html__( 'Term with this ID not found.', 'posterno' ),
+						array(
+							'id'  => $id,
+							'row' => $this->get_row_id( $parsed_data ),
+						)
+					);
+					continue;
+				}
 			}
-			*/
 
 			$result = $this->process_item( $parsed_data );
 
