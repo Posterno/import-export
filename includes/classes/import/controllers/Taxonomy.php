@@ -103,7 +103,7 @@ class Taxonomy extends BaseController {
 	protected function auto_map_columns( $raw_headers, $num_indexes = true ) {
 		include PNO_PLUGIN_DIR . 'vendor/posterno/import-export/resources/mappings/mappings.php';
 
-		$initial_columns = $this->normalize_columns_names(
+		$default_columns = $this->normalize_columns_names(
 			apply_filters(
 				'posterno_csv_taxonomyterm_import_mapping_default_columns',
 				array(
@@ -116,23 +116,6 @@ class Taxonomy extends BaseController {
 				)
 			)
 		);
-
-		$repo = Carbon_Fields::resolve( 'container_repository' );
-
-		$fields = [];
-
-		/*
-		foreach ( $repo->get_containers() as $container ) {
-			if ( pno_ends_with( $container->get_id(), "pno_term_settings_{$this->taxonomy}" ) ) {
-				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
-					foreach ( $container->get_fields() as $field ) {
-						$fields[ ! empty( $field->get_label() ) ? $field->get_label() : $field->get_base_name() ] = $field->get_base_name();
-					}
-				}
-			}
-		}*/
-
-		$default_columns = array_merge( $initial_columns, $fields );
 
 		$special_columns = $this->get_special_columns(
 			$this->normalize_columns_names(
@@ -180,32 +163,19 @@ class Taxonomy extends BaseController {
 			$index = $matches[0];
 		}
 
+		// Properly format for meta field.
+		$meta = str_replace( 'meta:', '', $item );
+
 		// Available options.
-		$default = array(
-			'id'          => esc_html__( 'ID', 'posterno' ),
-			'term_name'   => esc_html__( 'Term name', 'posterno' ),
-			'term_slug'   => esc_html__( 'Term slug', 'posterno' ),
-			'description' => esc_html__( 'Description', 'posterno' ),
-			'parent'      => esc_html__( 'Parent', 'posterno' ),
-			'taxonomy'    => esc_html__( 'Taxonomy', 'posterno' ),
+		$options = array(
+			'id'            => esc_html__( 'ID', 'posterno' ),
+			'term_name'     => esc_html__( 'Term name', 'posterno' ),
+			'term_slug'     => esc_html__( 'Term slug', 'posterno' ),
+			'description'   => esc_html__( 'Description', 'posterno' ),
+			'parent'        => esc_html__( 'Parent', 'posterno' ),
+			'taxonomy'      => esc_html__( 'Taxonomy', 'posterno' ),
+			'meta:' . $meta => __( 'Import as meta', 'posterno' ),
 		);
-
-		$repo = Carbon_Fields::resolve( 'container_repository' );
-
-		$fields = [];
-
-		/*
-		foreach ( $repo->get_containers() as $container ) {
-			if ( pno_ends_with( $container->get_id(), "pno_term_settings_{$this->taxonomy}" ) ) {
-				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
-					foreach ( $container->get_fields() as $field ) {
-						$fields[ $field->get_base_name() ] = ! empty( $field->get_label() ) ? $field->get_label() : $field->get_base_name();
-					}
-				}
-			}
-		}*/
-
-		$options = array_merge( $default, $fields );
 
 		return apply_filters( 'posterno_csv_taxonomyterm_import_mapping_options', $options, $item );
 	}

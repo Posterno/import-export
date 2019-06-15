@@ -100,7 +100,7 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 			'slug'        => esc_html__( 'Term slug', 'posterno' ),
 			'description' => esc_html__( 'Description', 'posterno' ),
 			'parent'      => esc_html__( 'Parent', 'posterno' ),
-			'taxonomy' => esc_html__( 'Taxonomy' ),
+			'taxonomy'    => esc_html__( 'Taxonomy' ),
 		];
 
 		/**
@@ -124,10 +124,9 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 			if ( pno_ends_with( $container->get_id(), "pno_term_settings_{$this->taxonomy}" ) ) {
 				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
 					foreach ( $container->get_fields() as $field ) {
-						$cols[ $field->get_base_name() ] = $field->get_base_name();
+						$cols[ $field->get_base_name() ] = 'Meta: ' . $field->get_base_name();
 					}
 				}
-
 			}
 		}
 
