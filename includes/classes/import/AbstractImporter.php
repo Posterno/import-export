@@ -797,6 +797,9 @@ abstract class AbstractImporter implements ImporterInterface {
 		if ( isset( $parsed_data['title'] ) ) {
 			$name = esc_attr( $parsed_data['title'] );
 		}
+		if ( isset( $parsed_data['term_name'] ) ) {
+			$name = esc_attr( $parsed_data['term_name'] );
+		}
 		$row_data = array();
 
 		if ( $name ) {

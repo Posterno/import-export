@@ -108,8 +108,8 @@ class CsvImporterTaxonomyTerm extends AbstractImporter {
 
 			do_action( 'posterno_taxonomyterm_import_before_import', $parsed_data );
 
-			$id        = isset( $parsed_data['id'] ) ? absint( $parsed_data['id'] ) : 0;
-			$taxonomy  = isset( $parsed_data['taxonomy'] ) ? sanitize_text_field( $parsed_data['taxonomy'] ) : '';
+			$id       = isset( $parsed_data['id'] ) ? absint( $parsed_data['id'] ) : 0;
+			$taxonomy = isset( $parsed_data['taxonomy'] ) ? sanitize_text_field( $parsed_data['taxonomy'] ) : '';
 
 			if ( empty( $taxonomy ) || ! taxonomy_exists( $taxonomy ) ) {
 				$data['skipped'][] = new WP_Error(
@@ -177,7 +177,6 @@ class CsvImporterTaxonomyTerm extends AbstractImporter {
 			$id       = false;
 			$updating = false;
 
-			/*
 			if ( $this->params['update_existing'] ) {
 				$id       = isset( $data['id'] ) ? $data['id'] : false;
 				$updating = true;
@@ -187,64 +186,62 @@ class CsvImporterTaxonomyTerm extends AbstractImporter {
 				}
 			}
 
-			// Verify if the field's metakey being processed already exists or is a default one.
-			$meta_key    = isset( $data['listing_field_meta_key'] ) && ! empty( $data['listing_field_meta_key'] ) ? $data['listing_field_meta_key'] : false;
-			$field_in_db = $this->field_exists( $meta_key );
+			// Grab details.
+			$name     = isset( $data['term_name'] ) ? $data['term_name'] : false;
+			$slug     = isset( $data['slug'] ) ? $data['slug'] : false;
+			$desc     = isset( $data['description'] ) ? $data['description'] : false;
+			$parent   = isset( $data['parent'] ) ? $data['parent'] : false;
+			$taxonomy = isset( $data['taxonomy'] ) ? $data['taxonomy'] : false;
 
-			if ( pno_is_default_field( $meta_key ) ) {
-				$updating = true;
-			} elseif ( $field_in_db ) {
-				$updating = true;
-				$id       = $field_in_db;
+			if ( ! $taxonomy ) {
+				throw new Exception( esc_html__( 'No taxonomy assigned for import.', 'posterno' ) );
 			}
 
-			// Now update or create a new field.
-			$title    = isset( $data['title'] ) ? $data['title'] : false;
-			$type     = isset( $data['listing_field_type'] ) ? $data['listing_field_type'] : false;
-			$priority = isset( $data['listing_field_priority'] ) ? $data['listing_field_priority'] : 100;
+			$args = [];
+
+			if ( $name ) {
+				$args['name'] = $name;
+			}
+			if ( $slug ) {
+				$args['slug'] = $slug;
+			}
+			if ( $desc ) {
+				$args['description'] = $desc;
+			}
+			if ( $parent ) {
+				$args['parent'] = $parent;
+			}
 
 			if ( $updating ) {
-				$args = [
-					'ID' => $id,
-				];
-				if ( $title ) {
-					$args['post_title'] = $title;
-				}
-				wp_update_post( $args );
+
+				wp_update_term( $id, $taxonomy, $args );
+
 			} else {
-				if ( ! $title ) {
+
+				if ( ! $name ) {
 					throw new Exception( esc_html__( 'No title assigned for import.', 'posterno' ) );
 				}
-				if ( ! $type ) {
-					throw new Exception( esc_html__( 'No type assigned for import.', 'posterno' ) );
-				}
-				if ( ! $meta_key ) {
-					throw new Exception( esc_html__( 'No meta key assigned for import.', 'posterno' ) );
-				}
-				$new_field = \PNO\Entities\Field\Listing::create(
-					[
-						'name'     => $title,
-						'priority' => $priority,
-						'type'     => $type,
-					]
-				);
 
-				$id = $new_field->getPostID();
+				$term = wp_insert_term( $name, $taxonomy, $args );
 
+				if ( is_wp_error( $term ) ) {
+					throw new Exception( $term->get_error_message() );
+				}
+
+				if ( is_array( $term ) && isset( $term['term_id'] ) ) {
+					$id = $term['term_id'];
+				}
 			}
 
-			// Now update all other settings found.
-			$keys_to_skip = [
-				'ID',
-				'title',
-			];
-
-			foreach ( $data as $key => $value ) {
-				if ( empty( $value ) || in_array( $key, $keys_to_skip, true ) ) {
-					continue;
+			// Update metadata.
+			if ( isset( $data['meta_data'] ) && is_array( $data['meta_data'] ) && ! empty( $data['meta_data'] ) ) {
+				foreach ( $data['meta_data'] as $meta ) {
+					if ( ! isset( $meta['value'] ) || ( isset( $meta['value'] ) && empty( $meta['value'] ) ) ) {
+						continue;
+					}
+					carbon_set_term_meta( $id, $meta['key'], $meta['value'] );
 				}
-				carbon_set_post_meta( $id, $key, $value );
-			}*/
+			}
 
 			return array(
 				'id'      => $id,
