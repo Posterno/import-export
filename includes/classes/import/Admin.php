@@ -435,7 +435,7 @@ class Admin {
 				array(
 					'position'   => 'done',
 					'percentage' => 100,
-					'url'        => add_query_arg( array( 'nonce' => wp_create_nonce( 'listingsfield-csv' ) ), admin_url( 'edit.php?post_type=listings&page=listingsfield_importer&step=done' ) ),
+					'url'        => add_query_arg( array( 'nonce' => wp_create_nonce( 'profilesfield-csv' ) ), admin_url( 'edit.php?post_type=listings&page=profilesfield_importer&step=done' ) ),
 					'imported'   => count( $results['imported'] ),
 					'failed'     => count( $results['failed'] ),
 					'updated'    => count( $results['updated'] ),
