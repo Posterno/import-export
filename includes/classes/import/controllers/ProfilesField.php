@@ -38,7 +38,7 @@ class ProfilesField extends BaseController {
 		$this->page_description        = esc_html__( 'This tool allows you to import (or merge) profiles fields to your webiste from a CSV file.', 'posterno' );
 		$this->page_update_label       = esc_html__( 'Update existing profiles fields', 'posterno' );
 		$this->page_update_description = esc_html__( 'Existing profiles fields that match by ID will be updated. Profiles Fields that do not exist will be skipped.', 'posterno' );
-		$this->page_done_url           = admin_url( 'edit.php?post_type=listings&page=posterno-custom-listings-fields' );
+		$this->page_done_url           = admin_url( 'users.php?page=posterno-custom-profile-fields' );
 		$this->page_item_label         = esc_html__( 'Profiles Field', 'posterno' );
 		$this->page_url                = admin_url( 'edit.php?post_type=listings&page=profilesfield_importer' );
 	}

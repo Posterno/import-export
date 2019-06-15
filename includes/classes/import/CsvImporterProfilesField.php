@@ -210,9 +210,6 @@ class CsvImporterProfilesField extends AbstractImporter {
 			$id       = false;
 			$updating = false;
 
-			error_log( print_r( $data, true ) );
-
-			/*
 			if ( $this->params['update_existing'] ) {
 				$id       = isset( $data['id'] ) ? $data['id'] : false;
 				$updating = true;
@@ -223,7 +220,7 @@ class CsvImporterProfilesField extends AbstractImporter {
 			}
 
 			// Verify if the field's metakey being processed already exists or is a default one.
-			$meta_key    = isset( $data['listing_field_meta_key'] ) && ! empty( $data['listing_field_meta_key'] ) ? $data['listing_field_meta_key'] : false;
+			$meta_key    = isset( $data['profile_field_meta_key'] ) && ! empty( $data['profile_field_meta_key'] ) ? $data['profile_field_meta_key'] : false;
 			$field_in_db = $this->field_exists( $meta_key );
 
 			if ( pno_is_default_field( $meta_key ) ) {
@@ -235,8 +232,8 @@ class CsvImporterProfilesField extends AbstractImporter {
 
 			// Now update or create a new field.
 			$title    = isset( $data['title'] ) ? $data['title'] : false;
-			$type     = isset( $data['listing_field_type'] ) ? $data['listing_field_type'] : false;
-			$priority = isset( $data['listing_field_priority'] ) ? $data['listing_field_priority'] : 100;
+			$type     = isset( $data['profile_field_type'] ) ? $data['profile_field_type'] : false;
+			$priority = isset( $data['profile_field_priority'] ) ? $data['profile_field_priority'] : 100;
 
 			if ( $updating ) {
 				$args = [
@@ -279,7 +276,7 @@ class CsvImporterProfilesField extends AbstractImporter {
 					continue;
 				}
 				carbon_set_post_meta( $id, $key, $value );
-			} */
+			}
 
 			return array(
 				'id'      => $id,
