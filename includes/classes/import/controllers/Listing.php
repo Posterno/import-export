@@ -102,15 +102,33 @@ class Listing extends BaseController {
 	protected function auto_map_columns( $raw_headers, $num_indexes = true ) {
 		include PNO_PLUGIN_DIR . 'vendor/posterno/import-export/resources/mappings/mappings.php';
 
-		$default_columns = $this->normalize_columns_names(
+		$initial_columns = $this->normalize_columns_names(
 			apply_filters(
 				'posterno_csv_listing_import_mapping_default_columns',
 				array(
-					__( 'ID', 'posterno' )    => 'id',
-					__( 'Title', 'posterno' ) => 'title',
+					esc_html__( 'ID', 'posterno' ) => 'id',
+					esc_html__( 'Listing title', 'posterno' ) => 'title',
+					esc_html__( 'Description' )    => 'description',
+					esc_html__( 'Short description' )        => 'short_description',
+					esc_html__( 'Featured image' ) => 'featured_image',
+					esc_html__( 'Publish date' )   => 'published',
+					esc_html__( 'Status' )         => 'status',
+					esc_html__( 'Expiry date' )    => 'expires',
+					esc_html__( 'Featured' )       => 'featured',
+					esc_html__( 'Opening hours' )  => 'opening_hours',
+					esc_html__( 'Latitude' )       => 'latitude',
+					esc_html__( 'Longitude' )      => 'longitude',
+					esc_html__( 'Address' )        => 'address',
+					esc_html__( 'Gallery images' ) => 'gallery',
+					esc_html__( 'Author' )         => 'author',
 				)
 			)
 		);
+
+		$taxonomies = array_flip( pno_get_registered_listings_taxonomies() );
+		$fields     = array_flip( pno_get_cb_listings_fields() );
+
+		$default_columns = array_merge( $initial_columns, $taxonomies, $fields );
 
 		$special_columns = $this->get_special_columns(
 			$this->normalize_columns_names(
@@ -159,11 +177,27 @@ class Listing extends BaseController {
 		}
 
 		// Available options.
-		$options = array(
-			'id'    => esc_html__( 'ID', 'posterno' ),
-			'title' => esc_html__( 'Listing title', 'posterno' ),
+		$default_options = array(
+			'id'                => esc_html__( 'ID', 'posterno' ),
+			'title'             => esc_html__( 'Listing title', 'posterno' ),
+			'description'       => esc_html__( 'Description' ),
+			'short_description' => esc_html__( 'Short description' ),
+			'featured_image'    => esc_html__( 'Featured image' ),
+			'published'         => esc_html__( 'Publish date' ),
+			'status'            => esc_html__( 'Status' ),
+			'expires'           => esc_html__( 'Expiry date' ),
+			'featured'          => esc_html__( 'Featured' ),
+			'opening_hours'     => esc_html__( 'Opening hours' ),
+			'latitude'          => esc_html__( 'Latitude' ),
+			'longitude'         => esc_html__( 'Longitude' ),
+			'address'           => esc_html__( 'Address' ),
+			'gallery'           => esc_html__( 'Gallery images' ),
+			'author'            => esc_html__( 'Author' ),
 		);
+
+		$options = array_merge( $default_options, pno_get_registered_listings_taxonomies(), pno_get_cb_listings_fields() );
 
 		return apply_filters( 'posterno_csv_listing_import_mapping_options', $options, $item );
 	}
+
 }
