@@ -100,7 +100,7 @@ class CsvTaxonomyExporter extends CsvBatchExporter {
 			'slug'        => esc_html__( 'Term slug', 'posterno' ),
 			'description' => esc_html__( 'Description', 'posterno' ),
 			'parent'      => esc_html__( 'Parent', 'posterno' ),
-			'taxonomy'    => esc_html__( 'Taxonomy' ),
+			'taxonomy'    => esc_html__( 'Taxonomy', 'posterno' ),
 		];
 
 		/**
