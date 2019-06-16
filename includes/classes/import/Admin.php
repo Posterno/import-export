@@ -17,6 +17,7 @@ use PosternoImportExport\Import\Controllers\ListingsField;
 use PosternoImportExport\Import\Controllers\ProfilesField;
 use PosternoImportExport\Import\Controllers\RegistrationField;
 use PosternoImportExport\Import\Controllers\Taxonomy;
+use PosternoImportExport\Import\Controllers\Listing;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -53,30 +54,31 @@ class Admin {
 		add_action( 'wp_ajax_posterno_do_ajax_profilesfield_import', array( $this, 'do_ajax_profilesfield_import' ) );
 		add_action( 'wp_ajax_posterno_do_ajax_registrationfield_import', array( $this, 'do_ajax_registrationfield_import' ) );
 		add_action( 'wp_ajax_posterno_do_ajax_taxonomyterm_import', array( $this, 'do_ajax_taxonomyterm_import' ) );
+		add_action( 'wp_ajax_posterno_do_ajax_listing_import', array( $this, 'do_ajax_listing_import' ) );
 
 		// Register importers.
-		$this->importers['schema_importer']        = array(
+		$this->importers['schema_importer']            = array(
 			'menu'       => 'edit.php?post_type=listings',
 			'name'       => __( 'Schema Import', 'posterno' ),
 			'capability' => 'manage_options',
 			'callback'   => array( $this, 'schema_importer' ),
 			'url'        => admin_url( 'edit.php?post_type=listings&page=schema_importer' ),
 		);
-		$this->importers['email_importer']         = array(
+		$this->importers['email_importer']             = array(
 			'menu'       => 'edit.php?post_type=listings',
 			'name'       => __( 'Email Import', 'posterno' ),
 			'capability' => 'manage_options',
 			'callback'   => array( $this, 'email_importer' ),
 			'url'        => admin_url( 'edit.php?post_type=listings&page=email_importer' ),
 		);
-		$this->importers['listingsfield_importer'] = array(
+		$this->importers['listingsfield_importer']     = array(
 			'menu'       => 'edit.php?post_type=listings',
 			'name'       => __( 'Listings fields Import', 'posterno' ),
 			'capability' => 'manage_options',
 			'callback'   => array( $this, 'listingsfield_importer' ),
 			'url'        => admin_url( 'edit.php?post_type=listings&page=listingsfield_importer' ),
 		);
-		$this->importers['profilesfield_importer'] = array(
+		$this->importers['profilesfield_importer']     = array(
 			'menu'       => 'edit.php?post_type=listings',
 			'name'       => __( 'Profiles fields Import', 'posterno' ),
 			'capability' => 'manage_options',
@@ -90,12 +92,19 @@ class Admin {
 			'callback'   => array( $this, 'registrationfield_importer' ),
 			'url'        => admin_url( 'edit.php?post_type=listings&page=registrationfield_importer' ),
 		);
-		$this->importers['taxonomyterm_importer'] = array(
+		$this->importers['taxonomyterm_importer']      = array(
 			'menu'       => 'edit.php?post_type=listings',
 			'name'       => __( 'Taxonomy Terms Import', 'posterno' ),
 			'capability' => 'manage_options',
 			'callback'   => array( $this, 'taxonomyterm_importer' ),
 			'url'        => admin_url( 'edit.php?post_type=listings&page=taxonomyterm_importer' ),
+		);
+		$this->importers['listing_importer']           = array(
+			'menu'       => 'edit.php?post_type=listings',
+			'name'       => __( 'Listings Import', 'posterno' ),
+			'capability' => 'manage_options',
+			'callback'   => array( $this, 'listing_importer' ),
+			'url'        => admin_url( 'edit.php?post_type=listings&page=listing_importer' ),
 		);
 	}
 
@@ -205,6 +214,14 @@ class Admin {
 	 */
 	public function taxonomyterm_importer() {
 		$importer = new Taxonomy();
+		$importer->dispatch();
+	}
+
+	/**
+	 * The listings importer page.
+	 */
+	public function listing_importer() {
+		$importer = new Listing();
 		$importer->dispatch();
 	}
 
@@ -618,4 +635,68 @@ class Admin {
 			);
 		}
 	}
+
+	/**
+	 * Ajax callback for importing one batch of schemas from a CSV.
+	 */
+	public function do_ajax_listing_import() {
+		global $wpdb;
+
+		check_ajax_referer( 'pno-listing-import', 'security' );
+
+		if ( ! $this->import_allowed() || ! isset( $_POST['file'] ) ) { // PHPCS: input var ok.
+			wp_send_json_error( array( 'message' => __( 'Insufficient privileges to import.', 'posterno' ) ) );
+		}
+
+		$file   = pno_clean( wp_unslash( $_POST['file'] ) ); // PHPCS: input var ok.
+		$params = array(
+			'delimiter'       => ! empty( $_POST['delimiter'] ) ? pno_clean( wp_unslash( $_POST['delimiter'] ) ) : ',', // PHPCS: input var ok.
+			'start_pos'       => isset( $_POST['position'] ) ? absint( $_POST['position'] ) : 0, // PHPCS: input var ok.
+			'mapping'         => isset( $_POST['mapping'] ) ? (array) pno_clean( wp_unslash( $_POST['mapping'] ) ) : array(), // PHPCS: input var ok.
+			'update_existing' => isset( $_POST['update_existing'] ) ? (bool) $_POST['update_existing'] : false, // PHPCS: input var ok.
+			'lines'           => apply_filters( 'posterno_listing_import_batch_size', 30 ),
+			'parse'           => true,
+		);
+
+		// Log failures.
+		if ( 0 !== $params['start_pos'] ) {
+			$error_log = array_filter( (array) get_user_option( 'listing_import_error_log' ) );
+		} else {
+			$error_log = array();
+		}
+
+		$importer         = Taxonomy::get_importer( $file, $params );
+		$results          = $importer->import();
+		$percent_complete = $importer->get_percent_complete();
+		$error_log        = array_merge( $error_log, $results['failed'], $results['skipped'] );
+
+		update_user_option( get_current_user_id(), 'listing_import_error_log', $error_log );
+
+		if ( 100 === $percent_complete ) {
+			// Send success.
+			wp_send_json_success(
+				array(
+					'position'   => 'done',
+					'percentage' => 100,
+					'url'        => add_query_arg( array( 'nonce' => wp_create_nonce( 'listing-csv' ) ), admin_url( 'edit.php?post_type=listings&page=listing_importer&step=done' ) ),
+					'imported'   => count( $results['imported'] ),
+					'failed'     => count( $results['failed'] ),
+					'updated'    => count( $results['updated'] ),
+					'skipped'    => count( $results['skipped'] ),
+				)
+			);
+		} else {
+			wp_send_json_success(
+				array(
+					'position'   => $importer->get_file_position(),
+					'percentage' => $percent_complete,
+					'imported'   => count( $results['imported'] ),
+					'failed'     => count( $results['failed'] ),
+					'updated'    => count( $results['updated'] ),
+					'skipped'    => count( $results['skipped'] ),
+				)
+			);
+		}
+	}
+
 }
