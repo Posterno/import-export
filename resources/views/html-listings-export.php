@@ -40,8 +40,8 @@ $exporter = new CsvListingsExporter();
 				<h2><?php esc_html_e( 'Export listings to a CSV file', 'posterno' ); ?></h2>
 				<p><?php esc_html_e( 'This tool allows you to generate and download a CSV file containing a list of all listings submitted on this website.', 'posterno' ); ?></p>
 			</header>
-			<section>
-				<table class="form-table">
+			<section class="pno-importer-mapping-table-wrapper">
+				<table class="widefat pno-importer-mapping-table">
 					<tbody>
 						<?php foreach ( $exporter->form->getFields() as $field ) : ?>
 						<tr>
