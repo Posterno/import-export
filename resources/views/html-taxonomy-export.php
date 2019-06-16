@@ -40,9 +40,9 @@ $exporter = new CsvTaxonomyExporter();
 				<h2><?php esc_html_e( 'Export taxonomy terms to a CSV file', 'posterno' ); ?></h2>
 				<p><?php esc_html_e( 'This tool allows you to generate and download a CSV file containing a list of all taxonomy terms created on this website.', 'posterno' ); ?></p>
 			</header>
-			<section class="has-form">
+			<section class="pno-importer-mapping-table-wrapper">
 
-				<table class="form-table">
+				<table class="widefat pno-importer-mapping-table">
 					<tbody>
 						<?php foreach ( $exporter->form->getFields() as $field ) : ?>
 						<tr>
