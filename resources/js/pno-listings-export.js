@@ -33,7 +33,7 @@
 			month          = currentDate.getMonth() + 1,
 			year           = currentDate.getFullYear(),
 			timestamp      = currentDate.getTime(),
-			filename       = 'pno-listings-fields-export-' + day + '-' + month + '-' + year + '-' + timestamp + '.csv';
+			filename       = 'pno-listings-export-' + day + '-' + month + '-' + year + '-' + timestamp + '.csv';
 
 		event.data.listingsExportForm.$form.addClass( 'posterno-exporter__exporting' );
 		event.data.listingsExportForm.$form.find('.posterno-exporter-progress').val( 0 );
