@@ -665,7 +665,7 @@ class Admin {
 			$error_log = array();
 		}
 
-		$importer         = Taxonomy::get_importer( $file, $params );
+		$importer         = Listing::get_importer( $file, $params );
 		$results          = $importer->import();
 		$percent_complete = $importer->get_percent_complete();
 		$error_log        = array_merge( $error_log, $results['failed'], $results['skipped'] );

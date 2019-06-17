@@ -151,6 +151,58 @@ add_action(
 );
 
 /**
+ * Get list of fields to skip when checking carbon fields for listings.
+ *
+ * @return array
+ */
+function pno_get_carbon_listings_fields_to_skip() {
+
+	$fields_to_skip = [
+		'listing_type',
+		'monday',
+		'monday_time_slots',
+		'monday_opening',
+		'monday_closing',
+		'monday_additional_times',
+		'tuesday',
+		'tuesday_time_slots',
+		'tuesday_opening',
+		'tuesday_closing',
+		'tuesday_additional_times',
+		'wednesday',
+		'wednesday_time_slots',
+		'wednesday_opening',
+		'wednesday_closing',
+		'wednesday_additional_times',
+		'thursday',
+		'thursday_time_slots',
+		'thursday_opening',
+		'thursday_closing',
+		'thursday_additional_times',
+		'friday',
+		'friday_time_slots',
+		'friday_opening',
+		'friday_closing',
+		'friday_additional_times',
+		'saturday',
+		'saturday_time_slots',
+		'saturday_opening',
+		'saturday_closing',
+		'saturday_additional_times',
+		'sunday',
+		'sunday_time_slots',
+		'sunday_opening',
+		'sunday_closing',
+		'sunday_additional_times',
+		'listing_location',
+		'listing_gallery_images',
+	];
+
+	return $fields_to_skip;
+
+}
+
+/**
  * Get list of fields registered within carbon fields for listings.
  *
  * @return array
@@ -159,48 +211,32 @@ function pno_get_cb_listings_fields() {
 
 	$repo = \Carbon_Fields\Carbon_Fields::resolve( 'container_repository' );
 
-		$fields = [];
+	$fields = [];
 
-		$fields_to_skip = [
-			'listing_type',
-			'monday',
-			'monday_time_slots',
-			'monday_opening',
-			'monday_closing',
-			'monday_additional_times',
-			'tuesday',
-			'tuesday_time_slots',
-			'tuesday_opening',
-			'tuesday_closing',
-			'tuesday_additional_times',
-			'wednesday',
-			'wednesday_time_slots',
-			'wednesday_opening',
-			'wednesday_closing',
-			'wednesday_additional_times',
-			'thursday',
-			'thursday_time_slots',
-			'thursday_opening',
-			'thursday_closing',
-			'thursday_additional_times',
-			'friday',
-			'friday_time_slots',
-			'friday_opening',
-			'friday_closing',
-			'friday_additional_times',
-			'saturday',
-			'saturday_time_slots',
-			'saturday_opening',
-			'saturday_closing',
-			'saturday_additional_times',
-			'sunday',
-			'sunday_time_slots',
-			'sunday_opening',
-			'sunday_closing',
-			'sunday_additional_times',
-			'listing_location',
-			'listing_gallery_images',
-		];
+	$fields_to_skip = pno_get_carbon_listings_fields_to_skip();
+
+	foreach ( $repo->get_containers() as $container ) {
+		if ( $container->get_id() === 'carbon_fields_container_pno_listings_settings' ) {
+			if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
+				foreach ( $container->get_fields() as $field ) {
+					if ( in_array( $field->get_base_name(), $fields_to_skip ) ) {
+						continue;
+					}
+					$fields[ $field->get_base_name() ] = $field->get_base_name();
+				}
+			}
+		}
+	}
+
+	return $fields;
+
+}
+
+/*
+add_action( 'admin_init', function() {
+	$repo = \Carbon_Fields\Carbon_Fields::resolve( 'container_repository' );
+
+		$fields_to_skip = pno_get_carbon_listings_fields_to_skip();
 
 		foreach ( $repo->get_containers() as $container ) {
 			if ( $container->get_id() === 'carbon_fields_container_pno_listings_settings' ) {
@@ -209,12 +245,11 @@ function pno_get_cb_listings_fields() {
 						if ( in_array( $field->get_base_name(), $fields_to_skip ) ) {
 							continue;
 						}
-						$fields[ $field->get_base_name() ] = $field->get_base_name();
+						var_dump( $field->get_type() );
 					}
 				}
 			}
 		}
+} );
 
-		return $fields;
-
-}
+*/

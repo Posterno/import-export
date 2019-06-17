@@ -47,10 +47,23 @@ class CsvImporterListing extends AbstractImporter {
 		 * Columns not mentioned here will get parsed with 'pno_clean'.
 		 * column_name => callback.
 		 */
-		$data_formatting = array(
-			'id'            => 'intval',
-			'content'       => [ $this, 'parse_description_field' ],
+		$default_formatting = array(
+			'id'                => 'intval',
+			'description'       => [ $this, 'parse_description_field' ],
+			'short_description' => [ $this, 'parse_description_field' ],
+			'featured_image'    => [ $this, 'parse_images_field' ],
+			'published'         => [ $this, 'parse_date_field' ],
+			'expires'           => [ $this, 'parse_date_field' ],
+			'featured'          => [ $this, 'parse_bool_field' ],
+			'opening_hours'     => [ $this, 'parse_json_field' ],
+			'latitude'          => [ $this, 'parse_float_field' ],
+			'longitude'         => [ $this, 'parse_float_field' ],
+			'gallery_images'    => [ $this, 'parse_images_field' ],
 		);
+
+		$additional_mappings = $this->get_carbon_fields_mappings();
+
+		$data_formatting = array_merge( $default_formatting, $additional_mappings );
 
 		/**
 		 * Match special column names.
@@ -83,6 +96,48 @@ class CsvImporterListing extends AbstractImporter {
 	}
 
 	/**
+	 * Get mappings for custom fields.
+	 *
+	 * @return array
+	 */
+	private function get_carbon_fields_mappings() {
+
+		$mappings = [];
+
+		$repo = \Carbon_Fields\Carbon_Fields::resolve( 'container_repository' );
+
+		$fields_to_skip = pno_get_carbon_listings_fields_to_skip();
+
+		foreach ( $repo->get_containers() as $container ) {
+			if ( $container->get_id() === 'carbon_fields_container_pno_listings_settings' ) {
+				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
+					foreach ( $container->get_fields() as $field ) {
+						if ( in_array( $field->get_base_name(), $fields_to_skip ) ) {
+							continue;
+						}
+						switch ( $field->get_type() ) {
+							case 'textarea':
+							case 'rich_text':
+								$mappings[ $field->get_base_name() ] = [ $this, 'parse_description_field' ];
+								break;
+							case 'multiselect':
+							case 'set':
+								$mappings[ $field->get_base_name() ] = [ $this, 'parse_comma_field' ];
+								break;
+							case 'checkbox':
+								$mappings[ $field->get_base_name() ] = [ $this, 'parse_bool_field' ];
+								break;
+						}
+					}
+				}
+			}
+		}
+
+		return $mappings;
+
+	}
+
+	/**
 	 * Process importer.
 	 *
 	 * Do not import listings with IDs that already exist if option
@@ -111,7 +166,7 @@ class CsvImporterListing extends AbstractImporter {
 
 			if ( $id ) {
 				$listing_status = get_post_status( $id );
-				$id_exists    = $listing_status && 'publish' === $listing_status;
+				$id_exists      = $listing_status && 'publish' === $listing_status;
 			}
 
 			if ( $id_exists && ! $update_existing ) {
