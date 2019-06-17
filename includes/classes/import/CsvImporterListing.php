@@ -374,6 +374,8 @@ class CsvImporterListing extends AbstractImporter {
 			}
 			if ( $featured ) {
 				update_post_meta( $id, '_listing_is_featured', $featured );
+			} elseif ( isset( $data['featured'] ) && ( empty( $featured ) || ! $featured ) ) {
+				delete_post_meta( $id, '_listing_is_featured' );
 			}
 			if ( $opening_hours && is_array( $opening_hours ) && ! empty( $opening_hours ) ) {
 				foreach ( $opening_hours as $day_name => $day_details ) {
