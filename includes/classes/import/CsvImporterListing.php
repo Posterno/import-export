@@ -309,6 +309,7 @@ class CsvImporterListing extends AbstractImporter {
 			$featured_image = isset( $data['featured_image'][0] ) ? $data['featured_image'][0] : false;
 			$publish_date   = isset( $data['published'] ) ? $data['published'] : false;
 			$status         = isset( $data['status'] ) ? $data['status'] : false;
+			$expires_date   = isset( $data['expires'] ) ? $data['expires'] : false;
 			$featured       = isset( $data['featured'] ) && $data['featured'] ? true : false;
 			$opening_hours  = isset( $data['opening_hours'] ) && ! empty( $data['opening_hours'] ) ? $data['opening_hours'] : false;
 			$lat            = isset( $data['latitude'] ) ? $data['latitude'] : false;
@@ -316,7 +317,61 @@ class CsvImporterListing extends AbstractImporter {
 			$address        = isset( $data['address'] ) ? $data['address'] : false;
 			$gallery        = isset( $data['gallery'] ) && ! empty( $data['gallery'] ) ? $data['gallery'] : false;
 
-			error_log( print_r( $data, true ) );
+			$args = [];
+
+			if ( $title ) {
+				$args['post_title'] = $title;
+			}
+			if ( $description ) {
+				$args['post_content'] = $description;
+			}
+			if ( $excerpt ) {
+				$args['post_excerpt'] = $excerpt;
+			}
+			if ( $publish_date ) {
+				$args['post_date']     = $publish_date;
+				$args['post_date_gmt'] = get_gmt_from_date( $publish_date );
+			}
+			if ( $status ) {
+				$args['post_status'] = $status;
+			}
+
+			if ( $updating ) {
+				$args['ID'] = $id;
+				if ( $publish_date ) {
+					$args['post_modified']     = $publish_date;
+					$args['post_modified_gmt'] = get_gmt_from_date( $publish_date );
+				}
+				$update = wp_update_post( $args );
+
+				if ( is_wp_error( $update ) ) {
+					throw new Exception( $update->get_error_message() );
+				}
+			} else {
+				if ( ! $title ) {
+					throw new Exception( esc_html__( 'No title assigned for import.', 'posterno' ) );
+				}
+
+				$new_listing_id = wp_insert_post( $args );
+
+				if ( is_wp_error( $new_listing_id ) ) {
+					throw new Exception( $new_listing_id->get_error_message() );
+				}
+
+				$id = $new_listing_id;
+
+			}
+
+			// Now update all other data.
+			if ( $expires_date ) {
+				update_post_meta( $id, '_listing_expires', date( 'Y-m-d', strtotime( $expires_date ) ) );
+			}
+			if ( $featured ) {
+				update_post_meta( $id, '_listing_is_featured', $featured );
+			}
+			if ( $opening_hours ) {
+
+			}
 
 			return array(
 				'id'      => $id,
