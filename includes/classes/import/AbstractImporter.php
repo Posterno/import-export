@@ -639,6 +639,26 @@ abstract class AbstractImporter implements ImporterInterface {
 	}
 
 	/**
+	 * Parse listings categories from CSV file.
+	 *
+	 * @param string $value values submitted.
+	 * @return array
+	 */
+	public function parse_listings_categories_taxonomy_field( $value ) {
+		return $this->parse_taxonomy_field( $value, 'listings-categories' );
+	}
+
+	/**
+	 * Parse listings locations from CSV file.
+	 *
+	 * @param string $value values submitted.
+	 * @return array
+	 */
+	public function parse_listings_locations_taxonomy_field( $value ) {
+		return $this->parse_taxonomy_field( $value, 'listings-locations' );
+	}
+
+	/**
 	 * Parse a simple taxonomy field from a CSV.
 	 *
 	 * @param string $value Field value.
@@ -680,6 +700,17 @@ abstract class AbstractImporter implements ImporterInterface {
 	 */
 	public function parse_listing_types_field( $value ) {
 		return $this->parse_simple_taxonomy_field( $value, 'listings-types' );
+	}
+
+	/**
+	 * Parse listings tags from a CSV.
+	 *
+	 * @param string $value Field value.
+	 *
+	 * @return array
+	 */
+	public function parse_listing_tags_field( $value ) {
+		return $this->parse_simple_taxonomy_field( $value, 'listings-tags' );
 	}
 
 	/**

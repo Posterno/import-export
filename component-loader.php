@@ -234,22 +234,8 @@ function pno_get_cb_listings_fields() {
 
 /*
 add_action( 'admin_init', function() {
-	$repo = \Carbon_Fields\Carbon_Fields::resolve( 'container_repository' );
 
-		$fields_to_skip = pno_get_carbon_listings_fields_to_skip();
+	var_dump( pno_get_registered_listings_taxonomies() );
 
-		foreach ( $repo->get_containers() as $container ) {
-			if ( $container->get_id() === 'carbon_fields_container_pno_listings_settings' ) {
-				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
-					foreach ( $container->get_fields() as $field ) {
-						if ( in_array( $field->get_base_name(), $fields_to_skip ) ) {
-							continue;
-						}
-						var_dump( $field->get_type() );
-					}
-				}
-			}
-		}
 } );
-
 */

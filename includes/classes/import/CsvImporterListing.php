@@ -63,8 +63,9 @@ class CsvImporterListing extends AbstractImporter {
 		);
 
 		$additional_mappings = $this->get_carbon_fields_mappings();
+		$taxonomy_mappings   = $this->get_taxonomies_mappings();
 
-		$data_formatting = array_merge( $default_formatting, $additional_mappings );
+		$data_formatting = array_merge( $default_formatting, $additional_mappings, $taxonomy_mappings );
 
 		/**
 		 * Match special column names.
@@ -133,6 +134,31 @@ class CsvImporterListing extends AbstractImporter {
 				}
 			}
 		}
+
+		return $mappings;
+
+	}
+
+	/**
+	 * Get mappings for taxonomies.
+	 *
+	 * @return array
+	 */
+	private function get_taxonomies_mappings() {
+
+		$mappings = [];
+
+		// Listing types.
+		$mappings['listings-types'] = [ $this, 'parse_listing_types_field' ];
+
+		// Listing categories.
+		$mappings['listings-categories'] = [ $this, 'parse_listings_categories_taxonomy_field' ];
+
+		// Listing categories.
+		$mappings['listings-locations'] = [ $this, 'parse_listings_locations_taxonomy_field' ];
+
+		// Listing tags.
+		$mappings['listings-tags'] = [ $this, 'parse_listing_tags_field' ];
 
 		return $mappings;
 
