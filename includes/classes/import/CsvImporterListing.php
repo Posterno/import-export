@@ -98,6 +98,22 @@ class CsvImporterListing extends AbstractImporter {
 	}
 
 	/**
+	 * Get listing field.
+	 *
+	 * @param string $setting_id meta key.
+	 * @return string|boolean
+	 */
+	protected function get_listing_field( $setting_id ) {
+
+		$field = new \PNO\Database\Queries\Listing_Fields();
+
+		$found_field = $field->get_item_by( 'listing_meta_key', $setting_id );
+
+		return $found_field instanceof \PNO\Entities\Field\Listing && $found_field->getPostID() > 0 ? $found_field : false;
+
+	}
+
+	/**
 	 * Get mappings for custom fields.
 	 *
 	 * @return array
@@ -117,17 +133,27 @@ class CsvImporterListing extends AbstractImporter {
 						if ( in_array( $field->get_base_name(), $fields_to_skip ) ) {
 							continue;
 						}
-						switch ( $field->get_type() ) {
+
+						$found_field = $this->get_listing_field( $field->get_base_name() );
+
+						if ( ! $found_field ) {
+							continue;
+						}
+
+						switch ( $found_field->getType() ) {
 							case 'textarea':
-							case 'rich_text':
+							case 'editor':
 								$mappings[ $field->get_base_name() ] = [ $this, 'parse_description_field' ];
 								break;
 							case 'multiselect':
-							case 'set':
+							case 'multicheckbox':
 								$mappings[ $field->get_base_name() ] = [ $this, 'parse_comma_field' ];
 								break;
 							case 'checkbox':
 								$mappings[ $field->get_base_name() ] = [ $this, 'parse_bool_field' ];
+								break;
+							case 'file':
+								$mappings[ $field->get_base_name() ] = [ $this, 'parse_images_field' ];
 								break;
 						}
 					}
