@@ -136,7 +136,7 @@ class CsvListingsExporter extends CsvBatchExporter {
 			'short_description' => esc_html__( 'Short description', 'posterno' ),
 			'featured_image'    => esc_html__( 'Featured image', 'posterno' ),
 			'published'         => esc_html__( 'Published', 'posterno' ),
-			'last_modified'     => esc_html__( 'Last modified' ),
+			'last_modified'     => esc_html__( 'Last modified', 'posterno' ),
 			'status'            => esc_html__( 'Status', 'posterno' ),
 			'expires'           => esc_html__( 'Expires', 'posterno' ),
 			'is_featured'       => esc_html__( 'Featured', 'posterno' ),
