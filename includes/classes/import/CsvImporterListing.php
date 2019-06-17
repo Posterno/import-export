@@ -317,7 +317,9 @@ class CsvImporterListing extends AbstractImporter {
 			$address        = isset( $data['address'] ) ? $data['address'] : false;
 			$gallery        = isset( $data['gallery'] ) && ! empty( $data['gallery'] ) ? $data['gallery'] : false;
 
-			$args = [];
+			$args = [
+				'post_type' => 'listings',
+			];
 
 			if ( $title ) {
 				$args['post_title'] = $title;
@@ -408,7 +410,6 @@ class CsvImporterListing extends AbstractImporter {
 			}
 
 			if ( $gallery && is_array( $gallery ) && ! empty( $gallery ) ) {
-
 				foreach ( $gallery as $gallery_item ) {
 					$att_id = $this->get_attachment_id_from_url( $gallery_item, $id );
 					if ( \is_numeric( $att_id ) ) {
