@@ -52,8 +52,6 @@ class CsvImporterListing extends AbstractImporter {
 			'description'             => [ $this, 'parse_description_field' ],
 			'short_description'       => [ $this, 'parse_description_field' ],
 			'featured_image'          => [ $this, 'parse_images_field' ],
-			'published'               => [ $this, 'parse_date_field' ],
-			'expires'                 => [ $this, 'parse_date_field' ],
 			'featured'                => [ $this, 'parse_bool_field' ],
 			'opening_hours'           => [ $this, 'parse_json_field' ],
 			'latitude'                => [ $this, 'parse_float_field' ],
