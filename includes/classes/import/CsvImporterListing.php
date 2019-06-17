@@ -369,8 +369,26 @@ class CsvImporterListing extends AbstractImporter {
 			if ( $featured ) {
 				update_post_meta( $id, '_listing_is_featured', $featured );
 			}
-			if ( $opening_hours ) {
+			if ( $opening_hours && is_array( $opening_hours ) && ! empty( $opening_hours ) ) {
+				foreach ( $opening_hours as $day_name => $day_details ) {
+					$day_opening       = isset( $day_details['opening'] ) ? $day_details['opening'] : false;
+					$day_closing       = isset( $day_details['closing'] ) ? $day_details['closing'] : false;
+					$operation         = isset( $day_details['operation'] ) ? $day_details['operation'] : false;
+					$additiona_timings = isset( $day_details['additional_times'] ) && is_array( $day_details['additional_times'] ) && ! empty( $day_details['additional_times'] ) ? $day_details['additional_times'] : false;
 
+					if ( $day_opening ) {
+						pno_update_listing_opening_hours_by_day( $id, $day_name, 'opening', $day_opening );
+					}
+					if ( $day_closing ) {
+						pno_update_listing_opening_hours_by_day( $id, $day_name, 'closing', $day_closing );
+					}
+					if ( $operation ) {
+						pno_update_listing_hours_of_operation( $id, $day_name, $operation );
+					}
+					if ( $additiona_timings ) {
+						pno_update_listing_additional_opening_hours_by_day( $id, $day_name, $additiona_timings );
+					}
+				}
 			}
 
 			return array(
