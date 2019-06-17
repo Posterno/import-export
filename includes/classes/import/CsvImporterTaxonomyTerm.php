@@ -239,7 +239,25 @@ class CsvImporterTaxonomyTerm extends AbstractImporter {
 					if ( ! isset( $meta['value'] ) || ( isset( $meta['value'] ) && empty( $meta['value'] ) ) ) {
 						continue;
 					}
-					carbon_set_term_meta( $id, $meta['key'], $meta['value'] );
+
+					$type = $this->get_cb_field_type( $meta['key'], $taxonomy );
+
+					if ( $type === 'image' ) {
+
+						$attachment = $this->get_attachment_id_from_url( $meta['value'], $id );
+
+						if ( is_wp_error( $attachment ) ) {
+							throw new Exception( $attachment->get_error_message() );
+						}
+
+						$attachment_url = wp_get_attachment_url( $attachment );
+
+						if ( $attachment_url ) {
+							carbon_set_term_meta( $id, $meta['key'], $attachment_url );
+						}
+					} else {
+						carbon_set_term_meta( $id, $meta['key'], $meta['value'] );
+					}
 				}
 			}
 
@@ -250,6 +268,35 @@ class CsvImporterTaxonomyTerm extends AbstractImporter {
 		} catch ( Exception $e ) {
 			return new WP_Error( 'posterno_taxonomyterm_importer_error', $e->getMessage(), array( 'status' => $e->getCode() ) );
 		}
+	}
+
+	/**
+	 * Get the type of a cb field.
+	 *
+	 * @param string $meta the meta to verify.
+	 * @param string $taxonomy the taxonomy to verify
+	 * @return bool|string
+	 */
+	private function get_cb_field_type( $meta, $taxonomy ) {
+
+		$type = false;
+
+		$repo = Carbon_Fields::resolve( 'container_repository' );
+
+		foreach ( $repo->get_containers() as $container ) {
+			if ( pno_ends_with( $container->get_id(), "pno_term_settings_{$taxonomy}" ) ) {
+				if ( ! empty( $container->get_fields() ) && is_array( $container->get_fields() ) ) {
+					foreach ( $container->get_fields() as $field ) {
+						if ( $field->get_base_name() === $meta ) {
+							return $field->get_type();
+						}
+					}
+				}
+			}
+		}
+
+		return $type;
+
 	}
 
 }
