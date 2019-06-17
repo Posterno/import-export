@@ -456,6 +456,7 @@ class CsvImporterListing extends AbstractImporter {
 				'longitude',
 				'address',
 				'gallery',
+				'listing_social_profiles',
 			];
 
 			foreach ( $data as $field_key => $field_value ) {
