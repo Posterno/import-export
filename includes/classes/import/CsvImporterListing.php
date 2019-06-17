@@ -391,6 +391,14 @@ class CsvImporterListing extends AbstractImporter {
 				}
 			}
 
+			if ( $lat && $lng ) {
+				pno_update_listing_coordinates( $lat, $lng, $id );
+			}
+
+			if ( $address ) {
+				pno_update_listing_address_only( $address, $id );
+			}
+
 			return array(
 				'id'      => $id,
 				'updated' => $updating,
