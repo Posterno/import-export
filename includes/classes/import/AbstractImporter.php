@@ -586,14 +586,14 @@ abstract class AbstractImporter implements ImporterInterface {
 	}
 
 	/**
-	 * Parse a category field from a CSV.
-	 * Categories are separated by commas and subcategories are "parent > subcategory".
+	 * Parse a taxonomy field from a CSV.
+	 * Taxonomy terms are separated by commas and sub terms are "parent > subcategory".
 	 *
 	 * @param string $value Field value.
-	 *
+	 * @param string $taxonomy the taxonomy to parse.
 	 * @return array of arrays with "parent" and "name" keys.
 	 */
-	public function parse_categories_field( $value ) {
+	public function parse_taxonomy_field( $value, $taxonomy ) {
 		if ( empty( $value ) ) {
 			return array();
 		}
@@ -608,15 +608,15 @@ abstract class AbstractImporter implements ImporterInterface {
 
 			foreach ( $_terms as $index => $_term ) {
 				// Check if category exists. Parent must be empty string or null if doesn't exists.
-				$term = term_exists( $_term, 'schema_cat', $parent );
+				$term = term_exists( $_term, $taxonomy, $parent );
 
 				if ( is_array( $term ) ) {
 					$term_id = $term['term_id'];
 					// Don't allow users without capabilities to create new categories.
-				} elseif ( ! current_user_can( 'manage_schema_terms' ) ) {
+				} elseif ( ! current_user_can( 'manage_options' ) ) {
 					break;
 				} else {
-					$term = wp_insert_term( $_term, 'schema_cat', array( 'parent' => intval( $parent ) ) );
+					$term = wp_insert_term( $_term, $taxonomy, array( 'parent' => intval( $parent ) ) );
 
 					if ( is_wp_error( $term ) ) {
 						break; // We cannot continue if the term cannot be inserted.
@@ -672,7 +672,7 @@ abstract class AbstractImporter implements ImporterInterface {
 	}
 
 	/**
-	 * Parse a tag field from a CSV.
+	 * Parse listings types from a CSV.
 	 *
 	 * @param string $value Field value.
 	 *
