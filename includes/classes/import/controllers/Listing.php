@@ -37,7 +37,7 @@ class Listing extends BaseController {
 		$this->page_description        = esc_html__( 'This tool allows you to import (or merge) listings to your webiste from a CSV file.', 'posterno' );
 		$this->page_update_label       = esc_html__( 'Update existing listings', 'posterno' );
 		$this->page_update_description = esc_html__( 'Existing listings that match by ID will be updated. Listings that do not exist will be skipped.', 'posterno' );
-		$this->page_done_url           = admin_url( 'edit.php?post_type=pno_listings' );
+		$this->page_done_url           = admin_url( 'edit.php?post_type=listings' );
 		$this->page_item_label         = esc_html__( 'Listings', 'posterno' );
 		$this->page_url                = admin_url( 'edit.php?post_type=listings&page=listing_importer' );
 	}
