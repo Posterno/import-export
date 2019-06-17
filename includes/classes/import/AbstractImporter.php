@@ -196,11 +196,11 @@ abstract class AbstractImporter implements ImporterInterface {
 	 * Get attachment ID.
 	 *
 	 * @param  string $url        Attachment URL.
-	 * @param  int    $product_id Product ID.
+	 * @param  int    $listing_id Listing ID.
 	 * @return int
 	 * @throws Exception If attachment cannot be loaded.
 	 */
-	public function get_attachment_id_from_url( $url, $product_id ) {
+	public function get_attachment_id_from_url( $url, $listing_id ) {
 		if ( empty( $url ) ) {
 			return 0;
 		}
@@ -265,7 +265,7 @@ abstract class AbstractImporter implements ImporterInterface {
 				throw new Exception( $upload->get_error_message(), 400 );
 			}
 
-			$id = pno_rest_set_uploaded_image_as_attachment( $upload, $product_id );
+			$id = pno_rest_set_uploaded_image_as_attachment( $upload, $listing_id );
 
 			if ( ! wp_attachment_is_image( $id ) ) {
 				/* translators: %s: image URL */
