@@ -311,7 +311,7 @@ class CsvImporterListing extends AbstractImporter {
 			$last_modified   = isset( $data['last_modified'] ) ? $data['last_modified'] : false;
 			$status          = isset( $data['status'] ) ? $data['status'] : false;
 			$expires_date    = isset( $data['expires'] ) ? $data['expires'] : false;
-			$featured        = isset( $data['featured'] ) && $data['featured'] ? true : false;
+			$featured        = isset( $data['featured'] ) && $data['featured'] ? 'yes' : false;
 			$opening_hours   = isset( $data['opening_hours'] ) && ! empty( $data['opening_hours'] ) ? $data['opening_hours'] : false;
 			$lat             = isset( $data['latitude'] ) ? $data['latitude'] : false;
 			$lng             = isset( $data['longitude'] ) ? $data['longitude'] : false;
