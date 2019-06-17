@@ -136,6 +136,7 @@ class CsvListingsExporter extends CsvBatchExporter {
 			'short_description' => esc_html__( 'Short description', 'posterno' ),
 			'featured_image'    => esc_html__( 'Featured image', 'posterno' ),
 			'published'         => esc_html__( 'Published', 'posterno' ),
+			'last_modified'     => esc_html__( 'Last modified' ),
 			'status'            => esc_html__( 'Status', 'posterno' ),
 			'expires'           => esc_html__( 'Expires', 'posterno' ),
 			'is_featured'       => esc_html__( 'Featured', 'posterno' ),
@@ -285,6 +286,16 @@ class CsvListingsExporter extends CsvBatchExporter {
 	 */
 	private function get_column_value_published( $id ) {
 		return get_the_date( get_option( 'date_format' ), $id );
+	}
+
+	/**
+	 * Get the last modified date.
+	 *
+	 * @param string $id post id.
+	 * @return string
+	 */
+	private function get_column_value_last_modified( $id ) {
+		return get_the_modified_date( get_option( 'date_format' ), $id );
 	}
 
 	/**
