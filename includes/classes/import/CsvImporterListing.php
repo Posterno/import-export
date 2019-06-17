@@ -58,7 +58,7 @@ class CsvImporterListing extends AbstractImporter {
 			'opening_hours'           => [ $this, 'parse_json_field' ],
 			'latitude'                => [ $this, 'parse_float_field' ],
 			'longitude'               => [ $this, 'parse_float_field' ],
-			'gallery_images'          => [ $this, 'parse_images_field' ],
+			'gallery'                 => [ $this, 'parse_images_field' ],
 			'listing_social_profiles' => [ $this, 'parse_json_field' ],
 		);
 
