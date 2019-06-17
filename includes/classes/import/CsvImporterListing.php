@@ -329,6 +329,7 @@ class CsvImporterListing extends AbstractImporter {
 				$args['post_excerpt'] = $excerpt;
 			}
 			if ( $publish_date ) {
+				$publish_date          = date( 'Y-m-d H:i:s', strtotime( $publish_date ) );
 				$args['post_date']     = $publish_date;
 				$args['post_date_gmt'] = get_gmt_from_date( $publish_date );
 			}
@@ -397,6 +398,32 @@ class CsvImporterListing extends AbstractImporter {
 
 			if ( $address ) {
 				pno_update_listing_address_only( $address, $id );
+			}
+
+			if ( $featured_image ) {
+				$featured_img_id = $this->get_attachment_id_from_url( $featured_image, $id );
+				if ( $featured_img_id ) {
+					set_post_thumbnail( $id, $featured_img_id );
+				}
+			}
+
+			if ( $gallery && is_array( $gallery ) && ! empty( $gallery ) ) {
+
+				foreach ( $gallery as $gallery_item ) {
+					$att_id = $this->get_attachment_id_from_url( $gallery_item, $id );
+					if ( \is_numeric( $att_id ) ) {
+						$att_url = wp_get_attachment_url( $att_id );
+						if ( $att_url ) {
+							$images[] = [
+								'url'  => $att_url,
+								'path' => get_attached_file( $att_id ),
+							];
+						}
+					}
+				}
+				if ( ! empty( $images ) ) {
+					carbon_set_post_meta( $id, 'listing_gallery_images', $images );
+				}
 			}
 
 			return array(
