@@ -303,19 +303,20 @@ class CsvImporterListing extends AbstractImporter {
 			}
 
 			// Grab details.
-			$title          = isset( $data['title'] ) ? $data['title'] : false;
-			$description    = isset( $data['description'] ) ? $data['description'] : false;
-			$excerpt        = isset( $data['short_description'] ) ? $data['short_description'] : false;
-			$featured_image = isset( $data['featured_image'][0] ) ? $data['featured_image'][0] : false;
-			$publish_date   = isset( $data['published'] ) ? $data['published'] : false;
-			$status         = isset( $data['status'] ) ? $data['status'] : false;
-			$expires_date   = isset( $data['expires'] ) ? $data['expires'] : false;
-			$featured       = isset( $data['featured'] ) && $data['featured'] ? true : false;
-			$opening_hours  = isset( $data['opening_hours'] ) && ! empty( $data['opening_hours'] ) ? $data['opening_hours'] : false;
-			$lat            = isset( $data['latitude'] ) ? $data['latitude'] : false;
-			$lng            = isset( $data['longitude'] ) ? $data['longitude'] : false;
-			$address        = isset( $data['address'] ) ? $data['address'] : false;
-			$gallery        = isset( $data['gallery'] ) && ! empty( $data['gallery'] ) ? $data['gallery'] : false;
+			$title           = isset( $data['title'] ) ? $data['title'] : false;
+			$description     = isset( $data['description'] ) ? $data['description'] : false;
+			$excerpt         = isset( $data['short_description'] ) ? $data['short_description'] : false;
+			$featured_image  = isset( $data['featured_image'][0] ) ? $data['featured_image'][0] : false;
+			$publish_date    = isset( $data['published'] ) ? $data['published'] : false;
+			$status          = isset( $data['status'] ) ? $data['status'] : false;
+			$expires_date    = isset( $data['expires'] ) ? $data['expires'] : false;
+			$featured        = isset( $data['featured'] ) && $data['featured'] ? true : false;
+			$opening_hours   = isset( $data['opening_hours'] ) && ! empty( $data['opening_hours'] ) ? $data['opening_hours'] : false;
+			$lat             = isset( $data['latitude'] ) ? $data['latitude'] : false;
+			$lng             = isset( $data['longitude'] ) ? $data['longitude'] : false;
+			$address         = isset( $data['address'] ) ? $data['address'] : false;
+			$gallery         = isset( $data['gallery'] ) && ! empty( $data['gallery'] ) ? $data['gallery'] : false;
+			$social_profiles = isset( $data['listing_social_profiles'] ) && ! empty( $data['listing_social_profiles'] ) ? $data['listing_social_profiles'] : false;
 
 			$args = [
 				'post_type' => 'listings',
@@ -424,6 +425,84 @@ class CsvImporterListing extends AbstractImporter {
 				}
 				if ( ! empty( $images ) ) {
 					carbon_set_post_meta( $id, 'listing_gallery_images', $images );
+				}
+			}
+
+			if ( $social_profiles && is_array( $social_profiles ) ) {
+				$profiles = [];
+				foreach ( $social_profiles as $profile ) {
+					$profiles[] = [
+						'social_id'  => isset( $profile['social_id'] ) ? $profile['social_id'] : false,
+						'social_url' => isset( $profile['social_url'] ) ? $profile['social_url'] : false,
+					];
+				}
+				if ( ! empty( $profiles ) ) {
+					carbon_set_post_meta( $id, 'listing_social_profiles', $profiles );
+				}
+			}
+
+			// Now update all other fields.
+			$skipping = [
+				'title',
+				'description',
+				'short_description',
+				'featured_image',
+				'published',
+				'status',
+				'expires',
+				'featured',
+				'opening_hours',
+				'latitude',
+				'longitude',
+				'address',
+				'gallery',
+			];
+
+			foreach ( $data as $field_key => $field_value ) {
+				if ( in_array( $field_key, $skipping, true ) ) {
+					continue;
+				}
+				if ( ! $field_value || empty( $field_value ) ) {
+					delete_post_meta( $id, '_' . $field_key );
+					continue;
+				}
+
+				$found_field = $this->get_listing_field( $field_key );
+
+				if ( ! $found_field ) {
+					continue;
+				}
+
+				if ( $found_field->getType() === 'file' ) {
+					if ( $found_field->isMultiple() ) {
+						if ( is_array( $field_value ) ) {
+							$files = [];
+							foreach ( $field_value as $file_url_to_upload ) {
+								$new_att_id = $this->get_attachment_id_from_url( $file_url_to_upload, $id );
+								if ( \is_numeric( $new_att_id ) ) {
+									$new_att_url = wp_get_attachment_url( $new_att_id );
+									if ( $new_att_url ) {
+										$files[] = [
+											'url'  => $att_url,
+											'path' => get_attached_file( $new_att_id ),
+										];
+									}
+								}
+							}
+							if ( ! empty( $files ) ) {
+								carbon_set_post_meta( $id, $field_key, $files );
+							}
+						}
+					} else {
+						if ( isset( $field_value[0] ) ) {
+							$new_att_id = $this->get_attachment_id_from_url( $field_value[0], $id );
+							if ( is_numeric( $new_att_id ) ) {
+								carbon_set_post_meta( $id, $field_key, $new_att_id );
+							}
+						}
+					}
+				} else {
+					carbon_set_post_meta( $id, $field_key, $field_value );
 				}
 			}
 
