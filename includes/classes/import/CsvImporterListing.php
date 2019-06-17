@@ -459,47 +459,55 @@ class CsvImporterListing extends AbstractImporter {
 				if ( in_array( $field_key, $skipping, true ) ) {
 					continue;
 				}
-				if ( ! $field_value || empty( $field_value ) ) {
+				if ( ! $field_value || empty( $field_value ) && ! taxonomy_exists( $field_key ) ) {
 					delete_post_meta( $id, '_' . $field_key );
 					continue;
 				}
 
-				$found_field = $this->get_listing_field( $field_key );
+				if ( taxonomy_exists( $field_key ) && is_array( $field_value ) && ! empty( $field_value ) ) {
+					$terms = wp_set_post_terms( $id, array_map( 'absint', $field_value ), $field_key );
 
-				if ( ! $found_field ) {
-					continue;
-				}
+					if ( is_wp_error( $terms ) ) {
+						throw new Exception( $terms->get_error_message() );
+					}
+				} else {
+					$found_field = $this->get_listing_field( $field_key );
 
-				if ( $found_field->getType() === 'file' ) {
-					if ( $found_field->isMultiple() ) {
-						if ( is_array( $field_value ) ) {
-							$files = [];
-							foreach ( $field_value as $file_url_to_upload ) {
-								$new_att_id = $this->get_attachment_id_from_url( $file_url_to_upload, $id );
-								if ( \is_numeric( $new_att_id ) ) {
-									$new_att_url = wp_get_attachment_url( $new_att_id );
-									if ( $new_att_url ) {
-										$files[] = [
-											'url'  => $att_url,
-											'path' => get_attached_file( $new_att_id ),
-										];
+					if ( ! $found_field ) {
+						continue;
+					}
+
+					if ( $found_field->getType() === 'file' ) {
+						if ( $found_field->isMultiple() ) {
+							if ( is_array( $field_value ) ) {
+								$files = [];
+								foreach ( $field_value as $file_url_to_upload ) {
+									$new_att_id = $this->get_attachment_id_from_url( $file_url_to_upload, $id );
+									if ( \is_numeric( $new_att_id ) ) {
+										$new_att_url = wp_get_attachment_url( $new_att_id );
+										if ( $new_att_url ) {
+											$files[] = [
+												'url'  => $att_url,
+												'path' => get_attached_file( $new_att_id ),
+											];
+										}
 									}
 								}
+								if ( ! empty( $files ) ) {
+									carbon_set_post_meta( $id, $field_key, $files );
+								}
 							}
-							if ( ! empty( $files ) ) {
-								carbon_set_post_meta( $id, $field_key, $files );
+						} else {
+							if ( isset( $field_value[0] ) ) {
+								$new_att_id = $this->get_attachment_id_from_url( $field_value[0], $id );
+								if ( is_numeric( $new_att_id ) ) {
+									carbon_set_post_meta( $id, $field_key, $new_att_id );
+								}
 							}
 						}
 					} else {
-						if ( isset( $field_value[0] ) ) {
-							$new_att_id = $this->get_attachment_id_from_url( $field_value[0], $id );
-							if ( is_numeric( $new_att_id ) ) {
-								carbon_set_post_meta( $id, $field_key, $new_att_id );
-							}
-						}
+						carbon_set_post_meta( $id, $field_key, $field_value );
 					}
-				} else {
-					carbon_set_post_meta( $id, $field_key, $field_value );
 				}
 			}
 
