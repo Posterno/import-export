@@ -342,11 +342,7 @@ class CsvImporterListing extends AbstractImporter {
 
 			if ( $updating ) {
 				$args['ID'] = $id;
-				if ( $publish_date ) {
-					$args['post_modified']     = $publish_date;
-					$args['post_modified_gmt'] = get_gmt_from_date( $publish_date );
-				}
-				$update = wp_update_post( $args );
+				$update     = wp_update_post( $args );
 
 				if ( is_wp_error( $update ) ) {
 					throw new Exception( $update->get_error_message() );
