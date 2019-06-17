@@ -308,6 +308,7 @@ class CsvImporterListing extends AbstractImporter {
 			$excerpt         = isset( $data['short_description'] ) ? $data['short_description'] : false;
 			$featured_image  = isset( $data['featured_image'][0] ) ? $data['featured_image'][0] : false;
 			$publish_date    = isset( $data['published'] ) ? $data['published'] : false;
+			$last_modified   = isset( $data['last_modified'] ) ? $data['last_modified'] : false;
 			$status          = isset( $data['status'] ) ? $data['status'] : false;
 			$expires_date    = isset( $data['expires'] ) ? $data['expires'] : false;
 			$featured        = isset( $data['featured'] ) && $data['featured'] ? true : false;
@@ -335,6 +336,11 @@ class CsvImporterListing extends AbstractImporter {
 				$publish_date          = date( 'Y-m-d H:i:s', strtotime( $publish_date ) );
 				$args['post_date']     = $publish_date;
 				$args['post_date_gmt'] = get_gmt_from_date( $publish_date );
+			}
+			if ( $last_modified ) {
+				$last_modified             = date( 'Y-m-d H:i:s', strtotime( $last_modified ) );
+				$args['post_modified']     = $last_modified;
+				$args['post_modified_gmt'] = get_gmt_from_date( $last_modified );
 			}
 			if ( $status ) {
 				$args['post_status'] = $status;
