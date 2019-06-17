@@ -269,8 +269,28 @@ class CsvImporterListing extends AbstractImporter {
 			$id       = false;
 			$updating = false;
 
+			if ( $this->params['update_existing'] ) {
+				$id       = isset( $data['id'] ) ? $data['id'] : false;
+				$updating = true;
+
+				if ( ! $id ) {
+					throw new Exception( esc_html__( 'No ID was found.', 'posterno' ) );
+				}
+			}
+
 			// Grab details.
-			$title = isset( $data['title'] ) ? $data['title'] : 'null';
+			$title          = isset( $data['title'] ) ? $data['title'] : false;
+			$description    = isset( $data['description'] ) ? $data['description'] : false;
+			$excerpt        = isset( $data['short_description'] ) ? $data['short_description'] : false;
+			$featured_image = isset( $data['featured_image'][0] ) ? $data['featured_image'][0] : false;
+			$publish_date   = isset( $data['published'] ) ? $data['published'] : false;
+			$status         = isset( $data['status'] ) ? $data['status'] : false;
+			$featured       = isset( $data['featured'] ) && $data['featured'] ? true : false;
+			$opening_hours  = isset( $data['opening_hours'] ) && ! empty( $data['opening_hours'] ) ? $data['opening_hours'] : false;
+			$lat            = isset( $data['latitude'] ) ? $data['latitude'] : false;
+			$lng            = isset( $data['longitude'] ) ? $data['longitude'] : false;
+			$address        = isset( $data['address'] ) ? $data['address'] : false;
+			$gallery        = isset( $data['gallery'] ) && ! empty( $data['gallery'] ) ? $data['gallery'] : false;
 
 			error_log( print_r( $data, true ) );
 
