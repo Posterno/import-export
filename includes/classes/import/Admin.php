@@ -262,6 +262,7 @@ class Admin {
 		update_user_option( get_current_user_id(), 'schema_import_error_log', $error_log );
 
 		if ( 100 === $percent_complete ) {
+			$this->delete_csv_file( $file );
 			// @codingStandardsIgnoreStart.
 			$wpdb->delete( $wpdb->postmeta, array( 'meta_key' => '_original_id' ) );
 			$wpdb->delete( $wpdb->posts, array(
@@ -349,6 +350,7 @@ class Admin {
 		update_user_option( get_current_user_id(), 'email_import_error_log', $error_log );
 
 		if ( 100 === $percent_complete ) {
+			$this->delete_csv_file( $file );
 			// Send success.
 			wp_send_json_success(
 				array(
@@ -414,6 +416,8 @@ class Admin {
 		if ( 100 === $percent_complete ) {
 
 			\PNO\Cache\Helper::flush_all_fields_cache();
+
+			$this->delete_csv_file( $file );
 
 			// Send success.
 			wp_send_json_success(
@@ -481,6 +485,8 @@ class Admin {
 
 			\PNO\Cache\Helper::flush_all_fields_cache();
 
+			$this->delete_csv_file( $file );
+
 			// Send success.
 			wp_send_json_success(
 				array(
@@ -547,6 +553,8 @@ class Admin {
 
 			\PNO\Cache\Helper::flush_all_fields_cache();
 
+			$this->delete_csv_file( $file );
+
 			// Send success.
 			wp_send_json_success(
 				array(
@@ -610,6 +618,7 @@ class Admin {
 		update_user_option( get_current_user_id(), 'taxonomyterm_import_error_log', $error_log );
 
 		if ( 100 === $percent_complete ) {
+			$this->delete_csv_file( $file );
 			// Send success.
 			wp_send_json_success(
 				array(
@@ -673,6 +682,7 @@ class Admin {
 		update_user_option( get_current_user_id(), 'listing_import_error_log', $error_log );
 
 		if ( 100 === $percent_complete ) {
+			$this->delete_csv_file( $file );
 			// Send success.
 			wp_send_json_success(
 				array(
@@ -697,6 +707,20 @@ class Admin {
 				)
 			);
 		}
+	}
+
+	/**
+	 * Delete csv file.
+	 *
+	 * @param string $file file path.
+	 * @return void
+	 */
+	private function delete_csv_file( $file ) {
+
+		if ( file_exists( $file ) && pno_starts_with( $file, WP_CONTENT_DIR ) ) {
+			wp_delete_file( $file );
+		}
+
 	}
 
 }
