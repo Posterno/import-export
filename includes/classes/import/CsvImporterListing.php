@@ -290,8 +290,6 @@ class CsvImporterListing extends AbstractImporter {
 
 			do_action( 'posterno_listing_import_before_process_item', $data );
 
-			error_log( print_r( $data, true ) );
-
 			$id       = false;
 			$updating = false;
 
@@ -433,6 +431,12 @@ class CsvImporterListing extends AbstractImporter {
 
 			if ( $address ) {
 				pno_update_listing_address_only( $address, $id );
+			} elseif ( ! $address && pno_geocoder_is_enabled() ) {
+				$response = \PNO\Geocoder\Helper\Query::geocode_coordinates( $lat, $lng );
+				if ( isset( $response['street'] ) && ! empty( $response['street'] ) ) {
+					update_post_meta( $id, 'geocoded_data', $response );
+					pno_update_listing_address_only( $response['street'], $id );
+				}
 			}
 
 			if ( $featured_image ) {
