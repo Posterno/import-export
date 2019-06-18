@@ -349,6 +349,30 @@ class CsvImporterListing extends AbstractImporter {
 			}
 
 			// Grab the author's ID.
+			$author_id       = isset( $data['author_id'] ) ? $data['author_id'] : false;
+			$author_username = isset( $data['author_username'] ) ? $data['author_username'] : false;
+			$author_email    = isset( $data['author_email'] ) ? $data['author_email'] : false;
+
+			if ( $author_username ) {
+				$user = get_user_by( 'login', $author_username );
+				if ( $user ) {
+					$author_id = $user->ID;
+				}
+			} elseif ( $author_email ) {
+				$user = get_user_by( 'email', $author_email );
+				if ( $user ) {
+					$author_id = $user->ID;
+				}
+			} else {
+				$user = get_user_by( 'id', $author_id );
+				if ( $user ) {
+					$author_id = $user->ID;
+				}
+			}
+
+			if ( $author_id ) {
+				$args['post_author'] = $author_id;
+			}
 
 			if ( $updating ) {
 				$args['ID'] = $id;
