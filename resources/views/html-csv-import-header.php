@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 		<h2><?php echo esc_html( $this->page_title ); ?></h2>
 		<ul class="title-links hidden-sm-and-down">
 			<li>
-				<a href="https://posterno.com/addons" rel="nofollow" target="_blank" class="page-title-action"><?php esc_html_e( 'View Addons', 'posterno' ); ?></a>
+				<a href="https://posterno.com/addons" rel="nofollow" target="_blank" class="page-title-action"><?php esc_html_e( 'Addons', 'posterno' ); ?></a>
 			</li>
 			<li>
 				<a href="https://docs.posterno.com/" rel="nofollow" target="_blank" class="page-title-action"><?php esc_html_e( 'Documentation', 'posterno' ); ?></a>
