@@ -551,6 +551,8 @@ class CsvImporterListing extends AbstractImporter {
 				}
 			}
 
+			do_action( 'posterno_listing_import_after_process_item', $data );
+
 			return array(
 				'id'      => $id,
 				'updated' => $updating,
