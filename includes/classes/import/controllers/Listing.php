@@ -121,7 +121,9 @@ class Listing extends BaseController {
 					esc_html__( 'Longitude', 'posterno' ) => 'longitude',
 					esc_html__( 'Address', 'posterno' )   => 'address',
 					esc_html__( 'Gallery images', 'posterno' ) => 'gallery',
-					esc_html__( 'Author', 'posterno' )    => 'author',
+					esc_html__( 'Author ID', 'posterno' ) => 'author_id',
+					esc_html__( 'Author username', 'posterno' ) => 'author_username',
+					esc_html__( 'Author email', 'posterno' ) => 'author_email',
 				)
 			)
 		);
@@ -194,7 +196,9 @@ class Listing extends BaseController {
 			'longitude'         => esc_html__( 'Longitude', 'posterno' ),
 			'address'           => esc_html__( 'Address', 'posterno' ),
 			'gallery'           => esc_html__( 'Gallery images', 'posterno' ),
-			'author'            => esc_html__( 'Author', 'posterno' ),
+			'author_id'         => esc_html__( 'Author ID', 'posterno' ),
+			'author_username'   => esc_html__( 'Author username', 'posterno' ),
+			'author_email'      => esc_html__( 'Author email', 'posterno' ),
 		);
 
 		$options = array_merge( $default_options, pno_get_registered_listings_taxonomies(), pno_get_cb_listings_fields() );

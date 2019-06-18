@@ -290,6 +290,8 @@ class CsvImporterListing extends AbstractImporter {
 
 			do_action( 'posterno_listing_import_before_process_item', $data );
 
+			error_log( print_r( $data, true ) );
+
 			$id       = false;
 			$updating = false;
 
@@ -345,6 +347,8 @@ class CsvImporterListing extends AbstractImporter {
 			if ( $status ) {
 				$args['post_status'] = $status;
 			}
+
+			// Grab the author's ID.
 
 			if ( $updating ) {
 				$args['ID'] = $id;
