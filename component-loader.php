@@ -231,11 +231,3 @@ function pno_get_cb_listings_fields() {
 	return $fields;
 
 }
-
-/*
-add_action( 'admin_init', function() {
-
-	var_dump( pno_get_registered_listings_taxonomies() );
-
-} );
-*/
