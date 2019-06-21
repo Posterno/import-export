@@ -1,7 +1,6 @@
 {
 	"name": "posterno/import-export",
 	"description": "Component that provides the import and export functionalities for Posterno's content.",
-	"type": "wordpress-plugin",
 	"keywords": [
 		"wordpress"
 	],
