@@ -166,6 +166,9 @@ class Admin {
 	 */
 	public function dispatcher() {
 		$importer = new BaseController();
+		if ( isset( $_GET['page'] ) && $_GET['page'] === 'wc-setup' ) {
+			return;
+		}
 		$importer->trigger_step_handler();
 	}
 
