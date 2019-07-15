@@ -548,7 +548,7 @@ class CsvListingsExporter extends CsvBatchExporter {
 					}
 					$column_key = 'meta:' . esc_attr( $key );
 					/* translators: %s: meta data name */
-					$this->column_names[ $column_key ] = sprintf( __( 'Meta: %s' ), $key );
+					$this->column_names[ $column_key ] = sprintf( __( 'Meta: %s', 'posterno' ), $key );
 					$row[ $column_key ]                = $meta_value;
 					$i ++;
 				}
