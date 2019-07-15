@@ -551,6 +551,16 @@ class CsvImporterListing extends AbstractImporter {
 				}
 			}
 
+			// Now update metadata.
+			if ( isset( $data['meta_data'] ) && ! empty( $data['meta_data'] ) && is_array( $data['meta_data'] ) ) {
+				foreach ( $data['meta_data'] as $meta_data ) {
+					if ( ! isset( $meta_data['value'] ) || ! isset( $meta_data['key'] ) ) {
+						continue;
+					}
+					update_post_meta( $id, esc_attr( $meta_data['key'] ), pno_clean( maybe_unserialize( $meta_data['value'] ) ) );
+				}
+			}
+
 			do_action( 'posterno_listing_import_after_process_item', $data );
 
 			return array(

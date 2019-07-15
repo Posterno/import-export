@@ -179,6 +179,9 @@ class Listing extends BaseController {
 			$index = $matches[0];
 		}
 
+		// Properly format for meta field.
+		$meta = str_replace( 'meta:', '', $item );
+
 		// Available options.
 		$default_options = array(
 			'id'                => esc_html__( 'ID', 'posterno' ),
@@ -199,6 +202,7 @@ class Listing extends BaseController {
 			'author_id'         => esc_html__( 'Author ID', 'posterno' ),
 			'author_username'   => esc_html__( 'Author username', 'posterno' ),
 			'author_email'      => esc_html__( 'Author email', 'posterno' ),
+			'meta:' . $meta     => esc_html__( 'Import as meta data' ),
 		);
 
 		$options = array_merge( $default_options, pno_get_registered_listings_taxonomies(), pno_get_cb_listings_fields() );
