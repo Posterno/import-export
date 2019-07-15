@@ -690,6 +690,7 @@ class Admin {
 			$columns    = isset( $params['columns_to_export'] ) && is_array( $params['columns_to_export'] ) && ! empty( $params['columns_to_export'] ) ? $params['columns_to_export'] : false;
 			$stati      = isset( $params['status'] ) && is_array( $params['status'] ) && ! empty( $params['status'] ) ? $params['status'] : false;
 			$categories = isset( $params['categories'] ) && is_array( $params['categories'] ) && ! empty( $params['categories'] ) ? $params['categories'] : false;
+			$meta       = isset( $params['export_meta'] ) ? true : false;
 
 			if ( $columns ) {
 				$exporter->set_columns_to_export( $columns );
@@ -699,6 +700,9 @@ class Admin {
 			}
 			if ( $categories ) {
 				$exporter->set_categories( $categories );
+			}
+			if ( $meta ) {
+				$exporter->set_export_meta( (bool) $meta );
 			}
 		}
 

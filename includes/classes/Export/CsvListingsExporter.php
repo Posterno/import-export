@@ -46,6 +46,13 @@ class CsvListingsExporter extends CsvBatchExporter {
 	public $categories = null;
 
 	/**
+	 * Whether we're going to export custom meta data too.
+	 *
+	 * @var boolean
+	 */
+	public $export_meta = false;
+
+	/**
 	 * Get things started.
 	 */
 	public function __construct() {
@@ -72,6 +79,16 @@ class CsvListingsExporter extends CsvBatchExporter {
 	 */
 	public function set_categories( $cats ) {
 		$this->categories = array_map( 'sanitize_title_with_dashes', $cats );
+	}
+
+	/**
+	 * Set if we're going to export meta or not.
+	 *
+	 * @param bool $value yes or no.
+	 * @return void
+	 */
+	public function set_export_meta( $value ) {
+		$this->export_meta = (bool) $value;
 	}
 
 	/**
@@ -114,6 +131,22 @@ class CsvListingsExporter extends CsvBatchExporter {
 				'attributes' => [
 					'class'            => 'form-control',
 					'data-placeholder' => esc_html__( 'Leave empty to export all listings', 'posterno' ),
+				],
+			],
+			'columns_to_export' => [
+				'type'       => 'multiselect',
+				'label'      => esc_html__( 'Which columns should be exported?', 'posterno' ),
+				'values'     => $this->get_default_column_names(),
+				'attributes' => [
+					'class'            => 'form-control',
+					'data-placeholder' => esc_html__( 'Leave empty to export all content', 'posterno' ),
+				],
+			],
+			'export_meta'       => [
+				'type'       => 'checkbox',
+				'label'      => esc_html__( 'Export custom meta?', 'posterno' ),
+				'attributes' => [
+					'class' => 'form-control',
 				],
 			],
 		];
@@ -213,7 +246,7 @@ class CsvListingsExporter extends CsvBatchExporter {
 			$value     = '';
 
 			// Skip some columns if dynamically handled later or if we're being selective.
-			if ( ! $this->is_column_exporting( $column_id ) ) {
+			if ( in_array( $column_id, [ 'meta' ], true ) || ! $this->is_column_exporting( $column_id ) ) {
 				continue;
 			}
 
@@ -248,6 +281,8 @@ class CsvListingsExporter extends CsvBatchExporter {
 
 			$row[ $column_id ] = $value;
 		}
+
+		$this->prepare_meta_for_export( $id, $row );
 
 		/**
 		 * Filter: allow developers to customize data retrive for rows of the CSV listings fields exporter.
@@ -482,6 +517,43 @@ class CsvListingsExporter extends CsvBatchExporter {
 
 		return $email;
 
+	}
+
+	/**
+	 * Export meta data.
+	 *
+	 * @param string $id id of the listing being exported.
+	 * @param array  $row Row data.
+	 * @return void
+	 */
+	protected function prepare_meta_for_export( $id, &$row ) {
+		if ( $this->export_meta ) {
+			$meta_data = get_post_meta( $id );
+
+			if ( is_array( $meta_data ) && ! empty( $meta_data ) ) {
+				$meta_keys_to_skip = apply_filters( 'posterno_listing_export_skip_meta_keys', array(), $id );
+				$i                 = 1;
+				foreach ( $meta_data as $key => $value ) {
+					if ( in_array( $key, $meta_keys_to_skip, true ) ) {
+						continue;
+					}
+					if ( isset( $value[0] ) && ! empty( $value[0] ) ) {
+						// Allow 3rd parties to process the meta, e.g. to transform non-scalar values to scalar.
+						$meta_value = apply_filters( 'posterno_listing_export_meta_value', $value[0], $key, $id, $row );
+					} else {
+						continue;
+					}
+					if ( ! is_scalar( $meta_value ) ) {
+						continue;
+					}
+					$column_key = 'meta:' . esc_attr( $key );
+					/* translators: %s: meta data name */
+					$this->column_names[ $column_key ] = sprintf( __( 'Meta: %s' ), $key );
+					$row[ $column_key ]                = $meta_value;
+					$i ++;
+				}
+			}
+		}
 	}
 
 }

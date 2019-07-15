@@ -231,3 +231,29 @@ function pno_get_cb_listings_fields() {
 	return $fields;
 
 }
+
+/**
+ * Exclude custom fields from the list of metadata to exclude.
+ *
+ * @param array $keys list of keys.
+ * @return array
+ */
+function pno_listings_export_exclude_meta_keys( $keys ) {
+
+	$custom_fields = pno_get_cb_listings_fields();
+
+	if ( ! empty( $custom_fields ) && is_array( $custom_fields ) ) {
+		foreach ( $custom_fields as $field_key ) {
+			$keys[] = '_' . $field_key;
+		}
+	}
+
+	// Additional keys to exclude.
+	$keys[] = '_listing_expires';
+	$keys[] = '_listing_is_featured';
+	$keys[] = '_listing_opening_hours';
+
+	return $keys;
+
+}
+add_filter( 'posterno_listing_export_skip_meta_keys', 'pno_listings_export_exclude_meta_keys' );
