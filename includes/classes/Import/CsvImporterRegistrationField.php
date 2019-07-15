@@ -115,6 +115,9 @@ class CsvImporterRegistrationField extends AbstractImporter {
 	 * @return array
 	 */
 	public function import() {
+
+		check_ajax_referer( 'pno-registrationfield-import', 'security' );
+
 		$this->start_time = time();
 		$index            = 0;
 		$update_existing  = $this->params['update_existing'];
