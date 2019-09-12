@@ -21,7 +21,7 @@ $exporter = new CsvSchemasExporter();
 		<h2><?php esc_html_e( 'Export listings schemas', 'posterno' ); ?></h2>
 		<ul class="title-links hidden-sm-and-down">
 			<li>
-				<a href="https://posterno.com/addons" rel="nofollow" target="_blank" class="page-title-action">Addons</a>
+				<a href="https://posterno.com/extensions" rel="nofollow" target="_blank" class="page-title-action">Addons</a>
 			</li>
 			<li>
 				<a href="https://docs.posterno.com/" rel="nofollow" target="_blank" class="page-title-action">Documentation</a>
